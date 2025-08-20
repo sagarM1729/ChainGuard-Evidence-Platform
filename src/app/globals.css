@@ -1,0 +1,6 @@
+/* 🎨 GLOBAL STYLES */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body { font-feature-settings: 'rlig' 1, 'calt' 1; }

@@ -1,0 +1,1 @@
+// 🖼️ Sidebar layout component (placeholder).

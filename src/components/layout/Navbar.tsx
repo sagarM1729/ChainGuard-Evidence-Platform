@@ -1,0 +1,1 @@
+// 🖼️ Navbar layout component (placeholder).

@@ -1,0 +1,52 @@
+// 💎 DATABASE BLUEPRINT: Prisma schema starter
+
+generator client {
+	provider = "prisma-client-js"
+}
+
+datasource db {
+	provider = "postgresql"
+	url      = env("DATABASE_URL")
+}
+
+model User {
+	id        String   @id @default(cuid())
+	email     String   @unique
+	name      String?
+	password  String?
+	createdAt DateTime @default(now())
+	updatedAt DateTime @updatedAt
+	cases     Case[]
+	evidence  Evidence[]
+}
+
+model Case {
+	id          String     @id @default(cuid())
+	title       String
+	description String?
+	status      CaseStatus @default(OPEN)
+	createdAt   DateTime   @default(now())
+	updatedAt   DateTime   @updatedAt
+	ownerId     String
+	owner       User       @relation(fields: [ownerId], references: [id])
+	evidence    Evidence[]
+}
+
+model Evidence {
+	id          String   @id @default(cuid())
+	hash        String   @unique
+	filename    String
+	storageCid  String
+	caseId      String?
+	case        Case?    @relation(fields: [caseId], references: [id])
+	uploaderId  String
+	uploader    User     @relation(fields: [uploaderId], references: [id])
+	verified    Boolean  @default(false)
+	createdAt   DateTime @default(now())
+}
+
+enum CaseStatus {
+	OPEN
+	CLOSED
+	ARCHIVED
+}

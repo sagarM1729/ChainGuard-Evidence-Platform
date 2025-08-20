@@ -1,0 +1,1 @@
+// 📝 Main application types (placeholder).

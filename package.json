@@ -1,0 +1,52 @@
+{
+	"name": "chainguard-evidence-platform",
+	"version": "0.1.0",
+	"private": true,
+	"description": "ChainGuard Evidence Platform",
+	"engines": {
+		"node": ">=18.18.0"
+	},
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "eslint . --ext .ts,.tsx",
+		"typecheck": "tsc --noEmit",
+		"test": "jest",
+		"test:watch": "jest --watch",
+		"cypress": "cypress open",
+		"cypress:run": "cypress run",
+		"prisma:generate": "prisma generate",
+		"prisma:migrate": "prisma migrate dev",
+		"prisma:studio": "prisma studio"
+	},
+	"dependencies": {
+		"@prisma/client": "latest",
+		"next": "latest",
+		"next-auth": "latest",
+		"next-pwa": "latest",
+		"react": "latest",
+		"react-dom": "latest",
+		"web3.storage": "latest",
+		"zustand": "latest"
+	},
+	"devDependencies": {
+		"@tailwindcss/postcss": "^4.1.12",
+		"@testing-library/jest-dom": "latest",
+		"@testing-library/react": "latest",
+		"@types/jest": "latest",
+		"@types/node": "latest",
+		"@types/react": "latest",
+		"@types/react-dom": "latest",
+		"autoprefixer": "latest",
+		"cypress": "latest",
+		"eslint": "latest",
+		"eslint-config-next": "latest",
+		"jest": "latest",
+		"postcss": "latest",
+		"prisma": "latest",
+		"tailwindcss": "3.4.10",
+		"ts-jest": "latest",
+		"typescript": "latest"
+	}
+}

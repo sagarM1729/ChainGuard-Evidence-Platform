@@ -1,0 +1,1 @@
+// 📁 EvidenceCard component (placeholder).

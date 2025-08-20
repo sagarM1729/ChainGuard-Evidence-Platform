@@ -1,0 +1,1 @@
+// 🔧 General utility functions (placeholder).
