@@ -8,7 +8,7 @@ export default function Navbar() {
 		<nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-b border-[#1f7a8c]/10 shadow-sm">
 			<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 				<div className="flex h-16 items-center justify-between">
-					<div className="flex items-center space-x-3">
+					<Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity duration-300 cursor-pointer">
 						<div className="relative">
 							<div className="absolute -inset-1 bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] rounded-lg blur opacity-30"></div>
 							<div className="relative bg-white p-2 rounded-lg shadow-md border border-[#1f7a8c]/20">
@@ -25,7 +25,7 @@ export default function Navbar() {
 							<span className="text-lg font-bold bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] bg-clip-text text-transparent">ChainGuard</span>
 							<span className="text-xs text-[#022b3a]/70 font-medium tracking-wide">EVIDENCE PLATFORM</span>
 						</div>
-					</div>
+					</Link>
 					<div className="hidden md:flex items-center space-x-3">
 						<Link href="/login">
 							<button className="group relative px-5 py-2 text-[#1f7a8c] font-semibold rounded-lg border-2 border-[#1f7a8c] backdrop-blur-sm bg-white/80 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 overflow-hidden">
