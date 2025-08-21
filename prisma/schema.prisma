@@ -1,52 +1,59 @@
-// 💎 DATABASE BLUEPRINT: Prisma schema starter
+// This is your Prisma schema file.
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-	provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-	provider = "postgresql"
-	url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
+// User model for authentication and role-based access
+// Corresponds to Step 2: Authentication (The Front Door) [cite: 14]
 model User {
-	id        String   @id @default(cuid())
-	email     String   @unique
-	name      String?
-	password  String?
-	createdAt DateTime @default(now())
-	updatedAt DateTime @updatedAt
-	cases     Case[]
-	evidence  Evidence[]
+  id        String    @id @default(cuid())
+  name      String?
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  cases     Case[]    // A user can be associated with multiple cases
 }
 
+// Case model for managing investigation cases
+// Corresponds to Step 3: Core "Case" Management [cite: 22]
 model Case {
-	id          String     @id @default(cuid())
-	title       String
-	description String?
-	status      CaseStatus @default(OPEN)
-	createdAt   DateTime   @default(now())
-	updatedAt   DateTime   @updatedAt
-	ownerId     String
-	owner       User       @relation(fields: [ownerId], references: [id])
-	evidence    Evidence[]
+  id          String     @id @default(cuid())
+  caseNumber  String     @unique @default(uuid())
+  title       String
+  description String
+  status      String     @default("OPEN") // e.g., OPEN, CLOSED, COLD
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  officer     User       @relation(fields: [officerId], references: [id])
+  officerId   String
+  evidence    Evidence[] // A case can have multiple pieces of evidence [cite: 10]
 }
 
+// Evidence model for indexing metadata of the evidence files
+// This model connects the PostgreSQL index with IPFS and Hyperledger
 model Evidence {
-	id          String   @id @default(cuid())
-	hash        String   @unique
-	filename    String
-	storageCid  String
-	caseId      String?
-	case        Case?    @relation(fields: [caseId], references: [id])
-	uploaderId  String
-	uploader    User     @relation(fields: [uploaderId], references: [id])
-	verified    Boolean  @default(false)
-	createdAt   DateTime @default(now())
-}
+  id        String   @id @default(cuid())
+  filename  String
+  filetype  String
+  notes     String?
+  
+  // Tier 3: IPFS Hash for the actual encrypted file [cite: 151, 157]
+  ipfsHash  String   @unique
+  
+  // Tier 2: Transaction ID from Hyperledger Fabric for the immutable record
+  blockchainTxId String @unique
 
-enum CaseStatus {
-	OPEN
-	CLOSED
-	ARCHIVED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  case      Case     @relation(fields: [caseId], references: [id])
+  caseId    String
 }
