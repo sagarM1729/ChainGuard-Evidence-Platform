@@ -273,9 +273,9 @@ export default function HomePage() {
 								</div>
 								
 								<div className="group relative">
-									<div className="absolute -inset-1 bg-gradient-to-r from-[#022b3a] to-[#bfdbf7] rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
+									<div className="absolute -inset-1 bg-gradient-to-r from-[#022b3a] to-[#1f7a8c] rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
 									<div className="relative p-8 rounded-2xl bg-white/95 backdrop-blur-sm border border-[#1f7a8c]/20 shadow-xl group-hover:shadow-2xl transform group-hover:scale-105 transition-all duration-300">
-										<div className="flex items-center justify-center w-16 h-16 bg-gradient-to-r from-[#022b3a] to-[#bfdbf7] rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+										<div className="flex items-center justify-center w-16 h-16 bg-gradient-to-r from-[#022b3a] to-[#1f7a8c] rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
 											<FileCheck className="h-8 w-8 text-white" />
 										</div>
 										<h3 className="text-xl font-bold text-[#022b3a] mb-4">Evidence Analysis</h3>
@@ -284,9 +284,9 @@ export default function HomePage() {
 								</div>
 								
 								<div className="group relative md:col-span-2 lg:col-span-1">
-									<div className="absolute -inset-1 bg-gradient-to-r from-[#bfdbf7] to-[#1f7a8c] rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
+									<div className="absolute -inset-1 bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-500"></div>
 									<div className="relative p-8 rounded-2xl bg-white/95 backdrop-blur-sm border border-[#1f7a8c]/20 shadow-xl group-hover:shadow-2xl transform group-hover:scale-105 transition-all duration-300">
-										<div className="flex items-center justify-center w-16 h-16 bg-gradient-to-r from-[#bfdbf7] to-[#1f7a8c] rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+										<div className="flex items-center justify-center w-16 h-16 bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
 											<AlertTriangle className="h-8 w-8 text-white" />
 										</div>
 										<h3 className="text-xl font-bold text-[#022b3a] mb-4">Risk Assessment</h3>
