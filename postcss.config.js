@@ -1,7 +1,7 @@
-/** 🎨🖌️ PostCSS configuration (using @tailwindcss/postcss for Next.js 15) */
+/** 🎨🖌️ PostCSS configuration */
 module.exports = {
   plugins: {
-    '@tailwindcss/postcss': {},
+    tailwindcss: {},
     autoprefixer: {}
   }
 }
