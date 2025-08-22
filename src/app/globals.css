@@ -12,3 +12,8 @@
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 }
+
+/* Smooth scrolling for the entire document */
+html {
+  scroll-behavior: smooth;
+}

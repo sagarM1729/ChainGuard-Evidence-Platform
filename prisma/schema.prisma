@@ -57,3 +57,19 @@ model Evidence {
   case      Case     @relation(fields: [caseId], references: [id])
   caseId    String
 }
+
+// Add this new model to your schema.prisma
+model Whitelist {
+  id    String @id @default(cuid())
+  email String @unique
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique // This will be the hashed OTP
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("password_reset_tokens") // Optional: good practice for table naming
+}

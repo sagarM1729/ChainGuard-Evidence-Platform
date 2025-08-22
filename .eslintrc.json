@@ -1,7 +1,3 @@
 {
-	"_comment": "📜✅ LINTING RULES: ESLint configuration placeholder.",
-	"root": true,
-	"extends": [],
-	"plugins": [],
-	"rules": {}
+	"extends": ["next/core-web-vitals"]
 }
