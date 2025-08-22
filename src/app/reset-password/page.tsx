@@ -1,58 +1,61 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, Suspense } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, ArrowLeft } from "lucide-react"
+import { ArrowLeft, Eye, EyeOff } from "lucide-react"
 
-export default function SignupPage() {
+function ResetPasswordForm() {
   const router = useRouter()
-  // --- State Hooks for Form Inputs ---
-  const [name, setName] = useState("")
+  const searchParams = useSearchParams()
+  
   const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [otp, setOtp] = useState("")
+  const [newPassword, setNewPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
 
-  // --- Handle Form Submission ---
+  useEffect(() => {
+    // Pre-populate email from URL params
+    const emailParam = searchParams.get('email')
+    if (emailParam) {
+      setEmail(emailParam)
+    }
+  }, [searchParams])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
 
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ email, otp, newPassword }),
       })
 
       const data = await response.json()
 
-      if (!response.ok) {
-        setError(data.error || 'Registration failed')
-        return
+      if (response.ok) {
+        // Success - redirect to login with success message (replace history)
+        router.replace('/login?message=Password updated successfully')
+      } else {
+        setError(data.error || 'Something went wrong')
       }
-
-      // Success - redirect to login page
-      router.replace('/login')
     } catch (error) {
-      console.error('Registration error:', error)
+      console.error('Reset password error:', error)
       setError('Network error. Please try again.')
     } finally {
       setIsLoading(false)
     }
-  }
-
-  const goToLogin = () => {
-    router.replace('/login')
   }
 
   return (
@@ -61,15 +64,15 @@ export default function SignupPage() {
         {/* Back Button */}
         <div className="mb-6">
           <Link 
-            href="/" 
+            href="/forgot-password" 
             className="inline-flex items-center text-[#1f7a8c] hover:text-[#022b3a] transition-colors font-medium"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
+            Back to Forgot Password
           </Link>
         </div>
 
-        {/* --- Header --- */}
+        {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="p-3 bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] rounded-2xl shadow-lg">
@@ -82,11 +85,11 @@ export default function SignupPage() {
               />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-[#022b3a] mb-2">Create Account</h1>
-          <p className="text-[#022b3a]/70">Join ChainGuard Evidence Platform</p>
+          <h1 className="text-3xl font-bold text-[#022b3a] mb-2">Reset Password</h1>
+          <p className="text-[#022b3a]/70">Enter the 6-digit code sent to your email and your new password</p>
         </div>
 
-        {/* --- Form --- */}
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Error Message */}
           {error && (
@@ -95,20 +98,6 @@ export default function SignupPage() {
             </div>
           )}
 
-          {/* Name Field */}
-          <div>
-            <Label htmlFor="name" className="text-[#022b3a] font-semibold mb-2 block">Name</Label>
-            <Input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-[#1f7a8c]/20 rounded-xl bg-white/80 text-[#022b3a] placeholder-[#022b3a]/50 focus:border-[#1f7a8c] focus:outline-none focus:ring-2 focus:ring-[#1f7a8c]/20 transition-all outline-none"
-              placeholder="Enter your full name"
-              required
-            />
-          </div>
-
           {/* Email Field */}
           <div>
             <Label htmlFor="email" className="text-[#022b3a] font-semibold mb-2 block">Email address</Label>
@@ -116,30 +105,51 @@ export default function SignupPage() {
               id="email"
               type="email"
               value={email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border-2 border-[#1f7a8c]/20 rounded-xl bg-white/80 text-[#022b3a] placeholder-[#022b3a]/50 focus:border-[#1f7a8c] focus:outline-none focus:ring-2 focus:ring-[#1f7a8c]/20 transition-all outline-none"
-              placeholder="Enter your email"
+              placeholder="Enter your email address"
               required
+              disabled={isLoading}
             />
           </div>
 
-          {/* Password Field */}
+          {/* OTP Field */}
           <div>
-            <Label htmlFor="password" className="text-[#022b3a] font-semibold mb-2 block">Password</Label>
+            <Label htmlFor="otp" className="text-[#022b3a] font-semibold mb-2 block">Reset Code</Label>
+            <Input
+              id="otp"
+              type="text"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              className="w-full px-4 py-3 border-2 border-[#1f7a8c]/20 rounded-xl bg-white/80 text-[#022b3a] placeholder-[#022b3a]/50 focus:border-[#1f7a8c] focus:outline-none focus:ring-2 focus:ring-[#1f7a8c]/20 transition-all outline-none text-center text-lg tracking-widest"
+              placeholder="000000"
+              maxLength={6}
+              required
+              disabled={isLoading}
+            />
+            <p className="text-xs text-[#022b3a]/60 mt-2">Enter the 6-digit code sent to your email</p>
+          </div>
+
+          {/* New Password Field */}
+          <div>
+            <Label htmlFor="newPassword" className="text-[#022b3a] font-semibold mb-2 block">New Password</Label>
             <div className="relative">
               <Input
-                id="password"
+                id="newPassword"
                 type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full px-4 py-3 pr-12 border-2 border-[#1f7a8c]/20 rounded-xl bg-white/80 text-[#022b3a] placeholder-[#022b3a]/50 focus:border-[#1f7a8c] focus:outline-none focus:ring-2 focus:ring-[#1f7a8c]/20 transition-all outline-none"
-                placeholder="Create a strong password"
+                placeholder="Enter your new password"
                 required
+                disabled={isLoading}
+                minLength={8}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#022b3a]/60 hover:text-[#1f7a8c] transition-colors"
+                disabled={isLoading}
               >
                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
               </button>
@@ -147,23 +157,15 @@ export default function SignupPage() {
             <p className="text-xs text-[#022b3a]/60 mt-2">Use 8+ characters with letters, numbers & symbols</p>
           </div>
 
-          {/* Terms and Privacy */}
-          <div className="text-sm text-[#022b3a] bg-[#bfdbf7]/30 p-4 rounded-xl border border-[#1f7a8c]/10">
-            By creating an account, you agree to our{" "}
-            <a href="#" className="text-[#1f7a8c] hover:text-[#022b3a] hover:underline font-semibold transition-colors">Terms of Service</a>{" "}
-            and{" "}
-            <a href="#" className="text-[#1f7a8c] hover:text-[#022b3a] hover:underline font-semibold transition-colors">Privacy Policy</a>
-          </div>
-
           {/* Submit Button */}
           <Button 
             type="submit" 
-            disabled={isLoading}
+            disabled={isLoading || otp.length !== 6}
             className="group relative w-full bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-[#022b3a] to-[#1f7a8c] opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out"></div>
             <span className="relative z-10">
-              {isLoading ? "Creating Account..." : "Create Account"}
+              {isLoading ? "Updating Password..." : "Update Password"}
             </span>
           </Button>
         </form>
@@ -171,16 +173,21 @@ export default function SignupPage() {
         {/* Bottom Link */}
         <div className="text-center mt-8 pt-6 border-t border-[#1f7a8c]/20">
           <p className="text-[#022b3a]">
-            Already have an account?{" "}
-            <button 
-              onClick={goToLogin}
-              className="text-[#1f7a8c] hover:text-[#022b3a] font-semibold hover:underline transition-colors cursor-pointer"
-            >
-              Sign in here
-            </button>
+            Didn&apos;t receive a code?{" "}
+            <Link href="/forgot-password" className="text-[#1f7a8c] hover:text-[#022b3a] font-semibold hover:underline transition-colors">
+              Try again
+            </Link>
           </p>
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
   )
 }
