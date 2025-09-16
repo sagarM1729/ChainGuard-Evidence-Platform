@@ -17,9 +17,27 @@ model User {
   name      String?
   email     String    @unique
   password  String
+  role      UserRole  @default(OFFICER)     // Role-based access control
+  department String?                        // Officer department
+  badge     String?   @unique               // Officer badge number
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   cases     Case[]    // A user can be associated with multiple cases
+  
+  // Search indexes for quick user lookup
+  @@index([email])
+  @@index([role])
+  @@index([department])
+}
+
+// User roles for system access control
+enum UserRole {
+  ADMIN           // System administrator
+  SUPERVISOR      // Department supervisor  
+  DETECTIVE       // Lead detective
+  OFFICER         // Regular officer
+  FORENSIC_TECH   // Forensic technician
+  READONLY        // Read-only access
 }
 
 // Case model for managing investigation cases
@@ -29,33 +47,121 @@ model Case {
   caseNumber  String     @unique @default(uuid())
   title       String
   description String
-  status      String     @default("OPEN") // e.g., OPEN, CLOSED, COLD
+  status      CaseStatus @default(OPEN)
+  priority    Priority   @default(MEDIUM)
+  category    String?                        // e.g., "Theft", "Assault", "Fraud"
+  location    String?                        // Case location
+  dateOpened  DateTime   @default(now())
+  dateClosed  DateTime?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   officer     User       @relation(fields: [officerId], references: [id])
   officerId   String
   evidence    Evidence[] // A case can have multiple pieces of evidence [cite: 10]
+  
+  // Search indexes for quick case retrieval
+  @@index([caseNumber])
+  @@index([status])
+  @@index([priority])
+  @@index([category])
+  @@index([officerId])
+  @@index([title])        // For text search on titles
+  @@index([description])  // For text search on descriptions
+}
+
+// Case status enumeration
+enum CaseStatus {
+  OPEN
+  IN_PROGRESS
+  UNDER_REVIEW
+  CLOSED
+  COLD_CASE
+  ARCHIVED
+}
+
+// Case priority levels
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
 }
 
 // Evidence model for indexing metadata of the evidence files
 // This model connects the PostgreSQL index with IPFS and Hyperledger
 model Evidence {
-  id        String   @id @default(cuid())
+  id        String       @id @default(cuid())
   filename  String
   filetype  String
+  filesize  Int?         // File size in bytes
   notes     String?
   
-  // Tier 3: IPFS Hash for the actual encrypted file [cite: 151, 157]
-  ipfsHash  String   @unique
+  // Evidence classification
+  evidenceType EvidenceType @default(DOCUMENT)
+  category     String?                         // Sub-category classification
+  tags         String[]                        // Searchable tags
+  
+  // Tier 3: Storacha IPFS Integration
+  ipfsCid      String   @unique              // Content Identifier from Storacha
+  ipfsHash     String   @unique              // Legacy field, now maps to CID
+  fileHash     String                        // SHA-256 hash of original file for integrity
+  retrievalUrl String                        // Direct access URL from Storacha gateway
   
   // Tier 2: Transaction ID from Hyperledger Fabric for the immutable record
-  blockchainTxId String @unique
-
+  blockchainTxId String? @unique
+  blockchainHash String?                     // Hash recorded on blockchain
+  
+  // Chain of Custody & Security
+  custodyChain   Json?     // JSON array of custody transfers
+  isEncrypted    Boolean   @default(true)
+  encryptionKey  String?   // Encrypted with user's key
+  accessLevel    AccessLevel @default(RESTRICTED)
+  
+  // Metadata for search and analysis
+  collectedAt    DateTime?                   // When evidence was collected
+  collectedBy    String?                     // Who collected the evidence
+  location       String?                     // Where evidence was collected
+  deviceInfo     Json?                       // Device/source information
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   
   case      Case     @relation(fields: [caseId], references: [id])
   caseId    String
+  
+  // Search indexes for quick evidence retrieval
+  @@index([filename])
+  @@index([evidenceType])
+  @@index([category])
+  @@index([tags])
+  @@index([caseId])
+  @@index([fileHash])
+  @@index([ipfsCid])
+  @@index([blockchainTxId])
+  @@index([accessLevel])
+  @@index([notes])        // For text search on notes
+}
+
+// Evidence type classification
+enum EvidenceType {
+  DOCUMENT
+  PHOTO
+  VIDEO
+  AUDIO
+  DIGITAL_FILE
+  FORENSIC_IMAGE
+  LOG_FILE
+  DATABASE_DUMP
+  OTHER
+}
+
+// Access level for evidence security
+enum AccessLevel {
+  PUBLIC
+  INTERNAL
+  RESTRICTED
+  CONFIDENTIAL
+  TOP_SECRET
 }
 
 // Add this new model to your schema.prisma
