@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { LogOut, User, Home, Folder, Upload } from "lucide-react"
+import { LogOut, User, Home, Folder } from "lucide-react"
 
 export default function DashboardLayout({
   children,
@@ -74,10 +74,6 @@ export default function DashboardLayout({
               <Link href="/dashboard/cases" className="flex items-center space-x-2 text-[#022b3a] hover:text-[#1f7a8c] transition-colors">
                 <Folder className="h-4 w-4" />
                 <span className="font-medium">Cases</span>
-              </Link>
-              <Link href="/dashboard/evidence/upload" className="flex items-center space-x-2 text-[#022b3a] hover:text-[#1f7a8c] transition-colors">
-                <Upload className="h-4 w-4" />
-                <span className="font-medium">Upload Evidence</span>
               </Link>
             </div>
 

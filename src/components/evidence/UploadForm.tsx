@@ -197,7 +197,7 @@ export default function UploadForm({ caseId, onSuccess, onError }: UploadFormPro
                   type="button"
                   variant="outline"
                   onClick={() => fileInputRef.current?.click()}
-                  className="border-[#1f7a8c] text-[#1f7a8c] hover:bg-[#1f7a8c] hover:text-white"
+                  className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
                 >
                   Choose File
                 </Button>

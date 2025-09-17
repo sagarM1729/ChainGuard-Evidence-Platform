@@ -1,7 +1,22 @@
 // Evidence Manager Service for Storacha IPFS Integration
 import * as Client from '@web3-storage/w3up-client'
 import { prisma } from '@/lib/prisma'
-import { FabricClient, BlockchainEvidenceRecord, VerificationResult } from '@/lib/fabric'
+
+// Conditional import to avoid build issues
+let FabricClient: any = null
+let BlockchainEvidenceRecord: any = null
+let VerificationResult: any = null
+
+if (typeof window === 'undefined') {
+  try {
+    const fabric = require('@/lib/fabric')
+    FabricClient = fabric.FabricClient
+    BlockchainEvidenceRecord = fabric.BlockchainEvidenceRecord
+    VerificationResult = fabric.VerificationResult
+  } catch (error) {
+    console.warn('Fabric client not available:', error)
+  }
+}
 
 interface EvidenceUploadResult {
   ipfsCid: string
@@ -21,7 +36,7 @@ interface EvidenceMetadata {
 
 class EvidenceManager {
   private storachaClient: any = null
-  private fabricClient: FabricClient | null = null
+  private fabricClient: any = null
   private initialized = false
 
   constructor() {
@@ -50,8 +65,12 @@ class EvidenceManager {
 
   private async initializeFabric() {
     try {
-      this.fabricClient = new FabricClient()
-      console.log('✅ Fabric client initialized successfully')
+      if (FabricClient) {
+        this.fabricClient = new FabricClient()
+        console.log('✅ Fabric client initialized successfully')
+      } else {
+        console.log('⚠️ Fabric client not available, using simulation mode')
+      }
     } catch (error) {
       console.error('❌ Failed to initialize Fabric client:', error)
       // Don't throw - blockchain is optional for development
@@ -100,6 +119,7 @@ class EvidenceManager {
       // Step 3: Store metadata in PostgreSQL (Tier 1)
       const evidence = await prisma.evidence.create({
         data: {
+          id: crypto.randomUUID(),
           filename: metadata.filename,
           filetype: metadata.filetype,
           filesize: metadata.filesize,
@@ -234,7 +254,7 @@ class EvidenceManager {
       const evidence = await prisma.evidence.findUnique({
         where: { id: evidenceId },
         include: {
-          case: true
+          Case: true
         }
       })
 
@@ -279,7 +299,7 @@ class EvidenceManager {
 
       console.log('🔗 Recording evidence on blockchain:', data)
       
-      const blockchainRecord: BlockchainEvidenceRecord = {
+      const blockchainRecord: any = {
         id: data.evidenceId,
         caseId: data.caseId,
         filename: '', // Will be set by caller if needed
@@ -343,7 +363,7 @@ class EvidenceManager {
         try {
           const custodyTransfer: import('@/lib/fabric').CustodyTransferRecord = {
             evidenceId,
-            fromOfficer: evidence.custodyOfficer,
+            fromOfficer: evidence.collectedBy || 'Unknown',
             toOfficer: newOfficer,
             timestamp: new Date(),
             reason: notes || 'Custody transfer'
@@ -369,7 +389,7 @@ class EvidenceManager {
   /**
    * Get blockchain verification result for evidence
    */
-  async getBlockchainVerification(evidenceId: string): Promise<VerificationResult | null> {
+  async getBlockchainVerification(evidenceId: string): Promise<any | null> {
     try {
       if (!this.fabricClient) {
         console.warn('⚠️ Fabric client not available')

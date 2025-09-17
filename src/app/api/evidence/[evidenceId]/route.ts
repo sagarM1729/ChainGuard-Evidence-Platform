@@ -21,12 +21,12 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ evid
     const evidence = await prisma.evidence.findFirst({
       where: {
         id: evidenceId,
-        case: {
+        Case: {
           officerId: session.user.id
         }
       },
       include: {
-        case: {
+        Case: {
           select: {
             id: true,
             title: true,
@@ -82,7 +82,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ e
     const evidence = await prisma.evidence.findFirst({
       where: {
         id: evidenceId,
-        case: {
+        Case: {
           officerId: session.user.id
         }
       }

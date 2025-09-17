@@ -21,12 +21,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ evi
     const evidence = await prisma.evidence.findFirst({
       where: {
         id: evidenceId,
-        case: {
+        Case: {
           officerId: session.user.id
         }
       },
       include: {
-        case: {
+        Case: {
           select: {
             id: true,
             title: true

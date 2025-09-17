@@ -50,6 +50,22 @@ export default function CreateCaseForm({ onClose, onCaseCreated }: { onClose?: (
   
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showEvidenceForm, setShowEvidenceForm] = useState(false)
+  const [currentEvidence, setCurrentEvidence] = useState<Evidence>({
+    id: '',
+    filename: '',
+    filetype: '',
+    filesize: 0,
+    notes: '',
+    evidenceType: 'DOCUMENT',
+    category: '',
+    tags: [],
+    collectedAt: new Date().toISOString().split('T')[0],
+    collectedBy: '',
+    location: ''
+  })
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({})
+  
+  const fileInputRef = useRef<HTMLInputElement>(null)
   
   // Redirect if not authenticated
   useEffect(() => {
@@ -81,23 +97,6 @@ export default function CreateCaseForm({ onClose, onCaseCreated }: { onClose?: (
       </div>
     )
   }
-  
-  const [currentEvidence, setCurrentEvidence] = useState<Evidence>({
-    id: '',
-    filename: '',
-    filetype: '',
-    filesize: 0,
-    notes: '',
-    evidenceType: 'DOCUMENT',
-    category: '',
-    tags: [],
-    collectedAt: new Date().toISOString().split('T')[0],
-    collectedBy: '',
-    location: ''
-  })
-  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({})
-  
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleAddEvidence = () => {
     setCurrentEvidence({

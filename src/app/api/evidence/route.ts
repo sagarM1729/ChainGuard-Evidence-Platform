@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
     const evidence = await prisma.evidence.findMany({
       where: whereClause,
       include: {
-        case: {
+        Case: {
           select: {
             id: true,
             title: true
@@ -143,6 +143,7 @@ export async function POST(req: NextRequest) {
       // Create evidence record in database
       const evidence = await prisma.evidence.create({
         data: {
+          id: crypto.randomUUID(),
           filename,
           filetype,
           filesize,
@@ -158,6 +159,7 @@ export async function POST(req: NextRequest) {
           collectedBy,
           location,
           caseId,
+          updatedAt: new Date(),
           custodyChain: JSON.stringify([{
             officer: session.user.email,
             action: 'CREATED',

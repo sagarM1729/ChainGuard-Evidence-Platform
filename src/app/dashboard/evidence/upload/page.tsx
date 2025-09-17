@@ -1,166 +1,84 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useSession } from "next-auth/react"
-import Link from "next/link"
-import UploadForm from "@/components/evidence/UploadForm"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, FolderOpen } from "lucide-react"
+import { Card } from "@/components/ui/card"
+import { Plus, Folder, FileText, ArrowRight, Upload } from "lucide-react"
 
-interface Case {
-  id: string
-  title: string
-  description: string
-}
-
-export default function EvidenceUploadPage() {
+export default function EvidenceUploadRedirectPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const { data: session, status } = useSession()
-  const [cases, setCases] = useState<Case[]>([])
-  const [selectedCaseId, setSelectedCaseId] = useState<string>("")
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login")
-    } else if (status === "authenticated") {
-      fetchCases()
-      // Check if case ID is provided in URL params
-      const caseId = searchParams.get('caseId')
-      if (caseId) {
-        setSelectedCaseId(caseId)
-      }
-    }
-  }, [status, router, searchParams])
-
-  const fetchCases = async () => {
-    try {
-      const response = await fetch("/api/cases")
-      if (response.ok) {
-        const data = await response.json()
-        setCases(data.cases || [])
-      }
-    } catch (error) {
-      console.error("Error fetching cases:", error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleUploadSuccess = (result: any) => {
-    console.log("Evidence uploaded successfully:", result)
-    // Redirect to evidence list or case details
-    if (selectedCaseId) {
-      router.push(`/dashboard/cases/${selectedCaseId}`)
-    } else {
-      router.push("/dashboard/cases")
-    }
-  }
-
-  const handleUploadError = (error: string) => {
-    console.error("Upload error:", error)
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 border-2 border-[#1f7a8c] border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-[#1f7a8c]">Loading...</span>
-        </div>
-      </div>
-    )
-  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Back Navigation */}
-        <div className="mb-6">
-          <Link
-            href={selectedCaseId ? `/dashboard/cases/${selectedCaseId}` : "/dashboard/cases"}
-            className="inline-flex items-center text-[#1f7a8c] hover:text-[#022b3a] transition-colors font-medium"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            {selectedCaseId ? "Back to Case" : "Back to Cases"}
-          </Link>
-        </div>
-
+    <div className="p-6">
+      <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Upload Evidence</h1>
-          <p className="text-gray-600">
-            Upload evidence files with secure IPFS storage and blockchain verification
-          </p>
+        <div className="text-center mb-8">
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 border border-[#1f7a8c]/20 shadow-xl">
+            <Upload className="h-16 w-16 text-[#1f7a8c] mx-auto mb-4" />
+            <h1 className="text-3xl font-bold text-[#022b3a] mb-4">Evidence Upload</h1>
+            <p className="text-[#022b3a]/70 mb-6">
+              Evidence is now uploaded directly when creating or updating cases for better organization and workflow.
+            </p>
+          </div>
         </div>
 
-        {/* Case Selection */}
-        {!selectedCaseId && (
-          <div className="mb-8">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Select Case</h2>
-              {cases.length === 0 ? (
-                <div className="text-center py-8">
-                  <FolderOpen className="mx-auto w-12 h-12 text-gray-400 mb-4" />
-                  <p className="text-gray-600 mb-4">No cases found. Create a case first.</p>
-                  <Link href="/dashboard/cases/new">
-                    <Button className="bg-[#1f7a8c] hover:bg-[#022b3a] text-white">
-                      Create New Case
-                    </Button>
-                  </Link>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {cases.map((case_) => (
-                    <div
-                      key={case_.id}
-                      onClick={() => setSelectedCaseId(case_.id)}
-                      className="border border-gray-200 rounded-lg p-4 hover:border-[#1f7a8c] hover:bg-blue-50 cursor-pointer transition-colors"
-                    >
-                      <h3 className="font-semibold text-gray-900 mb-2">{case_.title}</h3>
-                      <p className="text-sm text-gray-600 line-clamp-2">{case_.description}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Selected Case Display */}
-        {selectedCaseId && (
-          <div className="mb-6">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-blue-800">Uploading to Case:</p>
-                  <p className="text-lg font-semibold text-blue-900">
-                    {cases.find(c => c.id === selectedCaseId)?.title || selectedCaseId}
-                  </p>
-                </div>
-                <Button
-                  onClick={() => setSelectedCaseId("")}
-                  variant="outline"
-                  size="sm"
-                  className="text-blue-700 border-blue-300 hover:bg-blue-100"
-                >
-                  Change Case
+        {/* Action Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Create New Case */}
+          <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer">
+            <div onClick={() => router.push('/dashboard/cases/new')}>
+              <div className="text-center">
+                <Plus className="h-12 w-12 text-[#1f7a8c] mx-auto mb-4" />
+                <h2 className="text-xl font-bold text-[#022b3a] mb-2">Create New Case</h2>
+                <p className="text-[#022b3a]/70 mb-4">
+                  Start a new investigation and upload evidence during case creation
+                </p>
+                <Button className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white w-full">
+                  Create Case
+                  <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               </div>
             </div>
-          </div>
-        )}
+          </Card>
 
-        {/* Upload Form */}
-        {selectedCaseId && (
-          <UploadForm
-            caseId={selectedCaseId}
-            onSuccess={handleUploadSuccess}
-            onError={handleUploadError}
-          />
-        )}
+          {/* View Existing Cases */}
+          <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer">
+            <div onClick={() => router.push('/dashboard/cases')}>
+              <div className="text-center">
+                <Folder className="h-12 w-12 text-[#022b3a] mx-auto mb-4" />
+                <h2 className="text-xl font-bold text-[#022b3a] mb-2">Existing Cases</h2>
+                <p className="text-[#022b3a]/70 mb-4">
+                  View your cases and add evidence to ongoing investigations
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="border border-[#022b3a]/30 bg-white text-[#022b3a] hover:bg-[#022b3a]/10 hover:border-[#022b3a]/40 hover:text-[#022b3a] active:scale-95 transition-colors duration-200 w-full"
+                >
+                  View Cases
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Information */}
+        <div className="mt-8">
+          <Card className="p-6 border-[#1f7a8c]/20 bg-gradient-to-r from-[#1f7a8c]/5 to-[#022b3a]/5 backdrop-blur-sm shadow-xl">
+            <div className="flex items-start space-x-4">
+              <FileText className="h-6 w-6 text-[#1f7a8c] mt-1" />
+              <div>
+                <h3 className="font-semibold text-[#022b3a] mb-2">How Evidence Upload Works</h3>
+                <ul className="text-[#022b3a]/80 space-y-1 text-sm">
+                  <li>• <strong>During Case Creation:</strong> Upload evidence files as you create new cases</li>
+                  <li>• <strong>Case Details Page:</strong> Click &quot;Add Evidence&quot; button to upload to existing cases</li>
+                  <li>• <strong>Case Edit Page:</strong> Add evidence while updating case information</li>
+                  <li>• <strong>Secure Storage:</strong> All evidence is stored on IPFS with blockchain verification</li>
+                </ul>
+              </div>
+            </div>
+          </Card>
+        </div>
       </div>
     </div>
   )
