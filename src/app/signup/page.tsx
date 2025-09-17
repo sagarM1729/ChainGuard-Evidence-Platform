@@ -1,13 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { signIn } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, ArrowLeft } from "lucide-react"
+import { Eye, EyeOff, ArrowLeft, CheckCircle, X } from "lucide-react"
 
 export default function SignupPage() {
   const router = useRouter()
@@ -18,6 +19,8 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [successMessage, setSuccessMessage] = useState("")
 
   // --- Handle Form Submission ---
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,8 +44,28 @@ export default function SignupPage() {
         return
       }
 
-      // Success - redirect to login page
-      router.replace('/login')
+      // Show success popup
+      setSuccessMessage("Account created successfully! Signing you in...")
+      setShowSuccess(true)
+
+      // Automatically sign in the user
+      const signInResult = await signIn('credentials', {
+        email,
+        password,
+        redirect: false
+      })
+
+      if (signInResult?.ok) {
+        // Redirect to cases page after a short delay
+        setTimeout(() => {
+          router.replace('/dashboard/cases')
+        }, 2000)
+      } else {
+        // If auto sign-in fails, redirect to login
+        setTimeout(() => {
+          router.replace('/login')
+        }, 2000)
+      }
     } catch (error) {
       console.error('Registration error:', error)
       setError('Network error. Please try again.')
@@ -181,6 +204,24 @@ export default function SignupPage() {
           </p>
         </div>
       </div>
+
+      {/* Success Popup */}
+      {showSuccess && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4 transform animate-in slide-in-from-bottom duration-300">
+            <div className="text-center">
+              <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <CheckCircle className="w-8 h-8 text-green-500" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Success!</h3>
+              <p className="text-gray-600 mb-6">{successMessage}</p>
+              <div className="flex justify-center">
+                <div className="w-8 h-8 border-2 border-[#1f7a8c] border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
