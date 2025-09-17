@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { title, description, status = "open" } = await req.json()
+    const { title, description, category, location, priority = "MEDIUM", status = "OPEN" } = await req.json()
 
     if (!title || !description) {
       return NextResponse.json(
@@ -66,6 +66,9 @@ export async function POST(req: NextRequest) {
       data: {
         title,
         description,
+        category,
+        location,
+        priority,
         status,
         officerId: session.user.id,
       },

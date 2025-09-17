@@ -1,0 +1,13 @@
+OrdererOrgs:
+  - Name: Orderer
+    Domain: evidence.com
+    Specs:
+      - Hostname: orderer
+
+PeerOrgs:
+  - Name: Org1
+    Domain: org1.evidence.com
+    Template:
+      Count: 1
+    Users:
+      Count: 1
