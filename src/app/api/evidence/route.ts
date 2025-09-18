@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { withRetry, checkDatabaseHealth } from "@/lib/db-utils"
 import { evidenceManager } from "@/services/evidenceManager"
 
 export async function GET(req: NextRequest) {
@@ -24,13 +25,15 @@ export async function GET(req: NextRequest) {
       // Get evidence for specific case
       whereClause.caseId = caseId
       
-      // Verify user has access to this case
-      const case_ = await prisma.case.findFirst({
-        where: {
-          id: caseId,
-          officerId: session.user.id
-        }
-      })
+      // Verify user has access to this case with retry logic
+      const case_ = await withRetry(() => 
+        prisma.case.findFirst({
+          where: {
+            id: caseId,
+            officerId: session.user.id
+          }
+        })
+      )
       
       if (!case_) {
         return NextResponse.json(
@@ -39,31 +42,35 @@ export async function GET(req: NextRequest) {
         )
       }
     } else {
-      // Get all evidence for user's cases
-      const userCases = await prisma.case.findMany({
-        where: { officerId: session.user.id },
-        select: { id: true }
-      })
+      // Get all evidence for user's cases with retry logic
+      const userCases = await withRetry(() =>
+        prisma.case.findMany({
+          where: { officerId: session.user.id },
+          select: { id: true }
+        })
+      )
       
       whereClause.caseId = {
         in: userCases.map((c: { id: string }) => c.id)
       }
     }
 
-    const evidence = await prisma.evidence.findMany({
-      where: whereClause,
-      include: {
-        Case: {
-          select: {
-            id: true,
-            title: true
+    const evidence = await withRetry(() =>
+      prisma.evidence.findMany({
+        where: whereClause,
+        include: {
+          Case: {
+            select: {
+              id: true,
+              title: true
+            }
           }
+        },
+        orderBy: {
+          createdAt: 'desc'
         }
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    })
+      })
+    )
 
     return NextResponse.json({
       evidence: evidence.map((item: any) => ({

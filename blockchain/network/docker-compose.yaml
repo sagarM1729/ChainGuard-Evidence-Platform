@@ -24,6 +24,7 @@ services:
     working_dir: /etc/hyperledger/fabric
     command: >
       bash -c "
+      apt-get update && apt-get install -y openssl &&
       mkdir -p /etc/hyperledger/fabric/msp/signcerts &&
       mkdir -p /etc/hyperledger/fabric/msp/keystore &&
       mkdir -p /etc/hyperledger/fabric/msp/cacerts &&
@@ -69,6 +70,7 @@ services:
     working_dir: /etc/hyperledger/fabric
     command: >
       bash -c "
+      apt-get update && apt-get install -y openssl &&
       mkdir -p /etc/hyperledger/fabric/msp/signcerts &&
       mkdir -p /etc/hyperledger/fabric/msp/keystore &&
       mkdir -p /etc/hyperledger/fabric/msp/cacerts &&

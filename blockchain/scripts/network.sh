@@ -32,17 +32,17 @@ start_network() {
     fi
     
     # Start the network
-    docker-compose up -d
+    docker compose up -d
     
     echo "⏳ Waiting for network to initialize..."
     sleep 10
     
     # Check if containers are running
-    if docker-compose ps | grep -q "Up"; then
+    if docker compose ps | grep -q "Up"; then
         echo "✅ Evidence blockchain network is running!"
         echo ""
         echo "📊 Network Status:"
-        docker-compose ps
+        docker compose ps
         echo ""
         echo "🔗 Network endpoints:"
         echo "   Peer:    localhost:7051"
@@ -59,7 +59,7 @@ stop_network() {
     echo "🛑 Stopping Evidence Platform network..."
     
     cd "$NETWORK_DIR"
-    docker-compose down -v
+    docker compose down -v
     
     # Clean up any remaining containers
     docker container prune -f
@@ -81,10 +81,10 @@ show_status() {
     
     cd "$NETWORK_DIR"
     
-    if docker-compose ps | grep -q "Up"; then
+    if docker compose ps | grep -q "Up"; then
         echo "✅ Network is running"
         echo ""
-        docker-compose ps
+        docker compose ps
     else
         echo "❌ Network is not running"
         echo ""
@@ -97,7 +97,7 @@ show_logs() {
     echo ""
     
     cd "$NETWORK_DIR"
-    docker-compose logs --tail=50 -f
+    docker compose logs --tail=50 -f
 }
 
 # Main script logic

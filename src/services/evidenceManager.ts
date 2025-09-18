@@ -1,6 +1,7 @@
-// Evidence Manager Service for Storacha IPFS Integration
+// Evidence Manager Service for IPFS Integration with Multi-Provider Support
 import * as Client from '@web3-storage/w3up-client'
 import { prisma } from '@/lib/prisma'
+import { ipfsUploadService } from '@/lib/ipfs-upload'
 
 // Conditional import to avoid build issues
 let FabricClient: any = null
@@ -67,12 +68,15 @@ class EvidenceManager {
     try {
       if (FabricClient) {
         this.fabricClient = new FabricClient()
-        console.log('✅ Fabric client initialized successfully')
+        await this.fabricClient.connect()
+        console.log('✅ Fabric client initialized and connected successfully')
       } else {
-        console.log('⚠️ Fabric client not available, using simulation mode')
+        console.log('⚠️ Fabric client not available (import failed), using simulation mode')
+        console.log('💡 To enable blockchain: Start Hyperledger Fabric network with ./blockchain/scripts/network.sh start')
       }
     } catch (error) {
-      console.error('❌ Failed to initialize Fabric client:', error)
+      console.error('❌ Failed to initialize/connect Fabric client:', error)
+      console.log('⚠️ Falling back to simulation mode')
       // Don't throw - blockchain is optional for development
     }
   }
@@ -109,10 +113,16 @@ class EvidenceManager {
       const fileHash = await this.calculateSHA256(file)
       console.log('✅ File hash calculated:', fileHash)
 
-      // Step 2: Upload to Storacha (Tier 3 - IPFS)
-      const cid = await this.storachaClient.uploadFile(file)
-      const ipfsCid = cid.toString()
-      const retrievalUrl = `https://w3s.link/ipfs/${ipfsCid}`
+      // Step 2: Upload to IPFS with multi-provider fallback
+      const uploadResult = await ipfsUploadService.uploadFile(file, metadata.filename)
+      const ipfsCid = uploadResult.cid
+      const retrievalUrl = uploadResult.url
+      
+      console.log('✅ File uploaded to IPFS:', { 
+        cid: ipfsCid, 
+        provider: uploadResult.provider,
+        size: uploadResult.size 
+      })
       
       console.log('✅ File uploaded to Storacha IPFS:', ipfsCid)
 

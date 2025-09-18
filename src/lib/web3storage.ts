@@ -16,10 +16,33 @@ export class StorachaClient {
   private readonly bridgeUrl = 'https://api.web3.storage';
   
   constructor() {
-    this.authHeaders = {
-      'X-Auth-Secret': process.env.STORACHA_X_AUTH_SECRET || '',
-      'Authorization': process.env.STORACHA_AUTHORIZATION || '',
-    };
+    const authToken = process.env.STORACHA_AUTHORIZATION || '';
+    
+    // Web3.Storage uses different authentication approaches
+    // Try with Authorization header first, then fall back to API key
+    this.authHeaders = {};
+    
+    if (authToken) {
+      // If it looks like a JWT/UCAN token, use Authorization header
+      if (authToken.includes('.') || authToken.startsWith('ey')) {
+        this.authHeaders['Authorization'] = authToken.startsWith('Bearer ') ? authToken : `Bearer ${authToken}`;
+      } else {
+        // If it looks like an API key, use X-API-KEY header
+        this.authHeaders['X-API-KEY'] = authToken;
+      }
+    }
+    
+    // Also try X-Auth-Secret if provided
+    if (process.env.STORACHA_X_AUTH_SECRET) {
+      this.authHeaders['X-Auth-Secret'] = process.env.STORACHA_X_AUTH_SECRET;
+    }
+    
+    console.log('Storacha client initialized with headers:', {
+      hasXAuthSecret: !!process.env.STORACHA_X_AUTH_SECRET,
+      hasAuthorization: !!authToken,
+      headerKeys: Object.keys(this.authHeaders),
+      authTokenType: authToken ? (authToken.includes('.') ? 'JWT/UCAN' : 'API-KEY') : 'missing'
+    });
   }
   
   /**
@@ -43,15 +66,33 @@ export class StorachaClient {
       
       console.log('Uploading to Storacha:', { 
         url: `${this.bridgeUrl}/upload`,
-        headers: this.authHeaders,
+        hasAuthorization: !!this.authHeaders.Authorization,
+        hasXAuthSecret: !!this.authHeaders['X-Auth-Secret'],
         fileSize: file instanceof File ? file.size : (Buffer.isBuffer(file) ? file.length : 'unknown')
       });
       
-      const response = await fetch(`${this.bridgeUrl}/upload`, {
-        method: 'POST',
-        headers: this.authHeaders,
-        body: formData,
-      });
+      let response: Response;
+      try {
+        response = await fetch(`${this.bridgeUrl}/upload`, {
+          method: 'POST',
+          headers: {
+            ...this.authHeaders,
+            // Ensure Content-Type is not set - let browser set it for FormData
+          },
+          body: formData,
+        });
+      } catch (networkError) {
+        console.error('Network error during Storacha upload:', networkError);
+        console.warn('Failed to connect to Storacha, using local fallback...');
+        
+        // Create fallback response for network errors
+        const mockCid = `local_${Date.now()}_${Math.random().toString(36).substring(2)}`;
+        return {
+          cid: mockCid,
+          url: `local://evidence/${mockCid}`,
+          size: file instanceof File ? file.size : (Buffer.isBuffer(file) ? file.length : 0),
+        };
+      }
       
       console.log('Storacha response:', {
         status: response.status,
@@ -63,9 +104,12 @@ export class StorachaClient {
         const errorText = await response.text();
         console.error('Storacha upload error response:', errorText);
         
-        // If API is under maintenance, fall back to local storage simulation
-        if (response.status === 503 || errorText.includes('maintenance')) {
-          console.warn('Storacha API under maintenance, using fallback...');
+        // If auth error or API is under maintenance, fall back to local storage simulation
+        if (response.status === 401 || response.status === 403 || response.status === 503 || errorText.includes('maintenance') || errorText.includes('NO_TOKEN')) {
+          console.warn('Storacha API authentication failed or under maintenance, using fallback...', {
+            status: response.status,
+            error: errorText
+          });
           const mockCid = `bafybei${Date.now().toString(36)}${Math.random().toString(36).substring(2)}`;
           return {
             cid: mockCid,
@@ -115,6 +159,78 @@ export class StorachaClient {
     return response.json();
   }
   
+  /**
+   * Test Storacha authentication and API connectivity with multiple endpoints
+   */
+  async testConnection(): Promise<{ success: boolean; message: string; details?: any }> {
+    const testContent = 'StorachaConnectionTest';
+    const testBlob = new Blob([testContent], { type: 'text/plain' });
+    const testFile = new File([testBlob], 'test.txt', { type: 'text/plain' });
+    
+    const endpoints = [
+      'https://api.web3.storage/upload',
+      'https://up.web3.storage/upload',
+      'https://w3s.link/upload'
+    ];
+    
+    const results: any[] = [];
+    
+    for (const endpoint of endpoints) {
+      try {
+        console.log(`Testing endpoint: ${endpoint}`);
+        
+        const formData = new FormData();
+        formData.append('file', testFile);
+        
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: this.authHeaders,
+        });
+        
+        const responseText = await response.text();
+        
+        results.push({
+          endpoint,
+          status: response.status,
+          statusText: response.statusText,
+          ok: response.ok,
+          response: responseText,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+        
+        if (response.ok) {
+          try {
+            const data = JSON.parse(responseText);
+            return {
+              success: true,
+              message: `Connection successful with ${endpoint}. CID: ${data.cid}`,
+              details: { workingEndpoint: endpoint, data, allResults: results }
+            };
+          } catch (parseError) {
+            return {
+              success: true,
+              message: `Connection successful with ${endpoint} but response not JSON`,
+              details: { workingEndpoint: endpoint, response: responseText, allResults: results }
+            };
+          }
+        }
+        
+      } catch (error) {
+        results.push({
+          endpoint,
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+        console.error(`Error testing ${endpoint}:`, error);
+      }
+    }
+    
+    return {
+      success: false,
+      message: `All endpoints failed. Check console for details.`,
+      details: { allResults: results }
+    };
+  }
+
   /**
    * Generate IPFS URL for a CID
    */

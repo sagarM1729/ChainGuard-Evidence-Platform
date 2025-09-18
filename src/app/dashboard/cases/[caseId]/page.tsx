@@ -350,7 +350,14 @@ export default function CaseDetailsPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => window.open(evidence.retrievalUrl, '_blank')}
+                            onClick={() => {
+                              // Check if it's a mock/local URL
+                              if (evidence.retrievalUrl?.startsWith('local://') || evidence.retrievalUrl?.includes('local_')) {
+                                alert('This evidence file is stored locally and cannot be viewed online. The original upload to IPFS failed, but the evidence metadata was saved.')
+                              } else {
+                                window.open(evidence.retrievalUrl, '_blank')
+                              }
+                            }}
                             className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
                           >
                             <Eye className="h-4 w-4" />
@@ -361,10 +368,15 @@ export default function CaseDetailsPage() {
                           size="sm"
                           onClick={() => {
                             if (evidence.retrievalUrl) {
-                              const link = document.createElement('a')
-                              link.href = evidence.retrievalUrl
-                              link.download = evidence.filename
-                              link.click()
+                              // Check if it's a mock/local URL
+                              if (evidence.retrievalUrl.startsWith('local://') || evidence.retrievalUrl.includes('local_')) {
+                                alert('This evidence file is stored locally and cannot be downloaded. The original upload to IPFS failed, but the evidence metadata was saved.')
+                              } else {
+                                const link = document.createElement('a')
+                                link.href = evidence.retrievalUrl
+                                link.download = evidence.filename
+                                link.click()
+                              }
                             }
                           }}
                           className="border border-[#022b3a]/30 bg-white text-[#022b3a] hover:bg-[#022b3a]/10 hover:border-[#022b3a]/40 hover:text-[#022b3a] active:scale-95 transition-colors duration-200"

@@ -1,0 +1,16 @@
+// Placeholder fabric.proto file to resolve import issues
+syntax = "proto3";
+
+package fabric;
+
+service FabricService {
+  rpc Placeholder(PlaceholderRequest) returns (PlaceholderResponse);
+}
+
+message PlaceholderRequest {
+  string message = 1;
+}
+
+message PlaceholderResponse {
+  string message = 1;
+}

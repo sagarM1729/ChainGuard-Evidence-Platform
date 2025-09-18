@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 import { storachaClient } from "@/lib/web3storage"
+import ComprehensiveUploadForm from "@/components/evidence/ComprehensiveUploadForm"
 
 interface Evidence {
   id: string
@@ -627,12 +628,12 @@ export default function NewCasePage() {
         </div>
       </form>
 
-      {/* Evidence Upload Modal */}
+      {/* Evidence Upload Modal - Comprehensive Form */}
       {showEvidenceForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-[#022b3a]">Add Evidence</h2>
+              <h2 className="text-2xl font-bold text-[#022b3a]">📁 Add Evidence - Comprehensive Details</h2>
               <Button 
                 variant="outline"
                 onClick={() => setShowEvidenceForm(false)}
@@ -643,58 +644,74 @@ export default function NewCasePage() {
             </div>
             
             <div className="space-y-6">
-              {/* File Upload */}
-              <div>
-                <Label className="text-[#022b3a] font-medium">Select File *</Label>
+              {/* File Upload Section */}
+              <div className="bg-gradient-to-r from-[#1f7a8c]/5 to-[#022b3a]/5 p-4 rounded-lg border border-[#1f7a8c]/20">
+                <Label className="text-[#022b3a] font-semibold text-lg flex items-center">
+                  <Upload className="h-5 w-5 mr-2" />
+                  Select Evidence File *
+                </Label>
                 <input
                   ref={fileInputRef}
                   type="file"
                   onChange={handleFileSelect}
-                  className="mt-1 w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
+                  className="mt-2 w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
                 />
                 {currentEvidence.filename && (
-                  <p className="text-sm text-[#022b3a]/70 mt-2">
-                    Selected: {currentEvidence.filename} ({formatBytes(currentEvidence.filesize)})
-                  </p>
+                  <div className="bg-white p-3 rounded-lg mt-3 border border-[#1f7a8c]/20">
+                    <p className="text-sm font-medium text-[#022b3a]">
+                      📄 {currentEvidence.filename} ({formatBytes(currentEvidence.filesize)})
+                    </p>
+                    <p className="text-xs text-[#022b3a]/70">Type: {currentEvidence.filetype}</p>
+                  </div>
                 )}
               </div>
 
-              {/* Evidence Type */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-[#022b3a] font-medium">Evidence Type</Label>
+              {/* Evidence Classification */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex flex-col">
+                  <Label className="text-[#022b3a] font-semibold flex items-center h-6 mb-2">
+                    <FileText className="h-4 w-4 mr-2" />
+                    Evidence Type *
+                  </Label>
                   <select
                     value={currentEvidence.evidenceType}
                     onChange={(e) => setCurrentEvidence(prev => ({ ...prev, evidenceType: e.target.value as any }))}
-                    className="mt-1 w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
+                    className="w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
                   >
-                    <option value="PHYSICAL">Physical</option>
-                    <option value="DIGITAL">Digital</option>
-                    <option value="DOCUMENT">Testimonial</option>
-                    <option value="PHOTO">Forensic</option>
+                    <option value="PHYSICAL">🔧 Physical Evidence</option>
+                    <option value="DIGITAL">💾 Digital Evidence</option>
+                    <option value="DOCUMENT">📄 Document Evidence</option>
+                    <option value="PHOTO">📸 Photographic Evidence</option>
+                    <option value="VIDEO">🎥 Video Evidence</option>
+                    <option value="AUDIO">🎵 Audio Evidence</option>
                   </select>
                 </div>
 
-                <div>
-                  <Label className="text-[#022b3a] font-medium">Evidence Category</Label>
+                <div className="flex flex-col">
+                  <Label className="text-[#022b3a] font-semibold flex items-center h-6 mb-2">
+                    <span className="w-4 mr-2">📂</span>
+                    Evidence Category *
+                  </Label>
                   <select
                     value={currentEvidence.category}
                     onChange={(e) => setCurrentEvidence(prev => ({ ...prev, category: e.target.value }))}
-                    className="mt-1 w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
+                    className="w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
                   >
                     <option value="">Select category</option>
-                    <option value="Weapon">Weapon</option>
-                    <option value="Fingerprint">Fingerprint</option>
-                    <option value="DNA">DNA</option>
-                    <option value="CCTV Footage">CCTV Footage</option>
-                    <option value="Financial Record">Financial Record</option>
-                    <option value="Blood Sample">Blood Sample</option>
-                    <option value="Document">Document</option>
-                    <option value="Phone Records">Phone Records</option>
-                    <option value="Computer Files">Computer Files</option>
-                    <option value="Clothing">Clothing</option>
-                    <option value="Vehicle">Vehicle</option>
-                    <option value="Other">Other</option>
+                    <option value="Weapon">🔫 Weapon</option>
+                    <option value="Fingerprint">👆 Fingerprint</option>
+                    <option value="DNA">🧬 DNA Sample</option>
+                    <option value="CCTV Footage">📹 CCTV Footage</option>
+                    <option value="Financial Record">💰 Financial Record</option>
+                    <option value="Blood Sample">🩸 Blood Sample</option>
+                    <option value="Document">📋 Document</option>
+                    <option value="Phone Records">📱 Phone Records</option>
+                    <option value="Computer Files">💻 Computer Files</option>
+                    <option value="Clothing">👕 Clothing</option>
+                    <option value="Vehicle">🚗 Vehicle</option>
+                    <option value="Drug Sample">💊 Drug Sample</option>
+                    <option value="Tool Mark">🔨 Tool Mark</option>
+                    <option value="Other">❓ Other</option>
                   </select>
                   
                   {currentEvidence.category === "Other" && (
@@ -708,75 +725,85 @@ export default function NewCasePage() {
                 </div>
               </div>
 
-              {/* Collection Location */}
-              <div>
-                <Label className="text-[#022b3a] font-medium">Collection Location</Label>
-                <Input
-                  value={currentEvidence.location}
-                  onChange={(e) => setCurrentEvidence(prev => ({ ...prev, location: e.target.value }))}
-                  placeholder="On the counter, next to the cash register"
-                  className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
-                />
-              </div>
+              {/* Collection Details */}
+              <div className="bg-gradient-to-r from-[#1f7a8c]/5 to-[#022b3a]/5 p-4 rounded-lg border border-[#1f7a8c]/20">
+                <h3 className="font-semibold text-[#022b3a] mb-4 flex items-center">
+                  <MapPin className="h-4 w-4 mr-2" />
+                  Collection Details
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-[#022b3a] font-medium">Collection Date *</Label>
+                    <Input
+                      type="date"
+                      value={currentEvidence.collectedAt}
+                      onChange={(e) => setCurrentEvidence(prev => ({ ...prev, collectedAt: e.target.value }))}
+                      className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-[#022b3a] font-medium">Collection Time</Label>
+                    <Input
+                      type="time"
+                      value={currentEvidence.collectedTime || new Date().toTimeString().slice(0, 5)}
+                      onChange={(e) => setCurrentEvidence(prev => ({ ...prev, collectedTime: e.target.value }))}
+                      className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                    />
+                  </div>
+                </div>
 
-              {/* Notes */}
-              <div>
-                <Label className="text-[#022b3a] font-medium">Notes</Label>
-                <textarea
-                  value={currentEvidence.notes}
-                  onChange={(e) => setCurrentEvidence(prev => ({ ...prev, notes: e.target.value }))}
-                  placeholder="Add notes about this evidence..."
-                  rows={3}
-                  className="mt-1 w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
-                />
-              </div>
-
-              {/* Tags */}
-              <div>
-                <Label className="text-[#022b3a] font-medium">Tags (comma-separated)</Label>
-                <Input
-                  value={currentEvidence.tags.join(', ')}
-                  onChange={(e) => handleTagsChange(e.target.value)}
-                  placeholder="e.g., weapon, fingerprint, digital"
-                  className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
-                />
-              </div>
-
-              {/* Collection Date & Time */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-[#022b3a] font-medium">Collection Date</Label>
+                <div className="mt-4">
+                  <Label className="text-[#022b3a] font-medium flex items-center">
+                    <User className="h-4 w-4 mr-2" />
+                    Collected By *
+                  </Label>
                   <Input
-                    type="date"
-                    value={currentEvidence.collectedAt}
-                    onChange={(e) => setCurrentEvidence(prev => ({ ...prev, collectedAt: e.target.value }))}
+                    value={currentEvidence.collectedBy}
+                    onChange={(e) => setCurrentEvidence(prev => ({ ...prev, collectedBy: e.target.value }))}
+                    placeholder="Officer name"
                     className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
                   />
                 </div>
-                <div>
-                  <Label className="text-[#022b3a] font-medium">Collection Time</Label>
+
+                <div className="mt-4">
+                  <Label className="text-[#022b3a] font-medium">Collection Location *</Label>
                   <Input
-                    type="time"
-                    value={currentEvidence.collectedTime || new Date().toTimeString().slice(0, 5)}
-                    onChange={(e) => setCurrentEvidence(prev => ({ ...prev, collectedTime: e.target.value }))}
+                    value={currentEvidence.location}
+                    onChange={(e) => setCurrentEvidence(prev => ({ ...prev, location: e.target.value }))}
+                    placeholder="Specific location where evidence was found (e.g., Kitchen counter, next to the sink)"
                     className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
                   />
                 </div>
               </div>
 
-              {/* Collected By */}
-              <div>
-                <Label className="text-[#022b3a] font-medium">Collected By</Label>
-                <Input
-                  value={currentEvidence.collectedBy}
-                  onChange={(e) => setCurrentEvidence(prev => ({ ...prev, collectedBy: e.target.value }))}
-                  placeholder="Officer name"
-                  className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
-                />
+              {/* Additional Information */}
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-[#022b3a] font-medium">Tags (comma-separated)</Label>
+                  <Input
+                    value={currentEvidence.tags.join(', ')}
+                    onChange={(e) => handleTagsChange(e.target.value)}
+                    placeholder="e.g., weapon, fingerprint, digital, blood-spatter, witness-statement"
+                    className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                  />
+                  <p className="text-xs text-[#022b3a]/70 mt-1">Tags help with evidence categorization and search</p>
+                </div>
+
+                <div>
+                  <Label className="text-[#022b3a] font-medium">Evidence Notes & Chain of Custody</Label>
+                  <textarea
+                    value={currentEvidence.notes}
+                    onChange={(e) => setCurrentEvidence(prev => ({ ...prev, notes: e.target.value }))}
+                    placeholder="Add detailed notes about this evidence: condition when found, witness statements, preservation method, chain of custody details, etc."
+                    rows={4}
+                    className="mt-1 w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
+                  />
+                </div>
               </div>
 
               {/* Actions */}
-              <div className="flex justify-end space-x-3 pt-4">
+              <div className="flex justify-end space-x-3 pt-6 border-t border-[#1f7a8c]/20">
                 <Button 
                   variant="outline"
                   onClick={() => setShowEvidenceForm(false)}
@@ -786,11 +813,11 @@ export default function NewCasePage() {
                 </Button>
                 <Button 
                   onClick={handleSaveEvidence}
-                  disabled={!currentEvidence.filename}
-                  className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white"
+                  disabled={!currentEvidence.filename || !currentEvidence.category || !currentEvidence.location || !currentEvidence.collectedBy}
+                  className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white disabled:opacity-50"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  Save Evidence
+                  Save Evidence to Case
                 </Button>
               </div>
             </div>

@@ -32,7 +32,7 @@ generate_crypto() {
 start_network() {
     echo "🚀 Starting blockchain network..."
     cd ../network
-    docker-compose up -d
+    docker compose up -d
     cd ../scripts
     
     # Wait for containers to start
