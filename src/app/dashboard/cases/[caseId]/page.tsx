@@ -20,7 +20,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import UploadForm from "@/components/evidence/UploadForm"
+import ComprehensiveUploadForm from "@/components/evidence/ComprehensiveUploadForm"
 
 interface Evidence {
   id: string
@@ -442,10 +442,10 @@ export default function CaseDetailsPage() {
                 Cancel
               </Button>
             </div>
-            <UploadForm 
+            <ComprehensiveUploadForm 
               caseId={case_.id}
               onSuccess={handleEvidenceUploaded}
-              onError={(error) => {
+              onError={(error: string) => {
                 console.error('Upload error:', error)
                 setShowUploadForm(false)
               }}
