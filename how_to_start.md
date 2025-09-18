@@ -1,14 +1,34 @@
 # 🚀 ChainGuard Evidence Platform - Startup Guide
 
-## 📋 What to Run After Restarting PC
+## 🎯 Private Repository - Ready to Run!
 
-### 🎯 Quick Start (Recommended)
+This repository includes **complete blockchain crypto material** for immediate deployment. No additional setup steps required!
+
+### ✨ Fresh Clone Setup (First Time)
+```bash
+git clone https://github.com/sagarM1729/ChainGuard-Evidence-Platform.git
+cd ChainGuard-Evidence-Platform
+git checkout connect_backend
+npm install
+```
+
+### 🚀 Quick Start (Every Time)
 ```bash
 cd /home/ajay/Project/ChainGuard-Evidence-Platform
 ./start-blockchain.sh
 ```
 
-### 🔧 Manual Startup Steps
+### � Crypto Material Included
+
+This repository includes:
+- ✅ **Complete blockchain certificates** (54 files)
+- ✅ **Private keys and TLS certificates**
+- ✅ **Orderer and peer authentication material**
+- ✅ **Ready-to-use crypto infrastructure**
+
+**No crypto generation needed!** Your friend can clone and run immediately.
+
+### �🔧 Manual Startup Steps (If needed)
 
 #### Step 1: Navigate to Project Directory
 ```bash
