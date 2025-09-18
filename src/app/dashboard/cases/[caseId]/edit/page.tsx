@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
-import UploadForm from "@/components/evidence/UploadForm"
+import ComprehensiveUploadForm from "@/components/evidence/ComprehensiveUploadForm"
 
 interface Evidence {
   id: string
@@ -488,10 +488,10 @@ export default function EditCasePage() {
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            <UploadForm 
+            <ComprehensiveUploadForm 
               caseId={caseId}
               onSuccess={handleEvidenceUploaded}
-              onError={(error) => {
+              onError={(error: string) => {
                 console.error('Upload error:', error)
                 setShowUploadForm(false)
               }}

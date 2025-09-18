@@ -174,11 +174,26 @@ export async function POST(req: NextRequest) {
         evidence
       })
     } else {
-      // Handle FormData upload (legacy method)
+      // Handle FormData upload (comprehensive method)
       const formData = await req.formData()
       const file = formData.get('file') as File
       const caseId = formData.get('caseId') as string
       const notes = formData.get('notes') as string
+      const evidenceType = formData.get('evidenceType') as string
+      const category = formData.get('category') as string
+      const tagsJson = formData.get('tags') as string
+      const collectedAt = formData.get('collectedAt') as string
+      const collectedTime = formData.get('collectedTime') as string
+      const collectedBy = formData.get('collectedBy') as string
+      const location = formData.get('location') as string
+      
+      // Parse tags from JSON
+      let tags: string[] = []
+      try {
+        tags = tagsJson ? JSON.parse(tagsJson) : []
+      } catch (e) {
+        console.warn('Failed to parse tags:', e)
+      }
 
       if (!file || !caseId) {
         return NextResponse.json(
@@ -209,7 +224,7 @@ export async function POST(req: NextRequest) {
         caseId
       })
 
-      // Store evidence using our Evidence Manager
+      // Store evidence using our Evidence Manager (basic fields only)
       const result = await evidenceManager.storeEvidence(file, {
         caseId,
         filename: file.name,
@@ -218,6 +233,44 @@ export async function POST(req: NextRequest) {
         notes: notes || undefined,
         custodyOfficer: session.user.email
       })
+
+      // Map frontend evidence type to Prisma enum
+      const mapEvidenceType = (type: string) => {
+        const typeMap: { [key: string]: string } = {
+          'DOCUMENT': 'DOCUMENT',
+          'PHOTO': 'PHOTO', 
+          'VIDEO': 'VIDEO',
+          'AUDIO': 'AUDIO',
+          'PHYSICAL': 'OTHER',
+          'DIGITAL': 'DIGITAL_FILE'
+        }
+        return typeMap[type] || 'DOCUMENT'
+      }
+
+      // Find and update the evidence record with comprehensive fields
+      const evidenceRecord = await prisma.evidence.findFirst({
+        where: { ipfsCid: result.ipfsCid }
+      })
+
+      if (evidenceRecord) {
+        await prisma.evidence.update({
+          where: { id: evidenceRecord.id },
+          data: {
+            evidenceType: mapEvidenceType(evidenceType || 'DOCUMENT') as any,
+            category: category || '',
+            tags: tags || [],
+            collectedAt: collectedAt ? new Date(`${collectedAt}T${collectedTime || '00:00'}`) : new Date(),
+            collectedBy: collectedBy || '',
+            location: location || '',
+            custodyChain: JSON.stringify([{
+              officer: session.user.email,
+              action: 'UPLOADED',
+              timestamp: new Date().toISOString(),
+              location: location || 'Digital Evidence System'
+            }])
+          }
+        })
+      }
 
       console.log('✅ Evidence stored successfully:', result)
 
