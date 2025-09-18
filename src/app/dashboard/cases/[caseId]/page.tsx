@@ -42,15 +42,16 @@ interface Evidence {
 
 interface Case {
   id: string
+  caseNumber: string
   title: string
   description: string
-  status: 'ACTIVE' | 'UNDER_REVIEW' | 'CLOSED' | 'ARCHIVED'
+  status: 'OPEN' | 'IN_PROGRESS' | 'UNDER_REVIEW' | 'CLOSED' | 'COLD_CASE' | 'ARCHIVED'
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
-  category: string
-  location: string
+  category?: string
+  location?: string
   createdAt: string
   updatedAt: string
-  assignedTo: string
+  officerId: string
   evidence: Evidence[]
 }
 
@@ -99,9 +100,11 @@ export default function CaseDetailsPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'ACTIVE': return 'text-blue-600 bg-blue-100 border-blue-200'
-      case 'UNDER_REVIEW': return 'text-purple-600 bg-purple-100 border-purple-200'
-      case 'CLOSED': return 'text-gray-600 bg-gray-100 border-gray-200'
+      case 'OPEN': return 'text-blue-600 bg-blue-100 border-blue-200'
+      case 'IN_PROGRESS': return 'text-purple-600 bg-purple-100 border-purple-200'
+      case 'UNDER_REVIEW': return 'text-yellow-600 bg-yellow-100 border-yellow-200'
+      case 'CLOSED': return 'text-green-600 bg-green-100 border-green-200'
+      case 'COLD_CASE': return 'text-gray-600 bg-gray-100 border-gray-200'
       case 'ARCHIVED': return 'text-gray-500 bg-gray-50 border-gray-100'
       default: return 'text-gray-600 bg-gray-100 border-gray-200'
     }
@@ -237,7 +240,7 @@ export default function CaseDetailsPage() {
                 <label className="text-sm font-medium text-[#022b3a]/70">Assigned To</label>
                 <div className="flex items-center mt-1">
                   <User className="h-4 w-4 text-[#1f7a8c] mr-1" />
-                  <span className="text-[#022b3a]">{case_.assignedTo}</span>
+                  <span className="text-[#022b3a]">{case_.officerId}</span>
                 </div>
               </div>
               

@@ -105,9 +105,11 @@ export default function DashboardPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'ACTIVE': return 'text-blue-600 bg-blue-100 border-blue-200'
-      case 'UNDER_REVIEW': return 'text-purple-600 bg-purple-100 border-purple-200'
-      case 'CLOSED': return 'text-gray-600 bg-gray-100 border-gray-200'
+      case 'OPEN': return 'text-blue-600 bg-blue-100 border-blue-200'
+      case 'IN_PROGRESS': return 'text-purple-600 bg-purple-100 border-purple-200'
+      case 'UNDER_REVIEW': return 'text-yellow-600 bg-yellow-100 border-yellow-200'
+      case 'CLOSED': return 'text-green-600 bg-green-100 border-green-200'
+      case 'COLD_CASE': return 'text-gray-600 bg-gray-100 border-gray-200'
       case 'ARCHIVED': return 'text-gray-500 bg-gray-50 border-gray-100'
       default: return 'text-gray-600 bg-gray-100 border-gray-200'
     }

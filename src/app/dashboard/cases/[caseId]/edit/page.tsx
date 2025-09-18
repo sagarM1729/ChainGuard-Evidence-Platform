@@ -33,7 +33,7 @@ interface CaseFormData {
   customCategory?: string
   location: string
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
-  status: 'ACTIVE' | 'UNDER_REVIEW' | 'CLOSED' | 'ARCHIVED'
+  status: 'OPEN' | 'IN_PROGRESS' | 'UNDER_REVIEW' | 'CLOSED' | 'COLD_CASE' | 'ARCHIVED'
   evidence: Evidence[]
 }
 
@@ -49,7 +49,7 @@ export default function EditCasePage() {
     customCategory: '',
     location: '',
     priority: 'MEDIUM',
-    status: 'ACTIVE',
+    status: 'OPEN',
     evidence: []
   })
   
@@ -339,9 +339,11 @@ export default function EditCasePage() {
                     required
                     className="mt-1 w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
                   >
-                    <option value="ACTIVE">Active</option>
+                    <option value="OPEN">Open</option>
+                    <option value="IN_PROGRESS">In Progress</option>
                     <option value="UNDER_REVIEW">Under Review</option>
                     <option value="CLOSED">Closed</option>
+                    <option value="COLD_CASE">Cold Case</option>
                     <option value="ARCHIVED">Archived</option>
                   </select>
                 </div>
@@ -457,9 +459,11 @@ export default function EditCasePage() {
               <div className="flex justify-between items-center text-sm">
                 <span className="text-[#022b3a]/70">Status</span>
                 <span className={`px-2 py-1 text-xs rounded-full ${
-                  formData.status === 'ACTIVE' ? 'bg-blue-100 text-blue-600' :
-                  formData.status === 'UNDER_REVIEW' ? 'bg-purple-100 text-purple-600' :
-                  formData.status === 'CLOSED' ? 'bg-gray-100 text-gray-600' :
+                  formData.status === 'OPEN' ? 'bg-blue-100 text-blue-600' :
+                  formData.status === 'IN_PROGRESS' ? 'bg-purple-100 text-purple-600' :
+                  formData.status === 'UNDER_REVIEW' ? 'bg-yellow-100 text-yellow-600' :
+                  formData.status === 'CLOSED' ? 'bg-green-100 text-green-600' :
+                  formData.status === 'COLD_CASE' ? 'bg-gray-100 text-gray-600' :
                   'bg-gray-50 text-gray-500'
                 }`}>
                   {formData.status.replace('_', ' ')}

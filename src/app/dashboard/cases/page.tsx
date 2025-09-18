@@ -9,16 +9,19 @@ import { Card } from "@/components/ui/card"
 
 interface Case {
   id: string
+  caseNumber: string
   title: string
   description: string
-  status: 'ACTIVE' | 'UNDER_REVIEW' | 'CLOSED' | 'ARCHIVED'
+  status: 'OPEN' | 'IN_PROGRESS' | 'UNDER_REVIEW' | 'CLOSED' | 'COLD_CASE' | 'ARCHIVED'
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
-  category: string
-  location: string
+  category?: string
+  location?: string
   createdAt: string
   updatedAt: string
-  assignedTo: string
-  evidence: any[]
+  officerId: string
+  _count: {
+    evidence: number
+  }
 }
 
 export default function AllCasesPage() {
@@ -64,7 +67,7 @@ export default function AllCasesPage() {
     const matchesSearch = 
       case_.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       case_.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      case_.category.toLowerCase().includes(searchTerm.toLowerCase())
+      (case_.category && case_.category.toLowerCase().includes(searchTerm.toLowerCase()))
     
     const matchesStatus = statusFilter === 'ALL' || case_.status === statusFilter
     const matchesPriority = priorityFilter === 'ALL' || case_.priority === priorityFilter
@@ -90,9 +93,11 @@ export default function AllCasesPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'ACTIVE': return 'text-blue-600 bg-blue-100 border-blue-200'
-      case 'UNDER_REVIEW': return 'text-purple-600 bg-purple-100 border-purple-200'
-      case 'CLOSED': return 'text-gray-600 bg-gray-100 border-gray-200'
+      case 'OPEN': return 'text-blue-600 bg-blue-100 border-blue-200'
+      case 'IN_PROGRESS': return 'text-purple-600 bg-purple-100 border-purple-200'
+      case 'UNDER_REVIEW': return 'text-yellow-600 bg-yellow-100 border-yellow-200'
+      case 'CLOSED': return 'text-green-600 bg-green-100 border-green-200'
+      case 'COLD_CASE': return 'text-gray-600 bg-gray-100 border-gray-200'
       case 'ARCHIVED': return 'text-gray-500 bg-gray-50 border-gray-100'
       default: return 'text-gray-600 bg-gray-100 border-gray-200'
     }
@@ -153,9 +158,11 @@ export default function AllCasesPage() {
               className="w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
             >
               <option value="ALL">All Status</option>
-              <option value="ACTIVE">Active</option>
+              <option value="OPEN">Open</option>
+              <option value="IN_PROGRESS">In Progress</option>
               <option value="UNDER_REVIEW">Under Review</option>
               <option value="CLOSED">Closed</option>
+              <option value="COLD_CASE">Cold Case</option>
               <option value="ARCHIVED">Archived</option>
             </select>
           </div>
@@ -253,15 +260,21 @@ export default function AllCasesPage() {
                 <div className="space-y-2 mb-4">
                   <div className="flex items-center text-sm text-[#022b3a]/60">
                     <FileText className="h-4 w-4 mr-2" />
-                    <span>{case_.category}</span>
+                    <span>#{case_.caseNumber}</span>
                   </div>
+                  {case_.category && (
+                    <div className="flex items-center text-sm text-[#022b3a]/60">
+                      <FileText className="h-4 w-4 mr-2" />
+                      <span>{case_.category}</span>
+                    </div>
+                  )}
                   <div className="flex items-center text-sm text-[#022b3a]/60">
                     <Calendar className="h-4 w-4 mr-2" />
                     <span>Created {new Date(case_.createdAt).toLocaleDateString()}</span>
                   </div>
                   <div className="flex items-center text-sm text-[#022b3a]/60">
                     <FileText className="h-4 w-4 mr-2" />
-                    <span>{case_.evidence?.length || 0} evidence items</span>
+                    <span>{case_._count?.evidence || 0} evidence items</span>
                   </div>
                 </div>
 

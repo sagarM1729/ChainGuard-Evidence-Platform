@@ -80,15 +80,30 @@ export async function PUT(
       )
     }
 
+    const updateData: any = {
+      title,
+      description,
+      updatedAt: new Date(),
+    }
+
+    if (category) {
+      updateData.category = category
+    }
+    if (location) {
+      updateData.location = location
+    }
+    if (priority) {
+      updateData.priority = priority
+    }
+    if (status) {
+      updateData.status = status
+    }
+
     const updatedCase = await prisma.case.update({
       where: {
         id: caseId,
       },
-      data: {
-        title,
-        description,
-        updatedAt: new Date(),
-      },
+      data: updateData,
       include: {
         evidence: {
           orderBy: {
