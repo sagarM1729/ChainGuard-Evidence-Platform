@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { 
   ArrowLeft, 
@@ -21,6 +21,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import ComprehensiveUploadForm from "@/components/evidence/ComprehensiveUploadForm"
+import type { MerkleProof } from "@/lib/merkle"
 
 interface Evidence {
   id: string
@@ -36,7 +37,8 @@ interface Evidence {
   location: string
   ipfsCid?: string
   retrievalUrl?: string
-  blockchainTxId?: string
+  merkleRoot?: string
+  merkleProof?: MerkleProof
   verified: boolean
 }
 
@@ -52,6 +54,7 @@ interface Case {
   createdAt: string
   updatedAt: string
   officerId: string
+  merkleRoot?: string
   evidence: Evidence[]
 }
 
@@ -65,13 +68,11 @@ export default function CaseDetailsPage() {
   const [showUploadForm, setShowUploadForm] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (caseId) {
-      fetchCaseDetails()
+  const fetchCaseDetails = useCallback(async () => {
+    if (!caseId) {
+      return
     }
-  }, [caseId])
 
-  const fetchCaseDetails = async () => {
     try {
       const response = await fetch(`/api/cases/${caseId}`)
       if (response.ok) {
@@ -86,7 +87,13 @@ export default function CaseDetailsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [caseId])
+
+  useEffect(() => {
+    if (caseId) {
+      fetchCaseDetails()
+    }
+  }, [caseId, fetchCaseDetails])
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -330,10 +337,10 @@ export default function CaseDetailsPage() {
                           </div>
                         )}
                         
-                        {evidence.blockchainTxId && (
+                        {evidence.merkleRoot && (
                           <div className="flex items-center text-sm text-[#022b3a]/70 mb-2">
                             <Shield className="h-4 w-4 text-green-500 mr-2" />
-                            <span>Blockchain verified</span>
+                            <span>Merkle ledger verified</span>
                           </div>
                         )}
                         
@@ -409,9 +416,15 @@ export default function CaseDetailsPage() {
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[#022b3a]/70">Blockchain Records</span>
+                <span className="text-[#022b3a]/70">Merkle Records</span>
                 <span className="font-semibold text-[#022b3a]">
-                  {case_.evidence.filter(e => e.blockchainTxId).length}
+                  {case_.evidence.filter(e => e.merkleRoot).length}
+                </span>
+              </div>
+              <div className="flex justify-between items-start">
+                <span className="text-[#022b3a]/70">Case Merkle Root</span>
+                <span className="font-mono text-xs text-[#022b3a] max-w-[180px] text-right break-all">
+                  {case_.merkleRoot ?? 'Pending'}
                 </span>
               </div>
             </div>

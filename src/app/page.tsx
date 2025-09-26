@@ -234,9 +234,9 @@ export default function HomePage() {
 										<div className="text-6xl mb-8 transform group-hover:scale-110 transition-transform duration-500">📜</div>
 										<h3 className="text-2xl font-black text-[#022b3a] mb-4">The Notary</h3>
 										<div className="inline-block px-6 py-2 bg-gradient-to-r from-[#1f7a8c]/20 to-[#022b3a]/20 rounded-full mb-6 border border-[#1f7a8c]/30">
-											<p className="text-lg font-bold text-[#1f7a8c]">Hyperledger Fabric</p>
+											<p className="text-lg font-bold text-[#1f7a8c]">Merkle Evidence Ledger</p>
 										</div>
-										<p className="text-[#022b3a] leading-relaxed font-medium">Unbreakable, trusted proof of authenticity. Blockchain-based immutable ledger that cryptographically verifies every evidence transaction.</p>
+										<p className="text-[#022b3a] leading-relaxed font-medium">Unbreakable, trusted proof of authenticity. Deterministic Merkle trees capture every evidence snapshot so you can reproduce and verify integrity without a heavyweight blockchain.</p>
 									</div>
 								</div>
 							</div>

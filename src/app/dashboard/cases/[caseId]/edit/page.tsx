@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
 import { ArrowLeft, Save, Plus, X, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -58,13 +58,11 @@ export default function EditCasePage() {
   const [showUploadForm, setShowUploadForm] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (caseId) {
-      fetchCaseData()
+  const fetchCaseData = useCallback(async () => {
+    if (!caseId) {
+      return
     }
-  }, [caseId])
 
-  const fetchCaseData = async () => {
     try {
       const response = await fetch(`/api/cases/${caseId}`)
       if (response.ok) {
@@ -98,7 +96,13 @@ export default function EditCasePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [caseId])
+
+  useEffect(() => {
+    if (caseId) {
+      fetchCaseData()
+    }
+  }, [caseId, fetchCaseData])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

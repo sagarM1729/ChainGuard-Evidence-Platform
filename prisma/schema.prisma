@@ -15,6 +15,7 @@ model Case {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime
   officerId   String
+  merkleRoot  String?
   category    String?
   dateClosed  DateTime?
   dateOpened  DateTime   @default(now())
@@ -43,23 +44,23 @@ model Evidence {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime
   caseId         String
-  custodyChain   Json?
-  encryptionKey  String?
-  fileHash       String
-  filesize       Int?
-  ipfsCid        String       @unique
-  isEncrypted    Boolean      @default(true)
-  retrievalUrl   String
   accessLevel    AccessLevel  @default(RESTRICTED)
   blockchainHash String?
   category       String?
   collectedAt    DateTime?
   collectedBy    String?
+  custodyChain   Json?
   deviceInfo     Json?
+  encryptionKey  String?
   evidenceType   EvidenceType @default(DOCUMENT)
+  fileHash       String
+  filesize       Int?
+  ipfsCid        String       @unique
+  isEncrypted    Boolean      @default(true)
   location       String?
+  retrievalUrl   String
   tags           String[]
-  Case           Case         @relation(fields: [caseId], references: [id])
+  case           Case         @relation(fields: [caseId], references: [id])
 
   @@index([accessLevel])
   @@index([blockchainTxId])

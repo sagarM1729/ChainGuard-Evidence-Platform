@@ -21,12 +21,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ evi
     const evidence = await prisma.evidence.findFirst({
       where: {
         id: evidenceId,
-        Case: {
+        case: {
           officerId: session.user.id
         }
       },
       include: {
-        Case: {
+        case: {
           select: {
             id: true,
             title: true
@@ -42,13 +42,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ evi
       )
     }
 
-    console.log('� Starting evidence integrity verification for:', evidenceId)
+  console.log('� Starting evidence integrity verification for:', evidenceId)
 
     // Verify evidence integrity using Evidence Manager
     const isValid = await evidenceManager.verifyEvidenceIntegrity(evidenceId)
 
-    // Also get blockchain verification details if available
-    const blockchainVerification = await evidenceManager.getBlockchainVerification(evidenceId)
+    // Also get Merkle ledger details if available
+  const merkleVerification = await evidenceManager.getMerkleVerification(evidenceId)
 
     const verificationResult = {
       evidenceId: evidenceId,
@@ -57,8 +57,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ evi
       fileHash: evidence.fileHash,
       isValid: isValid,
       verifiedAt: new Date().toISOString(),
-      blockchainTxId: evidence.blockchainTxId,
-      blockchainVerification: blockchainVerification
+      merkleRoot: merkleVerification?.merkleRoot ?? null,
+      merkleVerification
     }
 
     console.log('✅ Evidence verification completed:', verificationResult)

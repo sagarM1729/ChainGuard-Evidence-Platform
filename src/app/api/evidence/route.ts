@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { withRetry, checkDatabaseHealth } from "@/lib/db-utils"
 import { evidenceManager } from "@/services/evidenceManager"
+import { randomUUID } from "crypto"
 
 export async function GET(req: NextRequest) {
   try {
@@ -59,10 +60,11 @@ export async function GET(req: NextRequest) {
       prisma.evidence.findMany({
         where: whereClause,
         include: {
-          Case: {
+          case: {
             select: {
               id: true,
-              title: true
+              title: true,
+              // merkleRoot: true  // TODO: Fix after Prisma client regeneration
             }
           }
         },
@@ -75,7 +77,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       evidence: evidence.map((item: any) => ({
         ...item,
-        custodyChain: item.custodyChain ? JSON.parse(item.custodyChain as string) : []
+        custodyChain: item.custodyChain ? JSON.parse(item.custodyChain as string) : [],
+        merkleRoot: item.blockchainTxId,
+        caseMerkleRoot: null // TODO: Fix after Prisma client regeneration - item.case?.merkleRoot ?? null
       }))
     })
     
@@ -150,7 +154,7 @@ export async function POST(req: NextRequest) {
       // Create evidence record in database
       const evidence = await prisma.evidence.create({
         data: {
-          id: crypto.randomUUID(),
+          id: randomUUID(),
           filename,
           filetype,
           filesize,
@@ -287,7 +291,8 @@ export async function POST(req: NextRequest) {
           ipfsCid: result.ipfsCid,
           retrievalUrl: result.retrievalUrl,
           fileHash: result.fileHash,
-          blockchainTxId: result.blockchainTxId
+          merkleRoot: result.merkleRoot,
+          merkleProof: result.merkleProof
         }
       })
     }

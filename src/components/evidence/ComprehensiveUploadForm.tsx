@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import type { MerkleProof } from "@/lib/merkle"
 import { 
   Upload, 
   File, 
@@ -27,7 +28,8 @@ interface UploadResult {
   ipfsCid: string
   retrievalUrl: string
   fileHash: string
-  blockchainTxId?: string
+  merkleRoot: string
+  merkleProof: MerkleProof
 }
 
 export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: ComprehensiveUploadFormProps) {
@@ -441,15 +443,21 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
                   </code>
                 </div>
                 
-                {uploadResult.blockchainTxId && (
-                  <div className="flex items-center space-x-2">
-                    <Chain className="w-4 h-4 text-gray-500" />
-                    <span className="font-medium">Blockchain TX:</span>
-                    <code className="bg-gray-100 px-2 py-1 rounded text-xs font-mono">
-                      {uploadResult.blockchainTxId}
-                    </code>
-                  </div>
-                )}
+                <div className="flex items-center space-x-2">
+                  <Chain className="w-4 h-4 text-gray-500" />
+                  <span className="font-medium">Merkle Root:</span>
+                  <code className="bg-gray-100 px-2 py-1 rounded text-xs font-mono">
+                    {uploadResult.merkleRoot}
+                  </code>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Shield className="w-4 h-4 text-gray-500" />
+                  <span className="font-medium">Merkle Proof:</span>
+                  <span className="text-gray-600">
+                    {uploadResult.merkleProof.siblings.length} sibling nodes
+                  </span>
+                </div>
               </div>
             </div>
           )}
@@ -495,8 +503,8 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
             <div className="flex items-start space-x-2">
               <Chain className="w-4 h-4 text-[#1f7a8c] mt-0.5 flex-shrink-0" />
               <div>
-                <p className="font-medium text-gray-800">Blockchain Proof</p>
-                <p>Hyperledger Fabric record</p>
+                <p className="font-medium text-gray-800">Merkle Ledger</p>
+                <p>Case-level integrity root</p>
               </div>
             </div>
           </div>

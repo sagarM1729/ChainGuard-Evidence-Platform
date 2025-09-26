@@ -1,109 +1,86 @@
 # 🚀 ChainGuard Evidence Platform - Deployment Guide
 
-## 🎯 Private Repository - Complete Setup Included
+## 🎯 Overview
 
-This private repository contains **everything needed** to run the ChainGuard Evidence Platform immediately after cloning.
+ChainGuard is a three-tier evidence platform built with Next.js, Prisma, and a lightweight Merkle ledger that derives tier-two integrity proofs from deterministic Merkle trees computed from your PostgreSQL records.
 
-## ✨ What's Included
+## 🧱 Architecture at a Glance
 
-### 🔐 Blockchain Infrastructure
-- **Complete Hyperledger Fabric crypto material** (54 certificate files)
-- **Private keys and TLS certificates** for secure blockchain communication
-- **Orderer and peer organization certificates** ready for network startup
-- **Admin and user authentication credentials** pre-configured
+| Tier | Purpose | Technology |
+| --- | --- | --- |
+| 1 | Metadata index | PostgreSQL via Prisma |
+| 2 | Integrity notary | TypeScript Merkle ledger (`src/lib/merkle.ts`) |
+| 3 | Evidence vault | Pinata/IPFS with development fallback |
 
-### 📁 Key Directories
-```
-blockchain/network/organizations/
-├── ordererOrganizations/example.com/     # Orderer certificates & keys
-│   ├── ca/                               # Certificate Authority
-│   ├── msp/                              # Membership Service Provider
-│   ├── orderers/orderer.example.com/     # Orderer node certificates
-│   ├── tlsca/                            # TLS Certificate Authority
-│   └── users/Admin@example.com/          # Admin user credentials
-└── peerOrganizations/org1.example.com/   # Peer organization certificates
-    ├── ca/                               # Certificate Authority
-    ├── msp/                              # Membership Service Provider  
-    ├── peers/peer0.org1.example.com/     # Peer node certificates
-    ├── tlsca/                            # TLS Certificate Authority
-    └── users/                            # Admin and User1 credentials
-```
+## ⚙️ Prerequisites
 
-## 🚀 Quick Deployment
+- Node.js 18+
+- PostgreSQL database URL (Neon works great)
+- Pinata credentials (JWT or API key + secret)
+- Resend API key for transactional emails
 
-### For New Team Members
+## 📦 First-Time Setup
+
 ```bash
-# 1. Clone the private repository
+# Clone repository
 git clone https://github.com/sagarM1729/ChainGuard-Evidence-Platform.git
 cd ChainGuard-Evidence-Platform
 
-# 2. Switch to the working branch
-git checkout connect_backend
-
-# 3. Install dependencies
+# Install dependencies
 npm install
 
-# 4. Start the complete platform
-./start-blockchain.sh
+# Apply database schema
+npx prisma generate
+npx prisma migrate dev
 ```
 
-### Daily Development
+Copy `.env.example` to `.env.local` and fill in database, Pinata, and email values. Tier-two Merkle ledger does **not** require any environment variables.
+
+## 🚀 Daily Development
+
 ```bash
-# Navigate to project
-cd ChainGuard-Evidence-Platform
-
-# Start everything (blockchain + app)
-./start-blockchain.sh
+npm run dev
 ```
 
-## 🔒 Security Approach
+Open [http://localhost:3000](http://localhost:3000) and log in or register. Evidence uploads will:
 
-### Private Repository Benefits
-- ✅ **Immediate deployment** - No crypto generation delays
-- ✅ **Team consistency** - Everyone uses identical certificates
-- ✅ **Development speed** - Skip complex Hyperledger Fabric setup
-- ✅ **Plug-and-play** - Works immediately after git clone
+1. Persist metadata to PostgreSQL
+2. Compute SHA-256 hash and update the case Merkle root
+3. Upload files via Pinata/IPFS (or mock CID fallback)
 
-### Security Considerations
-- 🔐 **Private repo only** - Never expose crypto material publicly
-- 🛡️ **Development certificates** - Not for production use
-- 🔄 **Regenerate for production** - Use fresh crypto for live deployments
-- 🚫 **Never commit to public repos** - Contains private keys
+## ✅ Verifying the Three Tiers
 
-## 🎯 What This Enables
+1. **Tier 1 (Postgres)** – run `npx prisma studio` and inspect `Case` and `Evidence` tables.
+2. **Tier 2 (Merkle)** – run `npm run test` to execute `src/lib/merkle.test.ts` or check `Case.merkleRoot` after an upload.
+3. **Tier 3 (IPFS)** – upload a file through the dashboard and open the generated retrieval URL.
 
-Your team members can:
-1. **Clone the repo** and have a working blockchain network in minutes
-2. **Skip complex Hyperledger Fabric installation** and crypto generation
-3. **Focus on application development** instead of infrastructure setup
-4. **Have identical development environments** across all machines
+## 🔐 Production Notes
 
-## 📋 Network Configuration
+- Generate a strong `NEXTAUTH_SECRET` with `openssl rand -base64 32`.
+- Use managed PostgreSQL with automatic backups.
+- Point `NEXTAUTH_URL` to your HTTPS domain.
+- Rotate Pinata credentials periodically.
+- Re-run `npx prisma migrate deploy` during deployments.
 
-### Blockchain Network
-- **Orderer:** `orderer.example.com:7050`
-- **Peer:** `peer0.org1.example.com:7051`
-- **Organization:** `Org1MSP`
-- **Channel:** `evidencechannel`
+## 🛟 Troubleshooting
 
-### Application Services
-- **Next.js App:** `http://localhost:3000`
-- **Database:** PostgreSQL/Neon Cloud
-- **IPFS Storage:** Storacha with Pinata fallback
-- **Blockchain:** Hyperledger Fabric 2.5.9
+- **Pinata auth errors** → verify `PINATA_JWT` or API key/secret in `.env.local`.
+- **Merkle root missing** → ensure migrations applied; run `npm run dev` and upload new evidence to regenerate.
+- **Type errors after pulling changes** → run `npm install` and `npx prisma generate`.
 
-## 🛠️ Troubleshooting
+## 📦 Deployment Automation
 
-If crypto material causes issues:
+For CI/CD pipelines:
+
 ```bash
-# Clean and regenerate (advanced users only)
-cd blockchain/network
-sudo rm -rf organizations/
-# Then use cryptogen to regenerate...
+npm ci
+npx prisma migrate deploy
+npm run build
+npm run start
 ```
 
-For most users: **The included crypto material works perfectly!**
+The Merkle ledger requires no external services, making container deployments significantly faster than blockchain-based setups.
 
 ---
 
-**Ready to develop?** Just clone, install, and run! 🚀
+**Ready to ship?** Deploy knowing your three-tier storage is lightweight, deterministic, and cloud friendly. 🌐

@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
-import { storachaClient } from "@/lib/web3storage"
 import ComprehensiveUploadForm from "@/components/evidence/ComprehensiveUploadForm"
 
 interface Evidence {
@@ -122,19 +121,42 @@ export default function NewCasePage() {
     }
   }
 
-  const uploadToStoracha = async (file: File): Promise<{ cid: string, url: string }> => {
+  const uploadToPinata = async (file: File): Promise<{ cid: string, url: string }> => {
     try {
-      console.log('Starting Storacha upload for:', file.name, 'Size:', file.size)
-      const result = await storachaClient.uploadFile(file, file.name)
-      console.log('Storacha upload completed:', result)
-      return { cid: result.cid, url: result.url }
+      console.log('Starting server-side Pinata upload for:', file.name, 'Size:', file.size)
+
+      // Use server-side API endpoint for Pinata upload
+      const uploadFormData = new FormData()
+      uploadFormData.append('file', file)
+
+      const response = await fetch('/api/storage/upload', {
+        method: 'POST',
+        body: uploadFormData,
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || `Upload failed: ${response.status}`)
+      }
+
+      console.log('Server-side Pinata upload completed:', result)
+
+      if (result.fallback) {
+        console.warn('Using fallback storage due to:', result.error)
+      }
+
+      return {
+        cid: result.result.cid,
+        url: result.result.url
+      }
     } catch (error) {
-      console.error('Storacha upload failed:', error)
+      console.error('Storage upload failed:', error)
       const fallbackCid = `local_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9]/g, '_')}`
-      console.warn('Using fallback CID:', fallbackCid)
-      return { 
-        cid: fallbackCid, 
-        url: `local://evidence/${fallbackCid}` 
+      console.warn('Using client-side fallback CID:', fallbackCid)
+      return {
+        cid: fallbackCid,
+        url: `local://evidence/${fallbackCid}`
       }
     }
   }
@@ -148,7 +170,7 @@ export default function NewCasePage() {
     try {
       setUploadProgress(prev => ({ ...prev, [currentEvidence.id]: 0 }))
       
-      const { cid, url } = await uploadToStoracha(currentEvidence.file)
+  const { cid, url } = await uploadToPinata(currentEvidence.file)
       setUploadProgress(prev => ({ ...prev, [currentEvidence.id]: 100 }))
       
       const newEvidence: Evidence = {

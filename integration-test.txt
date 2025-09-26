@@ -1,1 +1,0 @@
-Three-tier integration test evidence file

@@ -1,4 +1,5 @@
 const { PrismaClient } = require('@prisma/client');
+const crypto = require('crypto');
 
 async function manageWhitelist() {
   const prisma = new PrismaClient();
@@ -24,6 +25,7 @@ async function manageWhitelist() {
     
     // Add some default authorized emails
     const emailsToAdd = [
+      'test@example.com',
       'sagarmeshram1729@gmail.com',
       'admin@chainguard.com',
       'investigator@police.gov',
@@ -41,7 +43,10 @@ async function manageWhitelist() {
         
         if (!existingEntry) {
           await prisma.whitelist.create({
-            data: { email }
+            data: { 
+              id: crypto.randomUUID(),
+              email 
+            }
           });
           console.log(`   ✅ Added: ${email}`);
         } else {
