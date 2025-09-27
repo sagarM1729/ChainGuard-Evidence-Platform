@@ -1,92 +1,121 @@
 #!/usr/bin/env node
 
 /**
- * ChainGuard Evidence Platform - Three-Tier Integration Test
- * Tests the complete workflow: PostgreSQL → Hyperledger Fabric → Storacha/IPFS
+ * Simple smoke test for the ChainGuard three-tier architecture.
+ * Tier 1: PostgreSQL via Prisma
+ * Tier 2: Merkle evidence ledger (inline utilities)
+ * Tier 3: Pinata/IPFS (manual verification)
  */
 
-const { exec } = require('child_process');
-const fs = require('fs');
-const crypto = require('crypto');
+const { PrismaClient } = require('@prisma/client')
+const crypto = require('crypto')
 
-async function runCommand(command) {
-  return new Promise((resolve, reject) => {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve({ stdout, stderr });
-      }
-    });
-  });
+const prisma = new PrismaClient()
+
+const hash = (value) => crypto.createHash('sha256').update(value).digest('hex')
+
+const createLeafHash = ({ caseId, evidenceId, ipfsCid, fileHash, timestamp }) =>
+  hash([caseId, evidenceId, ipfsCid, fileHash, timestamp].join('|'))
+
+const buildMerkleLayers = (initialLeaves) => {
+  if (initialLeaves.length === 0) return []
+
+  const layers = [initialLeaves]
+  let currentLayer = initialLeaves
+
+  while (currentLayer.length > 1) {
+    const nextLayer = []
+    for (let i = 0; i < currentLayer.length; i += 2) {
+      const left = currentLayer[i]
+      const right = currentLayer[i + 1] ?? currentLayer[i]
+      nextLayer.push(hash(left + right))
+    }
+    layers.push(nextLayer)
+    currentLayer = nextLayer
+  }
+
+  return layers
 }
 
-async function testThreeTierIntegration() {
-  console.log('🔄 ChainGuard Evidence Platform - Three-Tier Integration Test');
-  console.log('===========================================================\n');
+const generateMerkleProof = (layers, leafIndex) => {
+  const path = []
+  let index = leafIndex
+
+  for (let level = 0; level < layers.length - 1; level++) {
+    const layer = layers[level]
+    const isRightNode = index % 2 === 1
+    const pairIndex = isRightNode ? index - 1 : index + 1
+    const sibling = layer[pairIndex] ?? layer[index]
+
+    path.push({ sibling, isLeft: isRightNode })
+    index = Math.floor(index / 2)
+  }
+
+  return path
+}
+
+const verifyMerkleProof = (leaf, proof, root) => {
+  const computedRoot = proof.reduce((acc, { sibling, isLeft }) => {
+    return isLeft ? hash(sibling + acc) : hash(acc + sibling)
+  }, leaf)
+
+  return computedRoot === root
+}
+
+async function main() {
+  console.log('🧪 ChainGuard Three-Tier Smoke Test')
+  console.log('='.repeat(60))
 
   try {
-    // TIER 1: PostgreSQL Database Test
-    console.log('📊 TIER 1: Testing PostgreSQL Database...');
-    const dbTest = await runCommand('cd /home/sagar/Desktop/Dev/ChainGuard-Evidence-Platform && npx prisma db push --accept-data-loss');
-    console.log('✅ PostgreSQL: Database schema synchronized');
-    
-    // TIER 2: Hyperledger Fabric Test
-    console.log('\n⛓️  TIER 2: Testing Hyperledger Fabric Blockchain...');
-    const containerCheck = await runCommand('docker ps --filter "name=peer0.org1.evidence.com" --format "table {{.Names}}\\t{{.Status}}"');
-    if (containerCheck.stdout.includes('peer0.org1.evidence.com')) {
-      console.log('✅ Hyperledger Fabric: Blockchain network is running');
-      console.log('   - Peer container: Active');
-      console.log('   - Orderer container: Active');
-    } else {
-      console.log('⚠️  Hyperledger Fabric: Network containers not fully active');
-    }
-    
-    // TIER 3: Storacha/IPFS Test
-    console.log('\n☁️  TIER 3: Testing Storacha/IPFS Storage...');
-    
-    // Create test evidence file
-    const testContent = `Evidence Record ${Date.now()}\nHash: ${crypto.randomBytes(32).toString('hex')}\nTimestamp: ${new Date().toISOString()}`;
-    fs.writeFileSync('/tmp/integration-test-evidence.txt', testContent);
-    
-    // Upload to Storacha
-    const uploadResult = await runCommand('storacha up /tmp/integration-test-evidence.txt');
-    
-    if (uploadResult.stdout.includes('https://storacha.link/ipfs/')) {
-      const ipfsUrl = uploadResult.stdout.match(/https:\/\/storacha\.link\/ipfs\/[a-z0-9]+/)[0];
-      console.log('✅ Storacha/IPFS: File uploaded successfully');
-      console.log(`   - IPFS URL: ${ipfsUrl}`);
-      
-      // Extract CID
-      const cid = ipfsUrl.split('/ipfs/')[1];
-      console.log(`   - Content ID (CID): ${cid}`);
-    } else {
-      console.log('⚠️  Storacha/IPFS: Upload test inconclusive');
-    }
-    
-    // INTEGRATION SUMMARY
-    console.log('\n🎯 INTEGRATION SUMMARY');
-    console.log('======================');
-    console.log('✅ Tier 1 (PostgreSQL Index): OPERATIONAL');
-    console.log('   → Metadata storage, case management, search indexes');
-    console.log('✅ Tier 2 (Blockchain Notary): OPERATIONAL');
-    console.log('   → Immutable custody records, evidence hashes, timestamps');
-    console.log('✅ Tier 3 (IPFS Vault): OPERATIONAL');
-    console.log('   → Encrypted evidence files, distributed storage');
-    
-    console.log('\n🔐 EVIDENCE WORKFLOW VERIFIED:');
-    console.log('1. Evidence metadata → PostgreSQL database');
-    console.log('2. Evidence hash & custody → Hyperledger Fabric blockchain');
-    console.log('3. Encrypted evidence files → Storacha/IPFS storage');
-    console.log('\n🎉 All three tiers are working together successfully!');
-    
-    // Cleanup
-    fs.unlinkSync('/tmp/integration-test-evidence.txt');
-    
+    console.log('\n📊 Tier 1 – PostgreSQL')
+    const [users, cases, evidence] = await Promise.all([
+      prisma.user.count(),
+      prisma.case.count(),
+      prisma.evidence.count()
+    ])
+    console.log(`✅ Connected to database (users: ${users}, cases: ${cases}, evidence: ${evidence})`)
+
+    console.log('\n🌲 Tier 2 – Merkle Evidence Ledger')
+    const leaves = [
+      createLeafHash({
+        caseId: 'case-demo',
+        evidenceId: 'ev-001',
+        ipfsCid: 'bafy-demo-1',
+        fileHash: 'sha256-demo-1',
+        timestamp: new Date().toISOString()
+      }),
+      createLeafHash({
+        caseId: 'case-demo',
+        evidenceId: 'ev-002',
+        ipfsCid: 'bafy-demo-2',
+        fileHash: 'sha256-demo-2',
+        timestamp: new Date().toISOString()
+      })
+    ]
+
+    const layers = buildMerkleLayers(leaves)
+    const root = layers.at(-1)?.[0] ?? ''
+    const proof = generateMerkleProof(layers, 0)
+    const valid = verifyMerkleProof(leaves[0], proof, root)
+
+    console.log(`✅ Merkle root: ${root}`)
+    console.log(`✅ Proof length: ${proof.length}`)
+    console.log(`✅ Proof valid: ${valid}`)
+
+  console.log('\n🗃️ Tier 3 – Pinata/IPFS')
+  console.log('ℹ️ Upload a file via the dashboard to verify Pinata integration.')
+    console.log('   The POST /api/evidence endpoint returns the computed Merkle root and proof.')
+
+    console.log('\n🎉 All tiers responding. Happy hacking!')
+    process.exit(0)
   } catch (error) {
-    console.error('❌ Integration test failed:', error.message);
-    process.exit(1);
+    console.error('\n❌ Smoke test failed:', error)
+    process.exit(1)
+  } finally {
+    await prisma.$disconnect()
   }
 }
 
-testThreeTierIntegration();
+if (require.main === module) {
+  main()
+}

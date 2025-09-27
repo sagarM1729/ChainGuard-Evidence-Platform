@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { storachaClient } from '@/lib/web3storage'
 
 interface Evidence {
   id: string
@@ -50,6 +49,22 @@ export default function CreateCaseForm({ onClose, onCaseCreated }: { onClose?: (
   
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showEvidenceForm, setShowEvidenceForm] = useState(false)
+  const [currentEvidence, setCurrentEvidence] = useState<Evidence>({
+    id: '',
+    filename: '',
+    filetype: '',
+    filesize: 0,
+    notes: '',
+    evidenceType: 'DOCUMENT',
+    category: '',
+    tags: [],
+    collectedAt: new Date().toISOString().split('T')[0],
+    collectedBy: '',
+    location: ''
+  })
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({})
+  
+  const fileInputRef = useRef<HTMLInputElement>(null)
   
   // Redirect if not authenticated
   useEffect(() => {
@@ -81,23 +96,6 @@ export default function CreateCaseForm({ onClose, onCaseCreated }: { onClose?: (
       </div>
     )
   }
-  
-  const [currentEvidence, setCurrentEvidence] = useState<Evidence>({
-    id: '',
-    filename: '',
-    filetype: '',
-    filesize: 0,
-    notes: '',
-    evidenceType: 'DOCUMENT',
-    category: '',
-    tags: [],
-    collectedAt: new Date().toISOString().split('T')[0],
-    collectedBy: '',
-    location: ''
-  })
-  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({})
-  
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleAddEvidence = () => {
     setCurrentEvidence({
@@ -129,20 +127,43 @@ export default function CreateCaseForm({ onClose, onCaseCreated }: { onClose?: (
     }
   }
 
-  const uploadToStoracha = async (file: File): Promise<{ cid: string, url: string }> => {
+  const uploadToPinata = async (file: File): Promise<{ cid: string, url: string }> => {
     try {
-      console.log('Starting Storacha upload for:', file.name, 'Size:', file.size);
-      const result = await storachaClient.uploadFile(file, file.name)
-      console.log('Storacha upload completed:', result);
-      return { cid: result.cid, url: result.url }
+      console.log('Starting server-side Pinata upload for:', file.name, 'Size:', file.size)
+
+      // Use server-side API endpoint for Pinata upload
+      const uploadFormData = new FormData()
+      uploadFormData.append('file', file)
+
+      const response = await fetch('/api/storage/upload', {
+        method: 'POST',
+        body: uploadFormData,
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || `Upload failed: ${response.status}`)
+      }
+
+      console.log('Server-side Pinata upload completed:', result)
+
+      if (result.fallback) {
+        console.warn('Using fallback storage due to:', result.error)
+      }
+
+      return {
+        cid: result.result.cid,
+        url: result.result.url
+      }
     } catch (error) {
-      console.error('Storacha upload failed:', error)
+      console.error('Storage upload failed:', error)
       // Don't throw error, let the form continue with local reference
-      const fallbackCid = `local_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9]/g, '_')}`;
-      console.warn('Using fallback CID:', fallbackCid);
-      return { 
-        cid: fallbackCid, 
-        url: `local://evidence/${fallbackCid}` 
+  const fallbackCid = `local_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9]/g, '_')}`
+      console.warn('Using client-side fallback CID:', fallbackCid)
+      return {
+        cid: fallbackCid,
+        url: `local://evidence/${fallbackCid}`
       }
     }
   }
@@ -156,8 +177,8 @@ export default function CreateCaseForm({ onClose, onCaseCreated }: { onClose?: (
     try {
       setUploadProgress(prev => ({ ...prev, [currentEvidence.id]: 0 }))
       
-      // Upload to Storacha/IPFS
-      const { cid, url } = await uploadToStoracha(currentEvidence.file)
+  // Upload to Pinata/IPFS
+  const { cid, url } = await uploadToPinata(currentEvidence.file)
       setUploadProgress(prev => ({ ...prev, [currentEvidence.id]: 100 }))
       
       const newEvidence: Evidence = {

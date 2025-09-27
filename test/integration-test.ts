@@ -1,109 +1,80 @@
 // Test script for 3-tier ChainGuard Evidence Platform integration
-// Tests PostgreSQL + Hyperledger Fabric + IPFS integration
+// Tests PostgreSQL + Merkle ledger + IPFS integration paths
 
 import { prisma } from '../src/lib/prisma'
-import { evidenceManager } from '../src/services/evidenceManager'
-import { fabricClient } from '../src/lib/fabric'
+import { createLeafHash, generateMerkleProof, getMerkleRoot, verifyMerkleProof } from '../src/lib/merkle'
 
 async function test3TierIntegration() {
   console.log('🧪 Starting 3-Tier Integration Test')
-  console.log('=' .repeat(50))
-  
+  console.log('='.repeat(50))
+
   try {
     // Test 1: Database Connection (Tier 1 - PostgreSQL Index)
     console.log('\n📊 Testing Tier 1 - PostgreSQL Index')
     console.log('-'.repeat(30))
-    
-    const userCount = await prisma.user.count()
+
+    const caseCount = await prisma.case.count()
+    const evidenceCount = await prisma.evidence.count()
     console.log('✅ Database connection successful')
-    console.log(`📈 Users in database: ${userCount}`)
-    
-    // Test 2: Fabric Connection (Tier 2 - Blockchain Notary)
-    console.log('\n🔗 Testing Tier 2 - Hyperledger Fabric Notary')
+    console.log(`📁 Cases in database: ${caseCount}`)
+    console.log(`📄 Evidence records: ${evidenceCount}`)
+
+    // Test 2: Merkle Ledger (Tier 2 - Evidence Notary)
+    console.log('\n🌲 Testing Tier 2 - Merkle Evidence Ledger')
     console.log('-'.repeat(30))
-    
-    await fabricClient.connect()
-    console.log('✅ Fabric client connection successful')
-    
-    // Test simulated evidence recording
-    const mockEvidence = {
-      id: `test_${Date.now()}`,
-      caseId: 'test_case_001',
-      filename: 'test_evidence.pdf',
-      ipfsCid: 'QmTestCID123456789',
-      fileHash: 'sha256_test_hash_abcdef123456789',
-      custodyOfficer: 'test@officer.com',
-      timestamp: new Date(),
-      accessLevel: 'RESTRICTED' as const
-    }
-    
-    const txId = await fabricClient.recordEvidence(mockEvidence)
-    console.log('✅ Evidence recorded on blockchain (simulated)')
-    console.log(`🔗 Transaction ID: ${txId}`)
-    
+
+    const sampleLeaves = [
+      createLeafHash({
+        caseId: 'case-demo-001',
+        evidenceId: 'evidence-001',
+        ipfsCid: 'bafyDemoCid001',
+        fileHash: 'sha256-demo-hash-001',
+        timestamp: new Date().toISOString()
+      }),
+      createLeafHash({
+        caseId: 'case-demo-001',
+        evidenceId: 'evidence-002',
+        ipfsCid: 'bafyDemoCid002',
+        fileHash: 'sha256-demo-hash-002',
+        timestamp: new Date().toISOString()
+      }),
+      createLeafHash({
+        caseId: 'case-demo-001',
+        evidenceId: 'evidence-003',
+        ipfsCid: 'bafyDemoCid003',
+        fileHash: 'sha256-demo-hash-003',
+        timestamp: new Date().toISOString()
+      })
+    ]
+
+    const merkleRoot = getMerkleRoot(sampleLeaves)
+    const proof = generateMerkleProof(sampleLeaves, 1)
+    const proofValid = verifyMerkleProof(proof.leaf, proof, merkleRoot)
+
+    console.log('✅ Merkle root computed:', merkleRoot)
+    console.log(`🧾 Proof siblings: ${proof.siblings.length}`)
+    console.log(`🔍 Proof verification: ${proofValid ? 'PASS' : 'FAIL'}`)
+
     // Test 3: IPFS Integration (Tier 3 - Vault Storage)
-    console.log('\n🗃️ Testing Tier 3 - IPFS Vault Storage')
+    console.log('\n🗃️ Testing Tier 3 - IPFS Vault Storage (Simulated)')
     console.log('-'.repeat(30))
-    
-    // Create a test file buffer
-    const testContent = Buffer.from('This is a test evidence file for 3-tier integration testing')
-    const testFile = new File([testContent], 'test_evidence.txt', { type: 'text/plain' })
-    
-    console.log('📄 Test file created (simulated)')
-    console.log(`📊 File size: ${testContent.length} bytes`)
-    console.log(`🏷️ File type: ${testFile.type}`)
-    
-    // Test Evidence Manager integration (all 3 tiers)
-    console.log('\n🔄 Testing Complete 3-Tier Workflow')
-    console.log('-'.repeat(30))
-    
-    try {
-      // This would normally require STORACHA_EMAIL to be set
-      console.log('⚠️ IPFS upload requires STORACHA_EMAIL environment variable')
-      console.log('✅ Evidence Manager service initialized successfully')
-      console.log('✅ 3-tier architecture structure validated')
-      
-      // Simulate the workflow
-      console.log('\n📋 Simulated Workflow:')
-      console.log('  1. ✅ File uploaded to IPFS (Tier 3 - Vault)')
-      console.log('  2. ✅ Metadata stored in PostgreSQL (Tier 1 - Index)')
-      console.log('  3. ✅ Hash recorded on Hyperledger Fabric (Tier 2 - Notary)')
-      console.log('  4. ✅ Cross-tier integrity verification ready')
-      
-    } catch (ipfsError) {
-      console.log('⚠️ IPFS integration requires environment setup')
-      console.log('💡 Set STORACHA_EMAIL in .env for full IPFS testing')
-    }
-    
-    // Test 4: Integrity Verification Across Tiers
-    console.log('\n🔍 Testing Cross-Tier Verification')
-    console.log('-'.repeat(30))
-    
-    const verificationResult = await fabricClient.verifyEvidenceIntegrity(
-      mockEvidence.id, 
-      mockEvidence.fileHash
-    )
-    
-    console.log('✅ Cross-tier verification completed')
-    console.log(`🔍 Evidence ID: ${verificationResult.evidenceId}`)
-    console.log(`✅ Hash match: ${verificationResult.hashMatch}`)
-    console.log(`⏰ Verified at: ${verificationResult.verifiedAt}`)
-    
+
+  console.log('ℹ️ IPFS upload requires Pinata credentials (PINATA_JWT or API key/secret pair)')
+  console.log('✅ Evidence Manager will automatically fall back to a development mock CID if Pinata upload fails')
+  console.log('⚠️ Run `npm run dev` and upload a file through the dashboard to exercise the full Pinata pipeline')
+
     // Summary
     console.log('\n🎉 3-TIER INTEGRATION TEST RESULTS')
-    console.log('=' .repeat(50))
+    console.log('='.repeat(50))
     console.log('✅ Tier 1 (PostgreSQL Index): OPERATIONAL')
-    console.log('✅ Tier 2 (Hyperledger Fabric Notary): OPERATIONAL')
-    console.log('⚠️ Tier 3 (IPFS Vault): READY (needs STORACHA_EMAIL)')
-    console.log('✅ Cross-tier verification: OPERATIONAL')
-    console.log('✅ Evidence workflow: READY FOR PRODUCTION')
-    
+    console.log(`✅ Tier 2 (Merkle Ledger): ${proofValid ? 'OPERATIONAL' : 'VERIFY MANUALLY'}`)
+  console.log('ℹ️ Tier 3 (IPFS Vault): Run dashboard upload to validate Pinata credentials')
+    console.log('✅ Evidence workflow: READY FOR MANUAL END-TO-END TEST')
   } catch (error) {
     console.error('❌ 3-Tier Integration Test Failed:', error)
     process.exit(1)
   } finally {
     await prisma.$disconnect()
-    await fabricClient.disconnect()
   }
 }
 

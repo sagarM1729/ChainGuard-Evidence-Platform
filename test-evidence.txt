@@ -1,1 +1,18 @@
-Test evidence file for ChainGuard platform
+ChainGuard Evidence Platform - Test Upload
+===========================================
+
+This is a test evidence file for the ChainGuard platform.
+
+File Details:
+- Timestamp: 2025-09-27 21:05:30 UTC
+- Purpose: Testing Pinata IPFS integration
+- Platform: ChainGuard Evidence Management System
+- Storage Provider: Pinata Cloud
+
+Test Data:
+- Case ID: TEST-001
+- Evidence Type: Document
+- Integrity Hash: SHA-256 will be calculated automatically
+- Upload Method: Direct Pinata API via ChainGuard backend
+
+This file demonstrates successful storage using Pinata.

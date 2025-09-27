@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { v4 as uuidv4 } from "uuid"
 
 export async function GET(req: NextRequest) {
   try {
@@ -62,16 +63,30 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Generate unique case number
+    const caseCount = await prisma.case.count()
+    const caseNumber = `CASE-${Date.now()}-${String(caseCount + 1).padStart(4, '0')}`
+    
+    const now = new Date()
+
+    const caseData: any = {
+      id: uuidv4(),
+      caseNumber,
+      title,
+      description,
+      location,
+      priority,
+      status,
+      officerId: session.user.id,
+      updatedAt: now,
+    }
+
+    if (category) {
+      caseData.category = category
+    }
+
     const newCase = await prisma.case.create({
-      data: {
-        title,
-        description,
-        category,
-        location,
-        priority,
-        status,
-        officerId: session.user.id,
-      },
+      data: caseData,
       include: {
         _count: {
           select: {

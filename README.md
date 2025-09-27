@@ -10,15 +10,18 @@ A Next.js application for secure digital evidence management with complete authe
 - **Email Integration**: Resend API for email delivery
 - **Protected Routes**: Middleware-based route protection
 - **Responsive UI**: Tailwind CSS with custom design
+- **Three-Tier Evidence Storage**: PostgreSQL metadata, Merkle ledger attestations, and Pinata/IPFS file storage
+
 
 ## Tech Stack
 
 - **Frontend**: Next.js 15.5.0, React 19, TypeScript, Tailwind CSS
 - **Authentication**: NextAuth.js, bcryptjs
 - **Database**: PostgreSQL, Prisma ORM
+- **Evidence Ledger**: Node-based Merkle tree (TypeScript)
 - **Email**: Resend API, Nodemailer
 - **Testing**: Jest, Cypress
-- **Future**: Hyperledger Fabric, IPFS, AI Search
+- **Future**: IPFS, AI Search
 
 ## Getting Started
 
@@ -90,7 +93,6 @@ npx prisma studio       # Database GUI
 - [x] Authentication system with password reset
 - [ ] Evidence upload and management
 - [ ] IPFS integration for file storage
-- [ ] Blockchain verification with Hyperledger Fabric
 - [ ] AI-powered search functionality
 
 ## License
@@ -296,7 +298,6 @@ npm run typecheck       # Check TypeScript types
 │   ├── store/                 # Zustand state management
 │   └── types/                 # TypeScript type definitions
 ├── prisma/                    # Database schema and migrations
-├── blockchain/                # Hyperledger Fabric configuration
 ├── public/                    # Static assets
 └── cypress/                   # E2E test files
 ```
@@ -339,8 +340,11 @@ NEXTAUTH_URL="https://your-domain.com"
 # Production Email Service
 RESEND_API_KEY="re_your_production_api_key"
 
-# IPFS Storage
-WEB3_STORAGE_TOKEN="your-production-token"
+# IPFS Storage (Pinata)
+PINATA_JWT="your-production-pinata-jwt"
+# PINATA_API_KEY="your-production-pinata-api-key"
+# PINATA_API_SECRET="your-production-pinata-api-secret"
+# PINATA_GATEWAY_URL="https://gateway.pinata.cloud/ipfs"
 ```
 
 ### **Deployment Checklist**
@@ -372,7 +376,7 @@ WEB3_STORAGE_TOKEN="your-production-token"
 
 ### **📋 Planned**
 - [ ] Smart contract implementation
-- [ ] Blockchain verification system
+- [ ] Merkle ledger visualization
 - [ ] Advanced audit trails
 - [ ] Mobile app companion
 - [ ] API documentation
@@ -412,4 +416,4 @@ For support and questions:
 
 ---
 
-**ChainGuard Evidence Platform** - Secure digital evidence management with blockchain verification.
+**ChainGuard Evidence Platform** - Secure digital evidence management with Merkle ledger verification.

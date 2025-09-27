@@ -11,12 +11,12 @@ out/
 dist/
 build/
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Environment variables (commented out to push .env files to repo)
+# .env
+# .env.local
+# .env.development.local
+# .env.test.local
+# .env.production.local
 
 # Testing
 coverage/
