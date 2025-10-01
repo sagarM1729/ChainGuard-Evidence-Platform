@@ -23,6 +23,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import ComprehensiveUploadForm from "@/components/evidence/ComprehensiveUploadForm"
+import AIIntelligenceEngine from "@/components/cases/AIIntelligenceEngine"
 import type { MerkleProof } from "@/lib/merkle"
 
 interface Evidence {
@@ -485,6 +486,9 @@ export default function CaseDetailsPage() {
               </div>
             </div>
           </Card>
+
+          {/* AI Intelligence Engine */}
+          <AIIntelligenceEngine caseId={case_.id} />
         </div>
       </div>
 
