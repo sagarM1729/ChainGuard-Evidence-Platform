@@ -1,5 +1,6 @@
 // Evidence Manager Service for IPFS Integration with Multi-Provider Support
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 import { ipfsUploadService } from '@/lib/ipfs-upload'
 import { getPinataClient } from '@/lib/pinata-client'
 import {
@@ -100,6 +101,7 @@ class EvidenceManager {
             ipfsCid: ipfsCid
           }]),
           isEncrypted: true,
+          verified: false,
           caseId: metadata.caseId,
           createdAt: new Date(),
           updatedAt: new Date()
@@ -121,7 +123,9 @@ class EvidenceManager {
         where: { id: evidence.id },
         data: {
           blockchainHash: leafHash,
-          blockchainTxId: merkleRoot // legacy field now stores root snapshot
+          blockchainTxId: merkleRoot, // legacy field now stores root snapshot
+          merkleProof: merkleProof as unknown as Prisma.InputJsonValue,
+          verified: true
         }
       })
 
@@ -169,7 +173,7 @@ class EvidenceManager {
         where: { id: evidence.caseId },
         select: {
           id: true,
-          // merkleRoot: true  // TODO: Fix after Prisma client regeneration
+          merkleRoot: true
         }
       })
 
@@ -198,15 +202,25 @@ class EvidenceManager {
 
       const blockchainVerification =
         !!merkleProof &&
-        // caseRecord?.merkleRoot === merkleRoot &&  // TODO: Fix after Prisma client regeneration
+        !!caseRecord?.merkleRoot &&
+        caseRecord.merkleRoot === merkleRoot &&
         verifyMerkleProof(
           merkleProof.leaf,
           merkleProof,
-          // caseRecord?.merkleRoot || ''  // TODO: Fix after Prisma client regeneration
-          merkleRoot
+          caseRecord.merkleRoot
         )
 
       const isValid = localVerification && blockchainVerification
+
+      await prisma.evidence.update({
+        where: { id: evidence.id },
+        data: {
+          verified: isValid,
+          merkleProof: merkleProof
+            ? (merkleProof as unknown as Prisma.InputJsonValue)
+            : undefined
+        }
+      })
 
       console.log('🔍 Complete evidence integrity check:', {
         evidenceId,
@@ -241,7 +255,7 @@ class EvidenceManager {
             select: {
               id: true,
               title: true,
-              // merkleRoot: true  // TODO: Fix after Prisma client regeneration
+              merkleRoot: true
             }
           }
         }
@@ -348,11 +362,12 @@ class EvidenceManager {
     const proof = generateMerkleProof(leaves, targetIndex)
     const root = getMerkleRoot(leaves)
 
+    const caseRoot = evidence.case?.merkleRoot || null
+
     return {
       merkleRoot: root,
       proof,
-      // isValid: evidence.case?.merkleRoot === root  // TODO: Fix after Prisma client regeneration
-      isValid: true  // Temporary - will be fixed after Prisma client regeneration
+      isValid: caseRoot === root
     }
   }
 
@@ -397,9 +412,8 @@ class EvidenceManager {
 
     await prisma.case.update({
       where: { id: input.caseId },
-      data: { 
-        // merkleRoot  // TODO: Fix after Prisma client regeneration
-        updatedAt: new Date()
+      data: {
+        merkleRoot
       }
     })
 

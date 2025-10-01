@@ -16,11 +16,14 @@ import {
   Hash,
   Clock,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import ComprehensiveUploadForm from "@/components/evidence/ComprehensiveUploadForm"
+import AIIntelligenceEngine from "@/components/cases/AIIntelligenceEngine"
 import type { MerkleProof } from "@/lib/merkle"
 
 interface Evidence {
@@ -56,6 +59,11 @@ interface Case {
   officerId: string
   merkleRoot?: string
   evidence: Evidence[]
+  User?: {
+    id: string
+    name: string | null
+    email: string
+  }
 }
 
 export default function CaseDetailsPage() {
@@ -67,6 +75,7 @@ export default function CaseDetailsPage() {
   const [loading, setLoading] = useState(true)
   const [showUploadForm, setShowUploadForm] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
 
   const fetchCaseDetails = useCallback(async () => {
     if (!caseId) {
@@ -224,12 +233,39 @@ export default function CaseDetailsPage() {
           <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
             <h2 className="text-xl font-bold text-[#022b3a] mb-6">Case Information</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="text-sm font-medium text-[#022b3a]/70">Description</label>
-                <p className="mt-1 text-[#022b3a]">{case_.description}</p>
+            {/* Description - Full Width */}
+            <div className="mb-6">
+              <label className="text-sm font-medium text-[#022b3a]/70">Description</label>
+              <div className="mt-2 bg-gradient-to-r from-[#1f7a8c]/5 to-[#022b3a]/5 rounded-lg border border-[#1f7a8c]/10">
+                <div className="relative p-4">
+                  <p className={`text-[#022b3a] whitespace-pre-wrap break-words leading-relaxed ${!isDescriptionExpanded && case_.description.length > 300 ? 'line-clamp-4' : ''}`}>
+                    {case_.description}
+                  </p>
+                </div>
+                {case_.description.length > 300 && (
+                  <div className="px-4 pb-3 pt-0">
+                    <button
+                      onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                      className="flex items-center text-sm font-medium text-[#1f7a8c] hover:text-[#022b3a] transition-colors"
+                    >
+                      {isDescriptionExpanded ? (
+                        <>
+                          <ChevronUp className="h-4 w-4 mr-1" />
+                          Show Less
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="h-4 w-4 mr-1" />
+                          Show More
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
               </div>
-              
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="text-sm font-medium text-[#022b3a]/70">Category</label>
                 <p className="mt-1 text-[#022b3a]">{case_.category}</p>
@@ -247,7 +283,7 @@ export default function CaseDetailsPage() {
                 <label className="text-sm font-medium text-[#022b3a]/70">Assigned To</label>
                 <div className="flex items-center mt-1">
                   <User className="h-4 w-4 text-[#1f7a8c] mr-1" />
-                  <span className="text-[#022b3a]">{case_.officerId}</span>
+                  <span className="text-[#022b3a]">{case_.User?.name || case_.User?.email || case_.officerId}</span>
                 </div>
               </div>
               
@@ -401,6 +437,54 @@ export default function CaseDetailsPage() {
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* AI Intelligence Engine */}
+          <AIIntelligenceEngine caseId={case_.id} />
+
+          {/* Evidence Chain Integrity Status */}
+          <Card className="p-4 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Shield className="h-5 w-5 text-[#1f7a8c]" />
+                <h3 className="text-sm font-bold text-[#022b3a]">Chain Integrity</h3>
+              </div>
+              {case_.merkleRoot ? (
+                case_.evidence.length > 0 && case_.evidence.every(e => e.verified) ? (
+                  <div className="flex items-center space-x-1 px-3 py-1 bg-green-100 border border-green-200 rounded-full">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span className="text-xs font-semibold text-green-700">✓ Verified</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-1 px-3 py-1 bg-red-100 border border-red-200 rounded-full">
+                    <AlertCircle className="h-4 w-4 text-red-600" />
+                    <span className="text-xs font-semibold text-red-700">✗ Tampered</span>
+                  </div>
+                )
+              ) : (
+                <div className="flex items-center space-x-1 px-3 py-1 bg-gray-100 border border-gray-200 rounded-full">
+                  <Clock className="h-4 w-4 text-gray-600" />
+                  <span className="text-xs font-semibold text-gray-700">Pending</span>
+                </div>
+              )}
+            </div>
+            {case_.merkleRoot && (
+              <div className="mt-3 pt-3 border-t border-[#1f7a8c]/10">
+                <p className="text-xs text-[#022b3a]/60 mb-1">Evidence Status:</p>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-[#022b3a]/70">
+                    {case_.evidence.filter(e => e.verified).length} / {case_.evidence.length} verified
+                  </span>
+                  <span className={`font-semibold ${
+                    case_.evidence.every(e => e.verified) 
+                      ? 'text-green-600' 
+                      : 'text-red-600'
+                  }`}>
+                    {((case_.evidence.filter(e => e.verified).length / case_.evidence.length) * 100).toFixed(0)}%
+                  </span>
+                </div>
+              </div>
+            )}
+          </Card>
+
           {/* Quick Stats */}
           <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
             <h3 className="text-lg font-bold text-[#022b3a] mb-4">Quick Stats</h3>

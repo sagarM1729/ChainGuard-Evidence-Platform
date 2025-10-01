@@ -29,6 +29,13 @@ export async function GET(
             createdAt: "desc",
           },
         },
+        User: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     })
 

@@ -241,19 +241,30 @@ export default function EditCasePage() {
               </div>
 
               <div>
-                <Label htmlFor="description" className="text-[#022b3a] font-medium">
-                  Description *
-                </Label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  placeholder="Provide a detailed description of the case"
-                  required
-                  rows={4}
-                  className="mt-1 w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
-                />
+                <div className="flex justify-between items-center mb-1">
+                  <Label htmlFor="description" className="text-[#022b3a] font-medium">
+                    Description *
+                  </Label>
+                  <span className="text-xs text-[#022b3a]/60">
+                    {formData.description.length} characters
+                  </span>
+                </div>
+                <div className="relative">
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    placeholder="Provide a detailed description of the case..."
+                    required
+                    rows={6}
+                    className="mt-1 w-full px-4 py-3 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-2 focus:ring-[#1f7a8c]/20 bg-gradient-to-r from-[#1f7a8c]/5 to-[#022b3a]/5 transition-all duration-200 resize-y min-h-[150px]"
+                  />
+                </div>
+                <p className="mt-1 text-xs text-[#022b3a]/60 flex items-start">
+                  <span className="mr-1">💡</span>
+                  <span>Update the case description with any new relevant information or developments.</span>
+                </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
