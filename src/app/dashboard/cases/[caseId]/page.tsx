@@ -440,6 +440,51 @@ export default function CaseDetailsPage() {
           {/* AI Intelligence Engine */}
           <AIIntelligenceEngine caseId={case_.id} />
 
+          {/* Evidence Chain Integrity Status */}
+          <Card className="p-4 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <Shield className="h-5 w-5 text-[#1f7a8c]" />
+                <h3 className="text-sm font-bold text-[#022b3a]">Chain Integrity</h3>
+              </div>
+              {case_.merkleRoot ? (
+                case_.evidence.length > 0 && case_.evidence.every(e => e.verified) ? (
+                  <div className="flex items-center space-x-1 px-3 py-1 bg-green-100 border border-green-200 rounded-full">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <span className="text-xs font-semibold text-green-700">✓ Verified</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-1 px-3 py-1 bg-red-100 border border-red-200 rounded-full">
+                    <AlertCircle className="h-4 w-4 text-red-600" />
+                    <span className="text-xs font-semibold text-red-700">✗ Tampered</span>
+                  </div>
+                )
+              ) : (
+                <div className="flex items-center space-x-1 px-3 py-1 bg-gray-100 border border-gray-200 rounded-full">
+                  <Clock className="h-4 w-4 text-gray-600" />
+                  <span className="text-xs font-semibold text-gray-700">Pending</span>
+                </div>
+              )}
+            </div>
+            {case_.merkleRoot && (
+              <div className="mt-3 pt-3 border-t border-[#1f7a8c]/10">
+                <p className="text-xs text-[#022b3a]/60 mb-1">Evidence Status:</p>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-[#022b3a]/70">
+                    {case_.evidence.filter(e => e.verified).length} / {case_.evidence.length} verified
+                  </span>
+                  <span className={`font-semibold ${
+                    case_.evidence.every(e => e.verified) 
+                      ? 'text-green-600' 
+                      : 'text-red-600'
+                  }`}>
+                    {((case_.evidence.filter(e => e.verified).length / case_.evidence.length) * 100).toFixed(0)}%
+                  </span>
+                </div>
+              </div>
+            )}
+          </Card>
+
           {/* Quick Stats */}
           <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
             <h3 className="text-lg font-bold text-[#022b3a] mb-4">Quick Stats</h3>

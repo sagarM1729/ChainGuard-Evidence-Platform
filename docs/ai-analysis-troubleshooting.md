@@ -86,18 +86,7 @@
 
 #### Issue 7: External context is empty
 
-**Cause**: Google Custom Search not configured
-**This is OK!** The AI will still work without it.
-
-**To enable external search**:
-1. Follow the guide in `docs/google-custom-search-setup.md`
-2. Get a Google Custom Search API key
-3. Add to `.env.local`:
-   ```
-   GOOGLE_SEARCH_API_KEY=your_key_here
-   GOOGLE_SEARCH_ENGINE_ID=your_engine_id_here
-   ```
-4. Restart server
+**This is normal** - External context is currently a placeholder feature. The AI analysis focuses on internal case data, evidence patterns, and suspect profiling using Google Gemini AI.
 
 ## Testing the API Directly
 

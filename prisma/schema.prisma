@@ -13,7 +13,7 @@ model Case {
   title       String
   description String
   createdAt   DateTime   @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime   @updatedAt
   officerId   String
   merkleRoot  String?
   category    String?
@@ -42,10 +42,11 @@ model Evidence {
   ipfsHash       String       @unique
   blockchainTxId String?      @unique
   createdAt      DateTime     @default(now())
-  updatedAt      DateTime
+  updatedAt      DateTime     @updatedAt
   caseId         String
   accessLevel    AccessLevel  @default(RESTRICTED)
   blockchainHash String?
+  merkleProof    Json?
   category       String?
   collectedAt    DateTime?
   collectedBy    String?
@@ -57,6 +58,7 @@ model Evidence {
   filesize       Int?
   ipfsCid        String       @unique
   isEncrypted    Boolean      @default(true)
+  verified       Boolean      @default(false)
   location       String?
   retrievalUrl   String
   tags           String[]

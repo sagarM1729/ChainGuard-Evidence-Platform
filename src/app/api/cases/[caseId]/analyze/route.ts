@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { GoogleGenerativeAI } from "@google/generative-ai"
-import { google } from "googleapis"
 
 // Validate API key on startup
 if (!process.env.GEMINI_API_KEY) {
@@ -12,9 +11,6 @@ if (!process.env.GEMINI_API_KEY) {
 
 // Initialize Gemini AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
-
-// Initialize Google Custom Search
-const customsearch = google.customsearch('v1')
 
 interface AnalysisResult {
   caseSummary: {
@@ -25,7 +21,20 @@ interface AnalysisResult {
       organizations: string[]
       objects: string[]
     }
-    suggestedNextSteps: string[]
+    suspectProfile: {
+      likelySuspects: Array<{
+        profile: string
+        reasoning: string
+        evidenceSupporting: string[]
+      }>
+      motivePrediction: string
+      modusPrediction: string
+    }
+    suggestedNextSteps: Array<{
+      step: string
+      priority: 'HIGH' | 'MEDIUM' | 'LOW'
+      reasoning: string
+    }>
   }
   relatedCases: Array<{
     caseNumber: string
@@ -41,49 +50,7 @@ interface AnalysisResult {
   }>
 }
 
-// Function to search the web for related information using Google Custom Search
-async function searchWebForContext(caseTitle: string, caseDescription: string, category: string): Promise<Array<{
-  title: string
-  snippet: string
-  link: string
-  date: string
-}>> {
-  try {
-    // Check if Google Custom Search is configured
-    if (!process.env.GOOGLE_SEARCH_API_KEY || !process.env.GOOGLE_SEARCH_ENGINE_ID) {
-      console.log("Google Custom Search not configured, using fallback")
-      return []
-    }
-
-    // Create a search query based on case details
-    const searchQuery = `${category} crime case legal precedent ${caseTitle}`.substring(0, 150)
-    
-    console.log("Searching web for:", searchQuery)
-
-    // Perform Google Custom Search
-    const response = await customsearch.cse.list({
-      auth: process.env.GOOGLE_SEARCH_API_KEY,
-      cx: process.env.GOOGLE_SEARCH_ENGINE_ID,
-      q: searchQuery,
-      num: 5, // Get top 5 results
-      dateRestrict: 'y2', // Last 2 years
-    })
-
-    const results = response.data.items || []
-    
-    return results.map((item: any) => ({
-      title: item.title || '',
-      snippet: item.snippet || '',
-      link: item.link || '',
-      date: item.pagemap?.metatags?.[0]?.['article:published_time'] || new Date().toISOString().split('T')[0]
-    }))
-  } catch (error) {
-    console.error("Error searching web:", error)
-    return []
-  }
-}
-
-// Function to analyze case with Gemini AI
+// Function to analyze case with Gemini AI for suspect profiling and pattern detection
 async function analyzeCaseWithGemini(caseData: any, allCases: any[]): Promise<AnalysisResult> {
   try {
     console.log("Starting Gemini analysis for case:", caseData.caseNumber)
@@ -135,6 +102,8 @@ ${idx + 1}. Case ${c.caseNumber}: ${c.title}
 
 ${caseText}
 
+IMPORTANT: Focus on evidence-based analysis using ONLY the case data, evidence files, and related cases provided above. Do not make assumptions about external sources or events.
+
 Please provide your analysis in the following JSON structure:
 {
   "caseSummary": {
@@ -145,7 +114,24 @@ Please provide your analysis in the following JSON structure:
       "organizations": ["organizations mentioned"],
       "objects": ["weapons, vehicles, significant items"]
     },
-    "suggestedNextSteps": ["actionable step 1", "actionable step 2", ...]
+    "suspectProfile": {
+      "likelySuspects": [
+        {
+          "profile": "Description of suspect type/profile",
+          "reasoning": "Detailed explanation of why this person/type might be involved based on evidence",
+          "evidenceSupporting": ["evidence point 1", "evidence point 2", ...]
+        }
+      ],
+      "motivePrediction": "Predicted motive based on evidence and patterns",
+      "modusPrediction": "Predicted method of operation based on evidence"
+    },
+    "suggestedNextSteps": [
+      {
+        "step": "Specific actionable step",
+        "priority": "HIGH/MEDIUM/LOW",
+        "reasoning": "Why this step is important"
+      }
+    ]
   },
   "relatedCases": [
     {
@@ -155,21 +141,34 @@ Please provide your analysis in the following JSON structure:
       "caseId": "case id"
     }
   ],
-  "externalContext": [
-    {
-      "eventDescription": "description of relevant external event or information",
-      "source": "source name",
-      "date": "date if available",
-      "relevance": "explanation of why this is relevant"
-    }
-  ]
+  "externalContext": []
 }
 
-Focus on:
-1. Identifying patterns, inconsistencies, and key details
-2. Finding similar cases based on M.O., location, evidence types, or other factors
-3. Suggesting logical next investigative steps
-4. Providing contextual information that might be relevant to the investigation
+ANALYSIS FOCUS (use ONLY provided case data and evidence):
+
+1. SUSPECT PROFILING: Predict WHO might have committed this crime based on evidence
+   - Physical evidence (DNA, fingerprints, weapons, traces)
+   - Behavioral patterns (timing, method, target selection)
+   - Geographic patterns (location familiarity, escape routes)
+   - Comparison with similar cases in the provided database
+
+2. MOTIVE ANALYSIS: WHY this crime was committed
+   - Financial gain, revenge, passion, organized crime, etc.
+   - Support each theory with specific evidence from the case
+
+3. METHOD PREDICTION: HOW the crime was executed
+   - Level of planning and sophistication (based on evidence)
+   - Tools and techniques used (documented in evidence files)
+   - Insider knowledge indicators
+
+4. NEXT STEPS: Prioritized investigative actions
+   - HIGH priority: Immediate actions (evidence preservation, urgent interviews)
+   - MEDIUM priority: Important but can wait 24-48 hours
+   - LOW priority: Background investigation and documentation
+
+5. PATTERN DETECTION: Find similar cases ONLY from the related cases list above
+
+CRITICAL: Base ALL analysis on provided evidence. Do NOT reference external sources or make assumptions. Set externalContext to empty array [].
 
 Return ONLY valid JSON, no additional text.`
 
@@ -198,23 +197,6 @@ Return ONLY valid JSON, no additional text.`
     const analysis: AnalysisResult = JSON.parse(jsonText)
     console.log("Analysis complete, found", analysis.relatedCases.length, "related cases")
 
-    // Get web context from Google Search
-    const webContexts = await searchWebForContext(
-      caseData.title,
-      caseData.description,
-      caseData.category
-    )
-
-    // Add web-based external context from Google Search results
-    webContexts.forEach(context => {
-      analysis.externalContext.push({
-        eventDescription: `${context.title}: ${context.snippet}`,
-        source: context.link,
-        date: context.date,
-        relevance: "External information from web search related to case category and details"
-      })
-    })
-
     return analysis
   } catch (error: any) {
     console.error("Error analyzing with Gemini:", error)
@@ -239,11 +221,32 @@ Return ONLY valid JSON, no additional text.`
           organizations: [],
           objects: []
         },
+        suspectProfile: {
+          likelySuspects: [],
+          motivePrediction: "Analysis in progress",
+          modusPrediction: "Analysis in progress"
+        },
         suggestedNextSteps: [
-          "Review all collected evidence thoroughly",
-          "Interview relevant witnesses",
-          "Cross-reference with similar cases",
-          "Collect additional evidence if needed"
+          {
+            step: "Review all collected evidence thoroughly",
+            priority: "HIGH",
+            reasoning: "Complete evidence review is essential for accurate analysis"
+          },
+          {
+            step: "Interview relevant witnesses",
+            priority: "HIGH",
+            reasoning: "Witness testimony can provide crucial context"
+          },
+          {
+            step: "Cross-reference with similar cases",
+            priority: "MEDIUM",
+            reasoning: "Pattern detection may reveal connections"
+          },
+          {
+            step: "Collect additional evidence if needed",
+            priority: "MEDIUM",
+            reasoning: "Additional evidence may strengthen the case"
+          }
         ]
       },
       relatedCases: [],

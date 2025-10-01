@@ -138,11 +138,9 @@ npm run dev
 
 ### API Endpoints
 - **Gemini:** `https://generativelanguage.googleapis.com/v1beta/models/`
-- **Custom Search:** `https://www.googleapis.com/customsearch/v1`
 
 ### Dependencies
 - `@google/generative-ai` - Gemini SDK
-- `googleapis` - Google Custom Search client
 - `cheerio` - HTML parsing (installed but not actively used)
 
 ---
@@ -151,12 +149,10 @@ npm run dev
 
 1. **API Costs:**
    - Gemini 2.5 Flash: Free tier available (15 RPM)
-   - Google Custom Search: Free 100 queries/day
    - Monitor usage in Google Cloud Console
 
 2. **Rate Limits:**
    - Gemini: 15 requests/minute (free tier)
-   - Custom Search: 100 queries/day (free tier)
    - Upgrade if needed for production
 
 3. **Data Privacy:**

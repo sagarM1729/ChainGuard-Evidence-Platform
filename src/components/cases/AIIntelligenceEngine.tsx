@@ -3,8 +3,7 @@
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Brain, Loader2, ChevronDown, ChevronUp, ExternalLink, AlertCircle } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { Brain, Loader2, ChevronDown, ChevronUp, AlertCircle } from "lucide-react"
 
 interface KeyEntities {
   people: string[]
@@ -13,10 +12,29 @@ interface KeyEntities {
   objects: string[]
 }
 
+interface LikelySuspect {
+  profile: string
+  reasoning: string
+  evidenceSupporting: string[]
+}
+
+interface SuspectProfile {
+  likelySuspects: LikelySuspect[]
+  motivePrediction: string
+  modusPrediction: string
+}
+
+interface NextStep {
+  step: string
+  priority: 'HIGH' | 'MEDIUM' | 'LOW'
+  reasoning: string
+}
+
 interface CaseSummary {
   summary: string[]
   keyEntities: KeyEntities
-  suggestedNextSteps: string[]
+  suspectProfile: SuspectProfile
+  suggestedNextSteps: NextStep[]
 }
 
 interface RelatedCase {
@@ -44,11 +62,9 @@ interface AIIntelligenceEngineProps {
 }
 
 export default function AIIntelligenceEngine({ caseId }: AIIntelligenceEngineProps) {
-  const router = useRouter()
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [activeTab, setActiveTab] = useState<'summary' | 'related' | 'external'>('summary')
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     people: true,
     locations: true,
@@ -113,7 +129,7 @@ export default function AIIntelligenceEngine({ caseId }: AIIntelligenceEnginePro
       {!analysis && !isAnalyzing && (
         <div className="space-y-4">
           <p className="text-sm text-[#022b3a]/70 leading-relaxed">
-            Analyze case details, evidence, and cross-reference with internal and external data sources to uncover hidden patterns.
+            Analyze case details and evidence using AI to predict suspects, identify patterns, and provide prioritized investigative recommendations.
           </p>
           <Button
             onClick={handleRunAnalysis}
@@ -131,8 +147,8 @@ export default function AIIntelligenceEngine({ caseId }: AIIntelligenceEnginePro
             <Loader2 className="h-12 w-12 text-[#1f7a8c] animate-spin mb-4" />
             <div className="text-center space-y-2">
               <p className="text-sm font-medium text-[#022b3a]">Analyzing case data...</p>
-              <p className="text-xs text-[#022b3a]/60">Cross-referencing cases...</p>
-              <p className="text-xs text-[#022b3a]/60">Querying external sources...</p>
+              <p className="text-xs text-[#022b3a]/60">Processing evidence patterns...</p>
+              <p className="text-xs text-[#022b3a]/60">Generating suspect predictions...</p>
             </div>
           </div>
         </div>
@@ -158,44 +174,9 @@ export default function AIIntelligenceEngine({ caseId }: AIIntelligenceEnginePro
 
       {analysis && (
         <div className="space-y-4">
-          {/* Tabs */}
-          <div className="flex space-x-2 border-b border-[#1f7a8c]/20">
-            <button
-              onClick={() => setActiveTab('summary')}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
-                activeTab === 'summary'
-                  ? 'text-[#1f7a8c] border-b-2 border-[#1f7a8c]'
-                  : 'text-[#022b3a]/60 hover:text-[#022b3a]'
-              }`}
-            >
-              Summary
-            </button>
-            <button
-              onClick={() => setActiveTab('related')}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
-                activeTab === 'related'
-                  ? 'text-[#1f7a8c] border-b-2 border-[#1f7a8c]'
-                  : 'text-[#022b3a]/60 hover:text-[#022b3a]'
-              }`}
-            >
-              Related Cases ({analysis.relatedCases.length})
-            </button>
-            <button
-              onClick={() => setActiveTab('external')}
-              className={`px-4 py-2 text-sm font-medium transition-colors ${
-                activeTab === 'external'
-                  ? 'text-[#1f7a8c] border-b-2 border-[#1f7a8c]'
-                  : 'text-[#022b3a]/60 hover:text-[#022b3a]'
-              }`}
-            >
-              External ({analysis.externalContext.length})
-            </button>
-          </div>
-
-          {/* Tab Content */}
+          {/* Analysis Content */}
           <div className="max-h-[600px] overflow-y-auto">
-            {activeTab === 'summary' && (
-              <div className="space-y-6">
+            <div className="space-y-6">
                 {/* AI-Generated Summary */}
                 <div>
                   <h4 className="font-semibold text-[#022b3a] mb-3 flex items-center">
@@ -309,101 +290,111 @@ export default function AIIntelligenceEngine({ caseId }: AIIntelligenceEnginePro
                   </div>
                 </div>
 
+                {/* Suspect Profile */}
+                {analysis.caseSummary.suspectProfile && (
+                  <div>
+                    <h4 className="font-semibold text-[#022b3a] mb-3 flex items-center">
+                      <span className="text-lg mr-2">🔎</span>
+                      Suspect Profile & Predictions
+                    </h4>
+                    <div className="space-y-4">
+                      {/* Likely Suspects */}
+                      {analysis.caseSummary.suspectProfile.likelySuspects && analysis.caseSummary.suspectProfile.likelySuspects.length > 0 && (
+                        <div className="border border-orange-200 rounded-lg p-4 bg-orange-50">
+                          <h5 className="font-medium text-orange-900 mb-3 flex items-center">
+                            <span className="mr-2">👤</span>
+                            Likely Suspects
+                          </h5>
+                          <div className="space-y-3">
+                            {analysis.caseSummary.suspectProfile.likelySuspects.map((suspect, idx) => (
+                              <div key={idx} className="border border-orange-300 rounded-lg p-3 bg-white">
+                                <div className="flex items-start justify-between mb-2">
+                                  <p className="font-semibold text-[#022b3a]">{suspect.profile}</p>
+                                  <span className="text-xs px-2 py-1 bg-orange-100 text-orange-800 rounded-full">
+                                    Suspect #{idx + 1}
+                                  </span>
+                                </div>
+                                <p className="text-sm text-[#022b3a]/80 mb-2">
+                                  <span className="font-medium">Reasoning:</span> {suspect.reasoning}
+                                </p>
+                                {suspect.evidenceSupporting && suspect.evidenceSupporting.length > 0 && (
+                                  <div className="mt-2">
+                                    <p className="text-xs font-medium text-[#022b3a] mb-1">Supporting Evidence:</p>
+                                    <ul className="space-y-1">
+                                      {suspect.evidenceSupporting.map((evidence, eidx) => (
+                                        <li key={eidx} className="text-xs text-[#022b3a]/70 flex items-start">
+                                          <span className="text-orange-600 mr-1">•</span>
+                                          {evidence}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Motive Prediction */}
+                      {analysis.caseSummary.suspectProfile.motivePrediction && (
+                        <div className="border border-purple-200 rounded-lg p-4 bg-purple-50">
+                          <h5 className="font-medium text-purple-900 mb-2 flex items-center">
+                            <span className="mr-2">💭</span>
+                            Predicted Motive
+                          </h5>
+                          <p className="text-sm text-purple-900/90">
+                            {analysis.caseSummary.suspectProfile.motivePrediction}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Modus Operandi Prediction */}
+                      {analysis.caseSummary.suspectProfile.modusPrediction && (
+                        <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                          <h5 className="font-medium text-blue-900 mb-2 flex items-center">
+                            <span className="mr-2">🎯</span>
+                            Predicted Modus Operandi
+                          </h5>
+                          <p className="text-sm text-blue-900/90">
+                            {analysis.caseSummary.suspectProfile.modusPrediction}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Suggested Next Steps */}
                 <div>
                   <h4 className="font-semibold text-[#022b3a] mb-3 flex items-center">
                     <span className="text-lg mr-2">✅</span>
                     Suggested Next Steps
                   </h4>
-                  <ul className="space-y-2">
-                    {analysis.caseSummary.suggestedNextSteps.map((step, idx) => (
-                      <li key={idx} className="flex items-start text-sm text-[#022b3a]/80">
-                        <span className="text-[#1f7a8c] mr-2 font-bold">{idx + 1}.</span>
-                        <span>{step}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
-
-            {activeTab === 'related' && (
-              <div className="space-y-4">
-                <h4 className="font-semibold text-[#022b3a] mb-3">Potential Links to Other Cases</h4>
-                {analysis.relatedCases.length === 0 ? (
-                  <p className="text-sm text-[#022b3a]/60 text-center py-8">
-                    No related cases found. This case appears to be unique.
-                  </p>
-                ) : (
-                  analysis.relatedCases.map((relatedCase, idx) => (
-                    <div
-                      key={idx}
-                      className="border border-[#1f7a8c]/20 rounded-lg p-4 hover:shadow-md transition-shadow bg-gradient-to-r from-[#1f7a8c]/5 to-transparent"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <div>
-                          <h5 className="font-semibold text-[#022b3a]">{relatedCase.caseNumber}</h5>
-                          <p className="text-sm text-[#022b3a]/80 mt-1">{relatedCase.title}</p>
-                        </div>
-                        <Button
-                          onClick={() => router.push(`/dashboard/cases/${relatedCase.caseId}`)}
-                          variant="outline"
-                          size="sm"
-                          className="border-[#1f7a8c]/30 text-[#1f7a8c] hover:bg-[#1f7a8c]/10"
-                        >
-                          <ExternalLink className="h-3 w-3 mr-1" />
-                          View
-                        </Button>
-                      </div>
-                      <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded">
-                        <p className="text-xs font-medium text-yellow-900 mb-1">Reason for Flagging:</p>
-                        <p className="text-xs text-yellow-800">{relatedCase.reasonForFlagging}</p>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-
-            {activeTab === 'external' && (
-              <div className="space-y-4">
-                <h4 className="font-semibold text-[#022b3a] mb-3">External Intelligence & Public Records</h4>
-                {analysis.externalContext.length === 0 ? (
-                  <p className="text-sm text-[#022b3a]/60 text-center py-8">
-                    No external context available at this time.
-                  </p>
-                ) : (
                   <div className="space-y-3">
-                    {analysis.externalContext.map((context, idx) => (
-                      <div
-                        key={idx}
-                        className="border border-[#1f7a8c]/20 rounded-lg p-4 bg-white"
-                      >
-                        <div className="flex items-start justify-between mb-2">
-                          <h5 className="font-medium text-[#022b3a] text-sm flex-1">
-                            {context.eventDescription}
-                          </h5>
+                    {analysis.caseSummary.suggestedNextSteps.map((nextStep, idx) => {
+                      const priorityColors = {
+                        HIGH: 'bg-red-100 text-red-800 border-red-300',
+                        MEDIUM: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+                        LOW: 'bg-green-100 text-green-800 border-green-300'
+                      }
+                      const priorityColor = priorityColors[nextStep.priority] || priorityColors.MEDIUM
+
+                      return (
+                        <div key={idx} className={`border rounded-lg p-3 ${priorityColor}`}>
+                          <div className="flex items-start justify-between mb-2">
+                            <p className="font-semibold text-sm flex-1">{nextStep.step}</p>
+                            <span className="text-xs px-2 py-1 bg-white/60 rounded-full ml-2 flex-shrink-0">
+                              {nextStep.priority}
+                            </span>
+                          </div>
+                          <p className="text-xs opacity-90">{nextStep.reasoning}</p>
                         </div>
-                        <div className="space-y-1 text-xs text-[#022b3a]/70">
-                          <p className="flex items-center">
-                            <span className="font-medium mr-2">Source:</span>
-                            <span>{context.source}</span>
-                          </p>
-                          <p className="flex items-center">
-                            <span className="font-medium mr-2">Date:</span>
-                            <span>{context.date}</span>
-                          </p>
-                        </div>
-                        <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded">
-                          <p className="text-xs font-medium text-blue-900 mb-1">Relevance:</p>
-                          <p className="text-xs text-blue-800">{context.relevance}</p>
-                        </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
-                )}
-              </div>
-            )}
+                </div>
+            </div>
           </div>
 
           {/* Re-analyze Button */}

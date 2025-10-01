@@ -25,23 +25,10 @@ else
   exit 1
 fi
 
-# Test 2: Check Google Custom Search API
+# Test 2: Check AI Analysis Components
 echo ""
-echo "2️⃣  Testing Google Custom Search API..."
-SEARCH_KEY=$(grep "GOOGLE_SEARCH_API_KEY=" .env.local | cut -d'=' -f2)
-SEARCH_CX=$(grep "GOOGLE_SEARCH_ENGINE_ID=" .env.local | cut -d'=' -f2)
-
-if [ -z "$SEARCH_KEY" ] || [ -z "$SEARCH_CX" ]; then
-  echo "   ⚠️  Google Custom Search not configured (optional)"
-else
-  SEARCH_RESPONSE=$(curl -s "https://www.googleapis.com/customsearch/v1?key=$SEARCH_KEY&cx=$SEARCH_CX&q=test")
-  
-  if echo "$SEARCH_RESPONSE" | grep -q "totalResults"; then
-    echo "   ✅ Google Custom Search API working"
-  else
-    echo "   ⚠️  Google Custom Search API may have issues (but analysis will still work)"
-  fi
-fi
+echo "2️⃣  Checking AI Analysis Components..."
+echo "   ✅ Google Custom Search removed (using only Gemini AI)"
 
 # Test 3: Check environment variables
 echo ""

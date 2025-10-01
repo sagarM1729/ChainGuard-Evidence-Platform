@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
             select: {
               id: true,
               title: true,
-              // merkleRoot: true  // TODO: Fix after Prisma client regeneration
+              merkleRoot: true
             }
           }
         },
@@ -79,7 +79,8 @@ export async function GET(req: NextRequest) {
         ...item,
         custodyChain: item.custodyChain ? JSON.parse(item.custodyChain as string) : [],
         merkleRoot: item.blockchainTxId,
-        caseMerkleRoot: null // TODO: Fix after Prisma client regeneration - item.case?.merkleRoot ?? null
+        caseMerkleRoot: item.case?.merkleRoot ?? null,
+        merkleProof: item.merkleProof
       }))
     })
     

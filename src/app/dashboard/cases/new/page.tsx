@@ -313,7 +313,7 @@ export default function NewCasePage() {
               <div>
                 <h3 className="text-lg font-bold text-[#022b3a] mb-2">Add Evidence Later</h3>
                 <p className="text-sm text-[#022b3a]/70 leading-relaxed">
-                  Create the case first, then you'll be redirected to the case details page where you can securely upload and manage all evidence files.
+                  Create the case first, then you&apos;ll be redirected to the case details page where you can securely upload and manage all evidence files.
                 </p>
               </div>
             </div>
