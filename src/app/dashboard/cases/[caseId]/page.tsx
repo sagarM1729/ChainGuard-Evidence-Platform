@@ -437,6 +437,9 @@ export default function CaseDetailsPage() {
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* AI Intelligence Engine */}
+          <AIIntelligenceEngine caseId={case_.id} />
+
           {/* Quick Stats */}
           <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
             <h3 className="text-lg font-bold text-[#022b3a] mb-4">Quick Stats</h3>
@@ -486,9 +489,6 @@ export default function CaseDetailsPage() {
               </div>
             </div>
           </Card>
-
-          {/* AI Intelligence Engine */}
-          <AIIntelligenceEngine caseId={case_.id} />
         </div>
       </div>
 
