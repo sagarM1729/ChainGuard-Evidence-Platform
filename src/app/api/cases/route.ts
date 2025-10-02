@@ -96,6 +96,18 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    // Log activity
+    await prisma.activity.create({
+      data: {
+        id: uuidv4(),
+        type: 'CASE_CREATED',
+        title: 'Case Created',
+        description: `Created case ${caseNumber}: ${title}`,
+        userId: session.user.id,
+        caseId: newCase.id,
+      },
+    })
+
     return NextResponse.json({
       case: newCase,
       message: "Case created successfully",

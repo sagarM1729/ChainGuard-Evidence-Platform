@@ -3,7 +3,7 @@
 import { useSession } from "next-auth/react"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Files, Users, AlertCircle, TrendingUp, Plus, Eye, Clock, Star } from "lucide-react"
+import { Files, Users, AlertCircle, TrendingUp, Plus, Eye, Clock, Star, Upload, Shield, FolderOpen, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 
@@ -23,6 +23,18 @@ interface RecentCase {
   evidenceCount: number
 }
 
+interface Activity {
+  id: string
+  type: string
+  title: string
+  description?: string
+  createdAt: string
+  user?: {
+    name: string | null
+    email: string
+  }
+}
+
 export default function DashboardPage() {
   const { data: session } = useSession()
   const router = useRouter()
@@ -33,6 +45,7 @@ export default function DashboardPage() {
     pendingReviews: 0
   })
   const [recentCases, setRecentCases] = useState<RecentCase[]>([])
+  const [activities, setActivities] = useState<Activity[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -88,8 +101,23 @@ export default function DashboardPage() {
       }
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error)
-    } finally {
-      setLoading(false)
+    }
+    
+    // Fetch activities
+    await fetchActivities()
+    
+    setLoading(false)
+  }
+
+  const fetchActivities = async () => {
+    try {
+      const response = await fetch('/api/activities?limit=5')
+      if (response.ok) {
+        const data = await response.json()
+        setActivities(data.activities || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch activities:', error)
     }
   }
 
@@ -110,9 +138,67 @@ export default function DashboardPage() {
       case 'UNDER_REVIEW': return 'text-yellow-600 bg-yellow-100 border-yellow-200'
       case 'CLOSED': return 'text-green-600 bg-green-100 border-green-200'
       case 'COLD_CASE': return 'text-gray-600 bg-gray-100 border-gray-200'
-      case 'ARCHIVED': return 'text-gray-500 bg-gray-50 border-gray-100'
+      case 'ARCHIVED': return 'text-slate-600 bg-slate-100 border-slate-200'
       default: return 'text-gray-600 bg-gray-100 border-gray-200'
     }
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    })
+  }
+
+  const getActivityColor = (type: string) => {
+    switch (type) {
+      case 'CASE_CREATED':
+      case 'CASE_UPDATED':
+        return 'bg-[#1f7a8c]'
+      case 'EVIDENCE_UPLOADED':
+      case 'EVIDENCE_UPDATED':
+        return 'bg-[#022b3a]'
+      case 'EVIDENCE_VERIFIED':
+      case 'CHAIN_CUSTODY_VERIFIED':
+        return 'bg-green-500'
+      case 'CASE_STATUS_CHANGED':
+      case 'CASE_CLOSED':
+        return 'bg-blue-500'
+      default:
+        return 'bg-[#bfdbf7]'
+    }
+  }
+
+  const getActivityIcon = (type: string) => {
+    switch (type) {
+      case 'CASE_CREATED':
+      case 'CASE_UPDATED':
+        return <FolderOpen className="w-4 h-4 text-[#1f7a8c]" />
+      case 'EVIDENCE_UPLOADED':
+      case 'EVIDENCE_UPDATED':
+        return <Upload className="w-4 h-4 text-[#022b3a]" />
+      case 'EVIDENCE_VERIFIED':
+      case 'CHAIN_CUSTODY_VERIFIED':
+        return <Shield className="w-4 h-4 text-green-600" />
+      case 'CASE_CLOSED':
+        return <CheckCircle className="w-4 h-4 text-blue-600" />
+      default:
+        return <Clock className="w-4 h-4 text-[#022b3a]/60" />
+    }
+  }
+
+  const getTimeAgo = (dateString: string) => {
+    const now = new Date()
+    const past = new Date(dateString)
+    const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000)
+
+    if (diffInSeconds < 60) return 'Just now'
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`
+    return formatDate(dateString)
   }
 
   return (
@@ -285,37 +371,36 @@ export default function DashboardPage() {
         {/* Recent Activity */}
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-[#1f7a8c]/20 shadow-xl">
           <h2 className="text-lg sm:text-xl font-bold text-[#022b3a] mb-4 sm:mb-6">Recent Activity</h2>
-          <div className="space-y-3 sm:space-y-4">
-            <div className="flex items-center justify-between py-2 sm:py-3 border-b border-[#1f7a8c]/10">
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                <div className="w-2 h-2 bg-[#1f7a8c] rounded-full flex-shrink-0"></div>
-                <div>
-                  <p className="font-medium text-sm sm:text-base text-[#022b3a]">New evidence uploaded to Case #2023-001</p>
-                  <p className="text-xs sm:text-sm text-[#022b3a]/60">2 hours ago</p>
-                </div>
-              </div>
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="text-[#022b3a]/60">Loading activities...</div>
             </div>
-            
-            <div className="flex items-center justify-between py-2 sm:py-3 border-b border-[#1f7a8c]/10">
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                <div className="w-2 h-2 bg-[#022b3a] rounded-full flex-shrink-0"></div>
-                <div>
-                  <p className="font-medium text-sm sm:text-base text-[#022b3a]">Case #2023-002 status updated to Closed</p>
-                  <p className="text-xs sm:text-sm text-[#022b3a]/60">5 hours ago</p>
+          ) : activities.length > 0 ? (
+            <div className="space-y-3 sm:space-y-4">
+              {activities.map((activity) => (
+                <div key={activity.id} className="flex items-center justify-between py-2 sm:py-3 border-b border-[#1f7a8c]/10 last:border-b-0">
+                  <div className="flex items-center space-x-2 sm:space-x-3 flex-1">
+                    <div className={`w-2 h-2 rounded-full flex-shrink-0 ${getActivityColor(activity.type)}`}></div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm sm:text-base text-[#022b3a] truncate">
+                        {activity.description || activity.title}
+                      </p>
+                      <p className="text-xs sm:text-sm text-[#022b3a]/60">{getTimeAgo(activity.createdAt)}</p>
+                    </div>
+                  </div>
+                  <div className="flex-shrink-0 ml-2">
+                    {getActivityIcon(activity.type)}
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-            
-            <div className="flex items-center justify-between py-2 sm:py-3">
-              <div className="flex items-center space-x-2 sm:space-x-3">
-                <div className="w-2 h-2 bg-[#bfdbf7] rounded-full flex-shrink-0"></div>
-                <div>
-                  <p className="font-medium text-sm sm:text-base text-[#022b3a]">Chain of custody verified for Evidence #EV-001</p>
-                  <p className="text-xs sm:text-sm text-[#022b3a]/60">1 day ago</p>
-                </div>
-              </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8">
+              <Clock className="h-10 w-10 sm:h-12 sm:w-12 text-[#1f7a8c]/30 mb-3" />
+              <p className="text-sm sm:text-base text-[#022b3a]/60">No recent activity</p>
+              <p className="text-xs sm:text-sm text-[#022b3a]/40 mt-1">Activities will appear here as you work</p>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

@@ -139,6 +139,10 @@ export async function POST(req: NextRequest) {
         where: {
           id: caseId,
           officerId: session.user.id
+        },
+        select: {
+          id: true,
+          caseNumber: true
         }
       })
       
@@ -164,7 +168,7 @@ export async function POST(req: NextRequest) {
           category,
           tags,
           ipfsCid,
-          ipfsHash: ipfsCid, // Legacy field
+          ipfsHash: `${ipfsCid}-${Date.now()}`, // Make unique by adding timestamp
           fileHash: evidenceFileHash,
           retrievalUrl,
           collectedAt: collectedAt ? new Date(collectedAt) : undefined,
@@ -179,6 +183,19 @@ export async function POST(req: NextRequest) {
             location: location || 'Digital Evidence System'
           }])
         }
+      })
+
+      // Log activity
+      await prisma.activity.create({
+        data: {
+          id: randomUUID(),
+          type: 'EVIDENCE_UPLOADED',
+          title: 'Evidence Uploaded',
+          description: `Uploaded evidence "${filename}" to case ${case_.caseNumber}`,
+          userId: session.user.id,
+          caseId,
+          evidenceId: evidence.id,
+        },
       })
 
       return NextResponse.json({
@@ -219,6 +236,10 @@ export async function POST(req: NextRequest) {
         where: {
           id: caseId,
           officerId: session.user.id
+        },
+        select: {
+          id: true,
+          caseNumber: true
         }
       })
       
@@ -285,6 +306,21 @@ export async function POST(req: NextRequest) {
       }
 
       console.log('✅ Evidence stored successfully:', result)
+
+      // Log activity for FormData upload
+      if (evidenceRecord) {
+        await prisma.activity.create({
+          data: {
+            id: randomUUID(),
+            type: 'EVIDENCE_UPLOADED',
+            title: 'Evidence Uploaded',
+            description: `Uploaded evidence "${file.name}" to case ${case_.caseNumber}`,
+            userId: session.user.id,
+            caseId,
+            evidenceId: evidenceRecord.id,
+          },
+        })
+      }
 
       return NextResponse.json({
         message: "Evidence uploaded successfully",

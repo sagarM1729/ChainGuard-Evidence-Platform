@@ -7,7 +7,7 @@ import { prisma } from './prisma'
  */
 export async function cleanupAllExpiredTokens() {
   try {
-    const result = await (prisma as any).passwordResetToken.deleteMany({
+    const result = await prisma.password_reset_tokens.deleteMany({
       where: {
         expiresAt: {
           lt: new Date() // Delete all tokens that have expired
@@ -29,7 +29,7 @@ export async function cleanupAllExpiredTokens() {
  */
 export async function getExpiredTokensCount() {
   try {
-    const count = await (prisma as any).passwordResetToken.count({
+    const count = await prisma.password_reset_tokens.count({
       where: {
         expiresAt: {
           lt: new Date()
@@ -50,7 +50,7 @@ export async function getExpiredTokensCount() {
  */
 export async function getTotalTokensCount() {
   try {
-    const count = await (prisma as any).passwordResetToken.count()
+    const count = await prisma.password_reset_tokens.count()
     return { count, success: true }
   } catch (error) {
     console.error('Error counting total tokens:', error)
