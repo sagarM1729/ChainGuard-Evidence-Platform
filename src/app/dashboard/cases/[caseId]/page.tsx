@@ -198,7 +198,13 @@ export default function CaseDetailsPage() {
         {/* Title and Actions */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-3 sm:space-y-0">
           <div className="flex-1">
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#022b3a] mb-3">{case_.title}</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#022b3a] mb-2">{case_.title}</h1>
+            <div className="flex items-center gap-2 mb-3">
+              <Hash className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#1f7a8c]/60" />
+              <span className="text-xs sm:text-sm text-[#022b3a]/60 font-mono">
+                Case Number: {case_.caseNumber}
+              </span>
+            </div>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <span className={`px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium rounded-full border ${getStatusColor(case_.status)}`}>
                 {case_.status.replace('_', ' ')}

@@ -175,17 +175,17 @@ export default function DashboardPage() {
     switch (type) {
       case 'CASE_CREATED':
       case 'CASE_UPDATED':
-        return <FolderOpen className="w-4 h-4 text-[#1f7a8c]" />
+        return <FolderOpen className="w-4 h-4 sm:w-5 sm:h-5 text-[#1f7a8c]" />
       case 'EVIDENCE_UPLOADED':
       case 'EVIDENCE_UPDATED':
-        return <Upload className="w-4 h-4 text-[#022b3a]" />
+        return <Upload className="w-4 h-4 sm:w-5 sm:h-5 text-[#022b3a]" />
       case 'EVIDENCE_VERIFIED':
       case 'CHAIN_CUSTODY_VERIFIED':
-        return <Shield className="w-4 h-4 text-green-600" />
+        return <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
       case 'CASE_CLOSED':
-        return <CheckCircle className="w-4 h-4 text-blue-600" />
+        return <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
       default:
-        return <Clock className="w-4 h-4 text-[#022b3a]/60" />
+        return <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-[#022b3a]/60" />
     }
   }
 
@@ -369,36 +369,36 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-[#1f7a8c]/20 shadow-xl">
-          <h2 className="text-lg sm:text-xl font-bold text-[#022b3a] mb-4 sm:mb-6">Recent Activity</h2>
+        <div className="bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-2xl p-3 sm:p-6 border border-[#1f7a8c]/20 shadow-xl overflow-hidden">
+          <h2 className="text-base sm:text-lg md:text-xl font-bold text-[#022b3a] mb-3 sm:mb-4 md:mb-6">Recent Activity</h2>
           {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-[#022b3a]/60">Loading activities...</div>
+            <div className="flex items-center justify-center py-6 sm:py-8">
+              <div className="text-sm sm:text-base text-[#022b3a]/60">Loading activities...</div>
             </div>
           ) : activities.length > 0 ? (
-            <div className="space-y-3 sm:space-y-4">
+            <div className="space-y-2 sm:space-y-3 md:space-y-4">
               {activities.map((activity) => (
-                <div key={activity.id} className="flex items-center justify-between py-2 sm:py-3 border-b border-[#1f7a8c]/10 last:border-b-0">
-                  <div className="flex items-center space-x-2 sm:space-x-3 flex-1">
-                    <div className={`w-2 h-2 rounded-full flex-shrink-0 ${getActivityColor(activity.type)}`}></div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm sm:text-base text-[#022b3a] truncate">
+                <div key={activity.id} className="flex items-start sm:items-center justify-between py-2 sm:py-3 border-b border-[#1f7a8c]/10 last:border-b-0 gap-2 sm:gap-3">
+                  <div className="flex items-start sm:items-center space-x-2 sm:space-x-3 flex-1 min-w-0 overflow-hidden">
+                    <div className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full flex-shrink-0 mt-1 sm:mt-0 ${getActivityColor(activity.type)}`}></div>
+                    <div className="flex-1 min-w-0 overflow-hidden">
+                      <p className="font-medium text-xs sm:text-sm md:text-base text-[#022b3a] break-words line-clamp-2 sm:line-clamp-1">
                         {activity.description || activity.title}
                       </p>
-                      <p className="text-xs sm:text-sm text-[#022b3a]/60">{getTimeAgo(activity.createdAt)}</p>
+                      <p className="text-[10px] sm:text-xs md:text-sm text-[#022b3a]/60 mt-0.5 sm:mt-1 truncate">{getTimeAgo(activity.createdAt)}</p>
                     </div>
                   </div>
-                  <div className="flex-shrink-0 ml-2">
+                  <div className="flex-shrink-0 ml-1 sm:ml-2">
                     {getActivityIcon(activity.type)}
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-8">
-              <Clock className="h-10 w-10 sm:h-12 sm:w-12 text-[#1f7a8c]/30 mb-3" />
-              <p className="text-sm sm:text-base text-[#022b3a]/60">No recent activity</p>
-              <p className="text-xs sm:text-sm text-[#022b3a]/40 mt-1">Activities will appear here as you work</p>
+            <div className="flex flex-col items-center justify-center py-6 sm:py-8 md:py-10">
+              <Clock className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-[#1f7a8c]/30 mb-2 sm:mb-3" />
+              <p className="text-xs sm:text-sm md:text-base text-[#022b3a]/60 text-center">No recent activity</p>
+              <p className="text-[10px] sm:text-xs md:text-sm text-[#022b3a]/40 mt-1 text-center px-4">Activities will appear here as you work</p>
             </div>
           )}
         </div>

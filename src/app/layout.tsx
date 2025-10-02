@@ -2,8 +2,9 @@
 import './globals.css'
 import React from 'react'
 import AuthProvider from '@/components/providers/AuthProvider'
+import type { Metadata } from 'next'
 
-export const metadata = {
+export const metadata: Metadata = {
 	title: 'ChainGuard Evidence Platform',
 	description: 'Secure evidence management with blockchain and AI'
 }
