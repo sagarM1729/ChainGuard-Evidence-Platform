@@ -22,6 +22,7 @@ async function restoreDatabaseData(exportFilePath: string) {
     // Clear existing data (in reverse order to handle foreign keys)
     console.log('\n🧹 Clearing existing data...')
     await prisma.password_reset_tokens.deleteMany()
+    await prisma.activity.deleteMany()
     await prisma.evidence.deleteMany()
     await prisma.case.deleteMany()
     await prisma.user.deleteMany()
@@ -75,6 +76,19 @@ async function restoreDatabaseData(exportFilePath: string) {
         })
       }
       console.log(`✅ Restored ${exportData.tables.evidence.length} evidence items`)
+    }
+    
+    // Restore activities
+    if (exportData.tables.activities && exportData.tables.activities.length > 0) {
+      for (const activityData of exportData.tables.activities) {
+        // Extract user data
+        const { user, ...activityOnly } = activityData
+        
+        await prisma.activity.create({
+          data: activityOnly
+        })
+      }
+      console.log(`✅ Restored ${exportData.tables.activities.length} activity records`)
     }
     
     // Restore password reset tokens

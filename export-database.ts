@@ -60,6 +60,17 @@ async function exportDatabaseData() {
             // Note: password is excluded for security
           }
         }),
+        activities: await prisma.activity.findMany({
+          include: {
+            user: {
+              select: {
+                id: true,
+                email: true,
+                name: true
+              }
+            }
+          }
+        }),
         whitelist: await prisma.whitelist.findMany(),
         passwordResetTokens: await prisma.password_reset_tokens.findMany()
       }
@@ -76,6 +87,7 @@ async function exportDatabaseData() {
     console.log(`   📁 Cases: ${exportData.tables.cases.length}`)
     console.log(`   📄 Evidence: ${exportData.tables.evidence.length}`)
     console.log(`   👤 Users: ${exportData.tables.users.length}`)
+    console.log(`   📊 Activities: ${exportData.tables.activities.length}`)
     console.log(`   ✅ Whitelist: ${exportData.tables.whitelist.length}`)
     console.log(`   🔑 Reset Tokens: ${exportData.tables.passwordResetTokens.length}`)
 

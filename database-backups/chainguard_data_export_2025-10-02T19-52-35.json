@@ -1,0 +1,709 @@
+{
+  "exportDate": "2025-10-02T19:52:35.243Z",
+  "tables": {
+    "cases": [
+      {
+        "id": "c24d55df-7b13-4919-aaf7-c82b96fa863e",
+        "caseNumber": "CASE-1759429933007-0003",
+        "title": "Motorcycle Parts Theft in Vishrambag Area",
+        "description": "A case was registered on the evening of October 2, 2025, for the theft of a catalytic converter and an Electronic Control Unit (ECU) from a motorcycle. The vehicle was parked in a public parking area near the Vishrambag main road during the afternoon. This incident is noted for its similarity to two other vehicular thefts reported in the same locality within the last week, suggesting a potential organized pattern. Initial evidence includes high-resolution photographs of the vehicle's damage and a detailed statement from the owner. A canvas of the area is underway to retrieve potential CCTV footage from nearby shops.",
+        "createdAt": "2025-10-02T18:32:13.009Z",
+        "updatedAt": "2025-10-02T18:42:27.852Z",
+        "officerId": "301626c2-0115-449e-a1d7-03c8a57393d2",
+        "merkleRoot": "20aa9a2f2755f27defedc01ec9b461d925e38c2b50e463d8bb12f1693a3b57a3",
+        "category": "Theft",
+        "dateClosed": null,
+        "dateOpened": "2025-10-02T18:32:13.009Z",
+        "location": "Vishrambag sangli",
+        "priority": "MEDIUM",
+        "status": "UNDER_REVIEW",
+        "evidence": [
+          {
+            "id": "47f8d8d9-a28d-4d56-8854-481a154fc7aa",
+            "filename": "pune-crime-file.avif",
+            "filetype": "image/avif",
+            "notes": "B",
+            "ipfsHash": "bafkreibqywt7bjl7nconq24meccns36pwf3f3vs2itusecippwzfh7gxma-1759430283484",
+            "blockchainTxId": "20aa9a2f2755f27defedc01ec9b461d925e38c2b50e463d8bb12f1693a3b57a3",
+            "createdAt": "2025-10-02T18:38:03.484Z",
+            "updatedAt": "2025-10-02T18:38:04.325Z",
+            "caseId": "c24d55df-7b13-4919-aaf7-c82b96fa863e",
+            "accessLevel": "RESTRICTED",
+            "blockchainHash": "20aa9a2f2755f27defedc01ec9b461d925e38c2b50e463d8bb12f1693a3b57a3",
+            "merkleProof": {
+              "leaf": "20aa9a2f2755f27defedc01ec9b461d925e38c2b50e463d8bb12f1693a3b57a3",
+              "root": "20aa9a2f2755f27defedc01ec9b461d925e38c2b50e463d8bb12f1693a3b57a3",
+              "siblings": []
+            },
+            "category": "Vehicle",
+            "collectedAt": "2025-10-01T11:37:00.000Z",
+            "collectedBy": "sagar",
+            "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-02T18:38:04.324Z\",\"location\":\"Vishrambag sangli\"}]",
+            "deviceInfo": null,
+            "encryptionKey": null,
+            "evidenceType": "OTHER",
+            "fileHash": "30c5a7f0a57f689cd86b8c2084d96fcfb1765dd65a44e922090f7db253fcd760",
+            "filesize": 25982,
+            "ipfsCid": "bafkreibqywt7bjl7nconq24meccns36pwf3f3vs2itusecippwzfh7gxma",
+            "isEncrypted": true,
+            "verified": true,
+            "location": "Vishrambag sangli",
+            "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreibqywt7bjl7nconq24meccns36pwf3f3vs2itusecippwzfh7gxma",
+            "tags": [
+              "bike"
+            ]
+          }
+        ],
+        "User": {
+          "id": "301626c2-0115-449e-a1d7-03c8a57393d2",
+          "email": "test@example.com",
+          "name": "sagar",
+          "role": "OFFICER",
+          "badge": null,
+          "department": null
+        }
+      },
+      {
+        "id": "0bc75c1c-3e27-4075-b108-fb830a72c041",
+        "caseNumber": "CASE-1759430676904-0004",
+        "title": "Hit-and-Run Incident at Shivaji Mandai Junction",
+        "description": "A hit-and-run was reported on the evening of October 2, 2025, at the busy Shivaji Mandai traffic junction, resulting in serious injury to a pedestrian. The suspect vehicle, described as a dark-colored sedan, fled the scene immediately. Physical evidence collected includes fragments of a headlight assembly and tire marks. Digital evidence consists of traffic camera footage, which is currently under analysis to identify the license plate. The incident has been reported by local news, making it a prime candidate for the AI to cross-reference public data for witness descriptions or other leads",
+        "createdAt": "2025-10-02T18:44:36.906Z",
+        "updatedAt": "2025-10-02T18:52:25.190Z",
+        "officerId": "301626c2-0115-449e-a1d7-03c8a57393d2",
+        "merkleRoot": "6a9f2d72c80bfd54e923fb4bae95b401ee80da24f0e11d79eeeacf43b461d0b2",
+        "category": "Traffic Violation",
+        "dateClosed": null,
+        "dateOpened": "2025-10-02T18:44:36.906Z",
+        "location": "Pune",
+        "priority": "HIGH",
+        "status": "IN_PROGRESS",
+        "evidence": [
+          {
+            "id": "fd4334ae-8ddd-4033-884b-1d46faab6720",
+            "filename": "test 2.png",
+            "filetype": "image/png",
+            "notes": "test",
+            "ipfsHash": "bafkreicmh74edimk3dydp7eauzrm4iuss6vlgyserjxedcwd6px4mwmpda-1759431144476",
+            "blockchainTxId": "6a9f2d72c80bfd54e923fb4bae95b401ee80da24f0e11d79eeeacf43b461d0b2",
+            "createdAt": "2025-10-02T18:52:24.476Z",
+            "updatedAt": "2025-10-02T18:52:26.318Z",
+            "caseId": "0bc75c1c-3e27-4075-b108-fb830a72c041",
+            "accessLevel": "RESTRICTED",
+            "blockchainHash": "6a9f2d72c80bfd54e923fb4bae95b401ee80da24f0e11d79eeeacf43b461d0b2",
+            "merkleProof": {
+              "leaf": "6a9f2d72c80bfd54e923fb4bae95b401ee80da24f0e11d79eeeacf43b461d0b2",
+              "root": "6a9f2d72c80bfd54e923fb4bae95b401ee80da24f0e11d79eeeacf43b461d0b2",
+              "siblings": []
+            },
+            "category": "Documents",
+            "collectedAt": "2025-10-01T18:51:00.000Z",
+            "collectedBy": "sagar",
+            "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-02T18:52:26.316Z\",\"location\":\"test\"}]",
+            "deviceInfo": null,
+            "encryptionKey": null,
+            "evidenceType": "OTHER",
+            "fileHash": "4c3ff841a18ad8f037fc80a662ce229297aab362448a6e418ac3f3efc6598f18",
+            "filesize": 4881,
+            "ipfsCid": "bafkreicmh74edimk3dydp7eauzrm4iuss6vlgyserjxedcwd6px4mwmpda",
+            "isEncrypted": true,
+            "verified": true,
+            "location": "test",
+            "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreicmh74edimk3dydp7eauzrm4iuss6vlgyserjxedcwd6px4mwmpda",
+            "tags": [
+              "test"
+            ]
+          }
+        ],
+        "User": {
+          "id": "301626c2-0115-449e-a1d7-03c8a57393d2",
+          "email": "test@example.com",
+          "name": "sagar",
+          "role": "OFFICER",
+          "badge": null,
+          "department": null
+        }
+      },
+      {
+        "id": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+        "caseNumber": "CASE-1759357655106-0001",
+        "title": "Assassination of Political Activist Charlie Kirk",
+        "description": "On September 10, 2025, at approximately 12:23 PM, conservative political activist and Turning Point USA founder Charlie Kirk was fatally shot while speaking at an outdoor event on the campus of Utah Valley University in Orem, Utah. Kirk was struck by a single rifle shot to the neck, believed to have been fired from the roof of the nearby Losee Center, about 142 yards away. He was immediately transported to Timpanogos Regional Hospital but was pronounced dead shortly after",
+        "createdAt": "2025-10-01T22:27:35.109Z",
+        "updatedAt": "2025-10-02T19:37:02.815Z",
+        "officerId": "301626c2-0115-449e-a1d7-03c8a57393d2",
+        "merkleRoot": "31c29b4e29d8cad170ef45c95ab8419686a544e36963abda5696f8a9d0bbcdf0",
+        "category": "Assault",
+        "dateClosed": null,
+        "dateOpened": "2025-10-01T22:27:35.109Z",
+        "location": "United States",
+        "priority": "HIGH",
+        "status": "IN_PROGRESS",
+        "evidence": [
+          {
+            "id": "f64fd66b-5f97-4b58-9edd-bde09b64a44b",
+            "filename": "charkie-kirk-killer-jpg-1757644122613_1757644123206-600x338.jpg",
+            "filetype": "image/jpeg",
+            "notes": "suspect found jumping from university terrace , he was in all black clothes\r\n",
+            "ipfsHash": "bafkreides4rgdxcphedhn4zchw5ia6l6d4tbrr34dzprq64v5jgqlrjn7e",
+            "blockchainTxId": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+            "createdAt": "2025-10-01T22:29:12.320Z",
+            "updatedAt": "2025-10-01T22:29:13.531Z",
+            "caseId": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+            "accessLevel": "RESTRICTED",
+            "blockchainHash": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+            "merkleProof": {
+              "leaf": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+              "root": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+              "siblings": []
+            },
+            "category": "",
+            "collectedAt": "2025-09-30T22:27:00.000Z",
+            "collectedBy": "sagar",
+            "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-01T22:29:13.529Z\",\"location\":\"university terrace\"}]",
+            "deviceInfo": null,
+            "encryptionKey": null,
+            "evidenceType": "OTHER",
+            "fileHash": "64972261dc4f390676f3223dba80797e1f2618c77c1e5f187b95ea4d05c52df9",
+            "filesize": 36734,
+            "ipfsCid": "bafkreides4rgdxcphedhn4zchw5ia6l6d4tbrr34dzprq64v5jgqlrjn7e",
+            "isEncrypted": true,
+            "verified": true,
+            "location": "university terrace",
+            "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreides4rgdxcphedhn4zchw5ia6l6d4tbrr34dzprq64v5jgqlrjn7e",
+            "tags": []
+          },
+          {
+            "id": "cd740073-2940-4123-b3fc-c8eae4ab6ffd",
+            "filename": "download (1).jpeg",
+            "filetype": "image/jpeg",
+            "notes": "gun found wrapped in towel in the bushes of university",
+            "ipfsHash": "bafkreigiwryxljd4wsj2sichyv56tb72on2txng7k3cl4e2ldcgpnolmvu",
+            "blockchainTxId": "828586662d76f27a33693793a098ce1a81283ebd5f3a47218bb02d11b56b6549",
+            "createdAt": "2025-10-01T22:31:13.126Z",
+            "updatedAt": "2025-10-01T22:31:13.721Z",
+            "caseId": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+            "accessLevel": "RESTRICTED",
+            "blockchainHash": "381fada72a95078970f24ff972cd7ccbafb557d7433b722a0ccb07f075f4b790",
+            "merkleProof": {
+              "leaf": "381fada72a95078970f24ff972cd7ccbafb557d7433b722a0ccb07f075f4b790",
+              "root": "828586662d76f27a33693793a098ce1a81283ebd5f3a47218bb02d11b56b6549",
+              "siblings": [
+                {
+                  "hash": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+                  "position": "left"
+                }
+              ]
+            },
+            "category": "Weapon",
+            "collectedAt": "2025-09-30T22:30:00.000Z",
+            "collectedBy": "sagar",
+            "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-01T22:31:13.719Z\",\"location\":\"university\"}]",
+            "deviceInfo": null,
+            "encryptionKey": null,
+            "evidenceType": "OTHER",
+            "fileHash": "c8b47175a47cb493a92047c57be987fa73753bb4df56c4be134b188cf6b96cad",
+            "filesize": 7493,
+            "ipfsCid": "bafkreigiwryxljd4wsj2sichyv56tb72on2txng7k3cl4e2ldcgpnolmvu",
+            "isEncrypted": true,
+            "verified": true,
+            "location": "university",
+            "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreigiwryxljd4wsj2sichyv56tb72on2txng7k3cl4e2ldcgpnolmvu",
+            "tags": []
+          },
+          {
+            "id": "eb6be32a-142c-47a5-bf9d-1ecce954f907",
+            "filename": "download (2).jpeg",
+            "filetype": "image/jpeg",
+            "notes": "a guy was found wearing all black clothes , his names is tyler robinson , his grandfather also has same gun which is missing now , also he lives  near utah city",
+            "ipfsHash": "bafkreibnifax2xrdewjktdimjy3pig3xx4puxr7aumyeypqulgnazfclwq",
+            "blockchainTxId": "31c29b4e29d8cad170ef45c95ab8419686a544e36963abda5696f8a9d0bbcdf0",
+            "createdAt": "2025-10-01T22:33:35.571Z",
+            "updatedAt": "2025-10-01T22:33:36.656Z",
+            "caseId": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+            "accessLevel": "RESTRICTED",
+            "blockchainHash": "c814f0f293c6fe119e4f59672f5ff50d0587f79c44505345865744f25d79ec1a",
+            "merkleProof": {
+              "leaf": "c814f0f293c6fe119e4f59672f5ff50d0587f79c44505345865744f25d79ec1a",
+              "root": "31c29b4e29d8cad170ef45c95ab8419686a544e36963abda5696f8a9d0bbcdf0",
+              "siblings": [
+                {
+                  "hash": "c814f0f293c6fe119e4f59672f5ff50d0587f79c44505345865744f25d79ec1a",
+                  "position": "right"
+                },
+                {
+                  "hash": "828586662d76f27a33693793a098ce1a81283ebd5f3a47218bb02d11b56b6549",
+                  "position": "left"
+                }
+              ]
+            },
+            "category": "Photos",
+            "collectedAt": "2025-09-30T22:31:00.000Z",
+            "collectedBy": "sagar",
+            "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-01T22:33:36.654Z\",\"location\":\"Digital Evidence System\"}]",
+            "deviceInfo": null,
+            "encryptionKey": null,
+            "evidenceType": "PHOTO",
+            "fileHash": "2d41417d5e232592a98d0c4e36f41b77bf1f4bc7e0a3304c3e14599a0c944bb4",
+            "filesize": 5977,
+            "ipfsCid": "bafkreibnifax2xrdewjktdimjy3pig3xx4puxr7aumyeypqulgnazfclwq",
+            "isEncrypted": true,
+            "verified": true,
+            "location": "",
+            "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreibnifax2xrdewjktdimjy3pig3xx4puxr7aumyeypqulgnazfclwq",
+            "tags": []
+          }
+        ],
+        "User": {
+          "id": "301626c2-0115-449e-a1d7-03c8a57393d2",
+          "email": "test@example.com",
+          "name": "sagar",
+          "role": "OFFICER",
+          "badge": null,
+          "department": null
+        }
+      },
+      {
+        "id": "396b6f5b-5dbb-43ce-add5-1867aa54999a",
+        "caseNumber": "CASE-1759408686573-0002",
+        "title": "Theft of Solar Panels from Agricultural Land in Miraj",
+        "description": "A formal complaint was filed on October 2, 2025, by a local farmer concerning the theft of four solar panels from a water pump installation on his agricultural property located on the outskirts of Miraj. The complainant has provided the serial numbers for all stolen panels. The incident is believed to have occurred during the early morning hours, between approximately 2:00 AM and 3:00 AM. Initial leads include a key piece of digital evidence: a CCTV video file obtained from a neighboring property, which reportedly captured a suspicious vehicle near the scene during the estimated time frame. Crime scene photographs documenting cut electrical wires and damaged mounting brackets have also been logged as initial physical evidence.",
+        "createdAt": "2025-10-02T12:38:06.576Z",
+        "updatedAt": "2025-10-02T19:39:15.018Z",
+        "officerId": "301626c2-0115-449e-a1d7-03c8a57393d2",
+        "merkleRoot": "e029effc1df2e719da1ab9e7029093e06c219c2167f6416d080d35f8717cd0e3",
+        "category": "Theft",
+        "dateClosed": null,
+        "dateOpened": "2025-10-02T12:38:06.576Z",
+        "location": "Miraj",
+        "priority": "MEDIUM",
+        "status": "IN_PROGRESS",
+        "evidence": [
+          {
+            "id": "8301390f-94ec-4960-a641-8b7340daf3f8",
+            "filename": "Solar-Farm-Security-Systems.jpg",
+            "filetype": "image/jpeg",
+            "notes": "Captured from neighboring store\r\n",
+            "ipfsHash": "bafkreie6x2bxuho66v5y542v6hhjpvbpfgtigtcvdq3x7fdcbgceylp774",
+            "blockchainTxId": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+            "createdAt": "2025-10-02T12:45:14.077Z",
+            "updatedAt": "2025-10-02T12:45:15.282Z",
+            "caseId": "396b6f5b-5dbb-43ce-add5-1867aa54999a",
+            "accessLevel": "RESTRICTED",
+            "blockchainHash": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+            "merkleProof": {
+              "leaf": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+              "root": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+              "siblings": []
+            },
+            "category": "",
+            "collectedAt": "2025-10-01T06:44:00.000Z",
+            "collectedBy": "sagar",
+            "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-02T12:45:15.281Z\",\"location\":\"Miraj\"}]",
+            "deviceInfo": null,
+            "encryptionKey": null,
+            "evidenceType": "OTHER",
+            "fileHash": "9ebe837a1ddef57b8ef355f1ce97d42f29a6834c551c377f946209844c2dffff",
+            "filesize": 67022,
+            "ipfsCid": "bafkreie6x2bxuho66v5y542v6hhjpvbpfgtigtcvdq3x7fdcbgceylp774",
+            "isEncrypted": true,
+            "verified": true,
+            "location": "Miraj",
+            "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreie6x2bxuho66v5y542v6hhjpvbpfgtigtcvdq3x7fdcbgceylp774",
+            "tags": [
+              "land"
+            ]
+          },
+          {
+            "id": "132d93c2-ef45-4870-a755-66963507c420",
+            "filename": "aerial-view-damaged-by-hurricane-600nw-2273935607.webp",
+            "filetype": "image/webp",
+            "notes": "broken panel",
+            "ipfsHash": "bafkreicyzcmqegqwpxkoybb5dha3b5dwmyw2vlsuysjjxsbzm6yba5ersq-1759429746352",
+            "blockchainTxId": "e029effc1df2e719da1ab9e7029093e06c219c2167f6416d080d35f8717cd0e3",
+            "createdAt": "2025-10-02T18:29:06.352Z",
+            "updatedAt": "2025-10-02T18:29:07.690Z",
+            "caseId": "396b6f5b-5dbb-43ce-add5-1867aa54999a",
+            "accessLevel": "RESTRICTED",
+            "blockchainHash": "962a6edc54ff23c6a44ed8ad0db11d6fc0f1ad4ea40835a1ced2669dbe753355",
+            "merkleProof": {
+              "leaf": "962a6edc54ff23c6a44ed8ad0db11d6fc0f1ad4ea40835a1ced2669dbe753355",
+              "root": "e029effc1df2e719da1ab9e7029093e06c219c2167f6416d080d35f8717cd0e3",
+              "siblings": [
+                {
+                  "hash": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+                  "position": "left"
+                }
+              ]
+            },
+            "category": "Photos",
+            "collectedAt": "2025-10-02T18:28:00.000Z",
+            "collectedBy": "sagar",
+            "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-02T18:29:07.689Z\",\"location\":\"miraj\"}]",
+            "deviceInfo": null,
+            "encryptionKey": null,
+            "evidenceType": "OTHER",
+            "fileHash": "58c899021a167dd4ec043d19c1b0f476662daaae54c4929bc83967b010749194",
+            "filesize": 132646,
+            "ipfsCid": "bafkreicyzcmqegqwpxkoybb5dha3b5dwmyw2vlsuysjjxsbzm6yba5ersq",
+            "isEncrypted": true,
+            "verified": true,
+            "location": "miraj",
+            "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreicyzcmqegqwpxkoybb5dha3b5dwmyw2vlsuysjjxsbzm6yba5ersq",
+            "tags": [
+              "photo"
+            ]
+          }
+        ],
+        "User": {
+          "id": "301626c2-0115-449e-a1d7-03c8a57393d2",
+          "email": "test@example.com",
+          "name": "sagar",
+          "role": "OFFICER",
+          "badge": null,
+          "department": null
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "id": "f64fd66b-5f97-4b58-9edd-bde09b64a44b",
+        "filename": "charkie-kirk-killer-jpg-1757644122613_1757644123206-600x338.jpg",
+        "filetype": "image/jpeg",
+        "notes": "suspect found jumping from university terrace , he was in all black clothes\r\n",
+        "ipfsHash": "bafkreides4rgdxcphedhn4zchw5ia6l6d4tbrr34dzprq64v5jgqlrjn7e",
+        "blockchainTxId": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+        "createdAt": "2025-10-01T22:29:12.320Z",
+        "updatedAt": "2025-10-01T22:29:13.531Z",
+        "caseId": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+        "accessLevel": "RESTRICTED",
+        "blockchainHash": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+        "merkleProof": {
+          "leaf": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+          "root": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+          "siblings": []
+        },
+        "category": "",
+        "collectedAt": "2025-09-30T22:27:00.000Z",
+        "collectedBy": "sagar",
+        "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-01T22:29:13.529Z\",\"location\":\"university terrace\"}]",
+        "deviceInfo": null,
+        "encryptionKey": null,
+        "evidenceType": "OTHER",
+        "fileHash": "64972261dc4f390676f3223dba80797e1f2618c77c1e5f187b95ea4d05c52df9",
+        "filesize": 36734,
+        "ipfsCid": "bafkreides4rgdxcphedhn4zchw5ia6l6d4tbrr34dzprq64v5jgqlrjn7e",
+        "isEncrypted": true,
+        "verified": true,
+        "location": "university terrace",
+        "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreides4rgdxcphedhn4zchw5ia6l6d4tbrr34dzprq64v5jgqlrjn7e",
+        "tags": [],
+        "case": {
+          "id": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+          "caseNumber": "CASE-1759357655106-0001",
+          "title": "Assassination of Political Activist Charlie Kirk"
+        }
+      },
+      {
+        "id": "cd740073-2940-4123-b3fc-c8eae4ab6ffd",
+        "filename": "download (1).jpeg",
+        "filetype": "image/jpeg",
+        "notes": "gun found wrapped in towel in the bushes of university",
+        "ipfsHash": "bafkreigiwryxljd4wsj2sichyv56tb72on2txng7k3cl4e2ldcgpnolmvu",
+        "blockchainTxId": "828586662d76f27a33693793a098ce1a81283ebd5f3a47218bb02d11b56b6549",
+        "createdAt": "2025-10-01T22:31:13.126Z",
+        "updatedAt": "2025-10-01T22:31:13.721Z",
+        "caseId": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+        "accessLevel": "RESTRICTED",
+        "blockchainHash": "381fada72a95078970f24ff972cd7ccbafb557d7433b722a0ccb07f075f4b790",
+        "merkleProof": {
+          "leaf": "381fada72a95078970f24ff972cd7ccbafb557d7433b722a0ccb07f075f4b790",
+          "root": "828586662d76f27a33693793a098ce1a81283ebd5f3a47218bb02d11b56b6549",
+          "siblings": [
+            {
+              "hash": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+              "position": "left"
+            }
+          ]
+        },
+        "category": "Weapon",
+        "collectedAt": "2025-09-30T22:30:00.000Z",
+        "collectedBy": "sagar",
+        "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-01T22:31:13.719Z\",\"location\":\"university\"}]",
+        "deviceInfo": null,
+        "encryptionKey": null,
+        "evidenceType": "OTHER",
+        "fileHash": "c8b47175a47cb493a92047c57be987fa73753bb4df56c4be134b188cf6b96cad",
+        "filesize": 7493,
+        "ipfsCid": "bafkreigiwryxljd4wsj2sichyv56tb72on2txng7k3cl4e2ldcgpnolmvu",
+        "isEncrypted": true,
+        "verified": true,
+        "location": "university",
+        "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreigiwryxljd4wsj2sichyv56tb72on2txng7k3cl4e2ldcgpnolmvu",
+        "tags": [],
+        "case": {
+          "id": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+          "caseNumber": "CASE-1759357655106-0001",
+          "title": "Assassination of Political Activist Charlie Kirk"
+        }
+      },
+      {
+        "id": "eb6be32a-142c-47a5-bf9d-1ecce954f907",
+        "filename": "download (2).jpeg",
+        "filetype": "image/jpeg",
+        "notes": "a guy was found wearing all black clothes , his names is tyler robinson , his grandfather also has same gun which is missing now , also he lives  near utah city",
+        "ipfsHash": "bafkreibnifax2xrdewjktdimjy3pig3xx4puxr7aumyeypqulgnazfclwq",
+        "blockchainTxId": "31c29b4e29d8cad170ef45c95ab8419686a544e36963abda5696f8a9d0bbcdf0",
+        "createdAt": "2025-10-01T22:33:35.571Z",
+        "updatedAt": "2025-10-01T22:33:36.656Z",
+        "caseId": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+        "accessLevel": "RESTRICTED",
+        "blockchainHash": "c814f0f293c6fe119e4f59672f5ff50d0587f79c44505345865744f25d79ec1a",
+        "merkleProof": {
+          "leaf": "c814f0f293c6fe119e4f59672f5ff50d0587f79c44505345865744f25d79ec1a",
+          "root": "31c29b4e29d8cad170ef45c95ab8419686a544e36963abda5696f8a9d0bbcdf0",
+          "siblings": [
+            {
+              "hash": "c814f0f293c6fe119e4f59672f5ff50d0587f79c44505345865744f25d79ec1a",
+              "position": "right"
+            },
+            {
+              "hash": "828586662d76f27a33693793a098ce1a81283ebd5f3a47218bb02d11b56b6549",
+              "position": "left"
+            }
+          ]
+        },
+        "category": "Photos",
+        "collectedAt": "2025-09-30T22:31:00.000Z",
+        "collectedBy": "sagar",
+        "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-01T22:33:36.654Z\",\"location\":\"Digital Evidence System\"}]",
+        "deviceInfo": null,
+        "encryptionKey": null,
+        "evidenceType": "PHOTO",
+        "fileHash": "2d41417d5e232592a98d0c4e36f41b77bf1f4bc7e0a3304c3e14599a0c944bb4",
+        "filesize": 5977,
+        "ipfsCid": "bafkreibnifax2xrdewjktdimjy3pig3xx4puxr7aumyeypqulgnazfclwq",
+        "isEncrypted": true,
+        "verified": true,
+        "location": "",
+        "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreibnifax2xrdewjktdimjy3pig3xx4puxr7aumyeypqulgnazfclwq",
+        "tags": [],
+        "case": {
+          "id": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+          "caseNumber": "CASE-1759357655106-0001",
+          "title": "Assassination of Political Activist Charlie Kirk"
+        }
+      },
+      {
+        "id": "8301390f-94ec-4960-a641-8b7340daf3f8",
+        "filename": "Solar-Farm-Security-Systems.jpg",
+        "filetype": "image/jpeg",
+        "notes": "Captured from neighboring store\r\n",
+        "ipfsHash": "bafkreie6x2bxuho66v5y542v6hhjpvbpfgtigtcvdq3x7fdcbgceylp774",
+        "blockchainTxId": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+        "createdAt": "2025-10-02T12:45:14.077Z",
+        "updatedAt": "2025-10-02T12:45:15.282Z",
+        "caseId": "396b6f5b-5dbb-43ce-add5-1867aa54999a",
+        "accessLevel": "RESTRICTED",
+        "blockchainHash": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+        "merkleProof": {
+          "leaf": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+          "root": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+          "siblings": []
+        },
+        "category": "",
+        "collectedAt": "2025-10-01T06:44:00.000Z",
+        "collectedBy": "sagar",
+        "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-02T12:45:15.281Z\",\"location\":\"Miraj\"}]",
+        "deviceInfo": null,
+        "encryptionKey": null,
+        "evidenceType": "OTHER",
+        "fileHash": "9ebe837a1ddef57b8ef355f1ce97d42f29a6834c551c377f946209844c2dffff",
+        "filesize": 67022,
+        "ipfsCid": "bafkreie6x2bxuho66v5y542v6hhjpvbpfgtigtcvdq3x7fdcbgceylp774",
+        "isEncrypted": true,
+        "verified": true,
+        "location": "Miraj",
+        "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreie6x2bxuho66v5y542v6hhjpvbpfgtigtcvdq3x7fdcbgceylp774",
+        "tags": [
+          "land"
+        ],
+        "case": {
+          "id": "396b6f5b-5dbb-43ce-add5-1867aa54999a",
+          "caseNumber": "CASE-1759408686573-0002",
+          "title": "Theft of Solar Panels from Agricultural Land in Miraj"
+        }
+      },
+      {
+        "id": "132d93c2-ef45-4870-a755-66963507c420",
+        "filename": "aerial-view-damaged-by-hurricane-600nw-2273935607.webp",
+        "filetype": "image/webp",
+        "notes": "broken panel",
+        "ipfsHash": "bafkreicyzcmqegqwpxkoybb5dha3b5dwmyw2vlsuysjjxsbzm6yba5ersq-1759429746352",
+        "blockchainTxId": "e029effc1df2e719da1ab9e7029093e06c219c2167f6416d080d35f8717cd0e3",
+        "createdAt": "2025-10-02T18:29:06.352Z",
+        "updatedAt": "2025-10-02T18:29:07.690Z",
+        "caseId": "396b6f5b-5dbb-43ce-add5-1867aa54999a",
+        "accessLevel": "RESTRICTED",
+        "blockchainHash": "962a6edc54ff23c6a44ed8ad0db11d6fc0f1ad4ea40835a1ced2669dbe753355",
+        "merkleProof": {
+          "leaf": "962a6edc54ff23c6a44ed8ad0db11d6fc0f1ad4ea40835a1ced2669dbe753355",
+          "root": "e029effc1df2e719da1ab9e7029093e06c219c2167f6416d080d35f8717cd0e3",
+          "siblings": [
+            {
+              "hash": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+              "position": "left"
+            }
+          ]
+        },
+        "category": "Photos",
+        "collectedAt": "2025-10-02T18:28:00.000Z",
+        "collectedBy": "sagar",
+        "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-02T18:29:07.689Z\",\"location\":\"miraj\"}]",
+        "deviceInfo": null,
+        "encryptionKey": null,
+        "evidenceType": "OTHER",
+        "fileHash": "58c899021a167dd4ec043d19c1b0f476662daaae54c4929bc83967b010749194",
+        "filesize": 132646,
+        "ipfsCid": "bafkreicyzcmqegqwpxkoybb5dha3b5dwmyw2vlsuysjjxsbzm6yba5ersq",
+        "isEncrypted": true,
+        "verified": true,
+        "location": "miraj",
+        "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreicyzcmqegqwpxkoybb5dha3b5dwmyw2vlsuysjjxsbzm6yba5ersq",
+        "tags": [
+          "photo"
+        ],
+        "case": {
+          "id": "396b6f5b-5dbb-43ce-add5-1867aa54999a",
+          "caseNumber": "CASE-1759408686573-0002",
+          "title": "Theft of Solar Panels from Agricultural Land in Miraj"
+        }
+      },
+      {
+        "id": "47f8d8d9-a28d-4d56-8854-481a154fc7aa",
+        "filename": "pune-crime-file.avif",
+        "filetype": "image/avif",
+        "notes": "B",
+        "ipfsHash": "bafkreibqywt7bjl7nconq24meccns36pwf3f3vs2itusecippwzfh7gxma-1759430283484",
+        "blockchainTxId": "20aa9a2f2755f27defedc01ec9b461d925e38c2b50e463d8bb12f1693a3b57a3",
+        "createdAt": "2025-10-02T18:38:03.484Z",
+        "updatedAt": "2025-10-02T18:38:04.325Z",
+        "caseId": "c24d55df-7b13-4919-aaf7-c82b96fa863e",
+        "accessLevel": "RESTRICTED",
+        "blockchainHash": "20aa9a2f2755f27defedc01ec9b461d925e38c2b50e463d8bb12f1693a3b57a3",
+        "merkleProof": {
+          "leaf": "20aa9a2f2755f27defedc01ec9b461d925e38c2b50e463d8bb12f1693a3b57a3",
+          "root": "20aa9a2f2755f27defedc01ec9b461d925e38c2b50e463d8bb12f1693a3b57a3",
+          "siblings": []
+        },
+        "category": "Vehicle",
+        "collectedAt": "2025-10-01T11:37:00.000Z",
+        "collectedBy": "sagar",
+        "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-02T18:38:04.324Z\",\"location\":\"Vishrambag sangli\"}]",
+        "deviceInfo": null,
+        "encryptionKey": null,
+        "evidenceType": "OTHER",
+        "fileHash": "30c5a7f0a57f689cd86b8c2084d96fcfb1765dd65a44e922090f7db253fcd760",
+        "filesize": 25982,
+        "ipfsCid": "bafkreibqywt7bjl7nconq24meccns36pwf3f3vs2itusecippwzfh7gxma",
+        "isEncrypted": true,
+        "verified": true,
+        "location": "Vishrambag sangli",
+        "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreibqywt7bjl7nconq24meccns36pwf3f3vs2itusecippwzfh7gxma",
+        "tags": [
+          "bike"
+        ],
+        "case": {
+          "id": "c24d55df-7b13-4919-aaf7-c82b96fa863e",
+          "caseNumber": "CASE-1759429933007-0003",
+          "title": "Motorcycle Parts Theft in Vishrambag Area"
+        }
+      },
+      {
+        "id": "fd4334ae-8ddd-4033-884b-1d46faab6720",
+        "filename": "test 2.png",
+        "filetype": "image/png",
+        "notes": "test",
+        "ipfsHash": "bafkreicmh74edimk3dydp7eauzrm4iuss6vlgyserjxedcwd6px4mwmpda-1759431144476",
+        "blockchainTxId": "6a9f2d72c80bfd54e923fb4bae95b401ee80da24f0e11d79eeeacf43b461d0b2",
+        "createdAt": "2025-10-02T18:52:24.476Z",
+        "updatedAt": "2025-10-02T18:52:26.318Z",
+        "caseId": "0bc75c1c-3e27-4075-b108-fb830a72c041",
+        "accessLevel": "RESTRICTED",
+        "blockchainHash": "6a9f2d72c80bfd54e923fb4bae95b401ee80da24f0e11d79eeeacf43b461d0b2",
+        "merkleProof": {
+          "leaf": "6a9f2d72c80bfd54e923fb4bae95b401ee80da24f0e11d79eeeacf43b461d0b2",
+          "root": "6a9f2d72c80bfd54e923fb4bae95b401ee80da24f0e11d79eeeacf43b461d0b2",
+          "siblings": []
+        },
+        "category": "Documents",
+        "collectedAt": "2025-10-01T18:51:00.000Z",
+        "collectedBy": "sagar",
+        "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-02T18:52:26.316Z\",\"location\":\"test\"}]",
+        "deviceInfo": null,
+        "encryptionKey": null,
+        "evidenceType": "OTHER",
+        "fileHash": "4c3ff841a18ad8f037fc80a662ce229297aab362448a6e418ac3f3efc6598f18",
+        "filesize": 4881,
+        "ipfsCid": "bafkreicmh74edimk3dydp7eauzrm4iuss6vlgyserjxedcwd6px4mwmpda",
+        "isEncrypted": true,
+        "verified": true,
+        "location": "test",
+        "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreicmh74edimk3dydp7eauzrm4iuss6vlgyserjxedcwd6px4mwmpda",
+        "tags": [
+          "test"
+        ],
+        "case": {
+          "id": "0bc75c1c-3e27-4075-b108-fb830a72c041",
+          "caseNumber": "CASE-1759430676904-0004",
+          "title": "Hit-and-Run Incident at Shivaji Mandai Junction"
+        }
+      }
+    ],
+    "users": [
+      {
+        "id": "301626c2-0115-449e-a1d7-03c8a57393d2",
+        "name": "sagar",
+        "email": "test@example.com",
+        "createdAt": "2025-10-01T22:21:42.191Z",
+        "updatedAt": "2025-10-01T22:21:42.187Z",
+        "badge": null,
+        "department": null,
+        "role": "OFFICER"
+      },
+      {
+        "id": "a764343d-c935-46c4-afa9-746054fc31ef",
+        "name": "Ajay",
+        "email": "ajaysapkal1001@gmail.com",
+        "createdAt": "2025-10-02T11:52:22.714Z",
+        "updatedAt": "2025-10-02T11:52:22.713Z",
+        "badge": null,
+        "department": null,
+        "role": "OFFICER"
+      }
+    ],
+    "whitelist": [
+      {
+        "id": "9b36eb30-c238-4033-8ce0-21403385c6b0",
+        "email": "test@example.com"
+      },
+      {
+        "id": "521e73d1-a7d4-4733-8a0b-ce4e41d9de76",
+        "email": "admin@chainguard.com"
+      },
+      {
+        "id": "51414ddd-d37a-49f0-a27e-65903a24105a",
+        "email": "officer@police.gov"
+      },
+      {
+        "id": "5e3ca2ff-1991-4e68-8758-80d6f099fadb",
+        "email": "forensic@lab.gov"
+      },
+      {
+        "id": "af23d769-91b1-4ccc-8c19-4a43fb49fd85",
+        "email": "ajaysapkal1001@gmail.com"
+      }
+    ],
+    "passwordResetTokens": []
+  }
+}
