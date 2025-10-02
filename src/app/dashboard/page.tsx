@@ -116,20 +116,20 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6 lg:p-8">
       {/* Welcome Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-[#022b3a] mb-2">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#022b3a] mb-2">
           Welcome back, {session?.user?.name?.split(' ')[0] || 'Officer'}!
         </h1>
-        <p className="text-[#022b3a]/70">
+        <p className="text-sm sm:text-base text-[#022b3a]/70">
           Here&apos;s what&apos;s happening with your evidence management today.
         </p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 border border-[#1f7a8c]/20 shadow-xl">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 md:p-5 border border-[#1f7a8c]/20 shadow-xl">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[#022b3a]/60 text-sm font-medium">Total Cases</p>
@@ -141,7 +141,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 border border-[#1f7a8c]/20 shadow-xl">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 md:p-5 border border-[#1f7a8c]/20 shadow-xl">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[#022b3a]/60 text-sm font-medium">Evidence Items</p>
@@ -153,7 +153,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 border border-[#1f7a8c]/20 shadow-xl">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 md:p-5 border border-[#1f7a8c]/20 shadow-xl">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[#022b3a]/60 text-sm font-medium">Active Officers</p>
@@ -165,7 +165,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 border border-[#1f7a8c]/20 shadow-xl">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 md:p-5 border border-[#1f7a8c]/20 shadow-xl">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[#022b3a]/60 text-sm font-medium">Pending Reviews</p>
@@ -179,11 +179,11 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Actions */}
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-[#022b3a]">Quick Actions</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Button 
             onClick={() => router.push('/dashboard/cases/new')}
             className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] hover:from-[#022b3a] hover:to-[#1f7a8c] text-white p-6 h-auto rounded-2xl shadow-xl transition-all duration-300"
@@ -208,15 +208,15 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Cases */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 border border-[#1f7a8c]/20 shadow-xl">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-[#022b3a]">Recent Cases</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-6 sm:mb-8">
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-[#1f7a8c]/20 shadow-xl">
+          <div className="flex justify-between items-center mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-bold text-[#022b3a]">Recent Cases</h2>
             <Button 
               variant="outline" 
               size="sm"
               onClick={() => router.push('/dashboard/cases')}
-              className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
+              className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200 text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-2"
             >
               View All
             </Button>
@@ -231,37 +231,37 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : recentCases.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {recentCases.map((case_) => (
-                <Card key={case_.id} className="p-4 hover:shadow-lg transition-shadow cursor-pointer border-[#1f7a8c]/20">
+                <Card key={case_.id} className="p-3 sm:p-4 hover:shadow-lg transition-shadow cursor-pointer border-[#1f7a8c]/20">
                   <div 
                     className="flex justify-between items-start"
                     onClick={() => router.push(`/dashboard/cases/${case_.id}`)}
                   >
                     <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
-                        <h3 className="font-semibold text-[#022b3a] line-clamp-1">{case_.title}</h3>
-                        <div className="flex space-x-2">
-                          <span className={`px-2 py-1 text-xs rounded-full border ${getPriorityColor(case_.priority)}`}>
+                      <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 mb-2">
+                        <h3 className="font-semibold text-sm sm:text-base text-[#022b3a] line-clamp-1">{case_.title}</h3>
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                          <span className={`px-2 py-0.5 text-[10px] sm:text-xs rounded-full border ${getPriorityColor(case_.priority)}`}>
                             {case_.priority}
                           </span>
-                          <span className={`px-2 py-1 text-xs rounded-full border ${getStatusColor(case_.status)}`}>
+                          <span className={`px-2 py-0.5 text-[10px] sm:text-xs rounded-full border ${getStatusColor(case_.status)}`}>
                             {case_.status.replace('_', ' ')}
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between text-sm text-[#022b3a]/60">
-                        <div className="flex items-center space-x-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs sm:text-sm text-[#022b3a]/60 space-y-1.5 sm:space-y-0">
+                        <div className="flex items-center space-x-3 sm:space-x-4">
                           <span className="flex items-center">
-                            <Clock className="h-4 w-4 mr-1" />
+                            <Clock className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                             {new Date(case_.createdAt).toLocaleDateString()}
                           </span>
                           <span className="flex items-center">
-                            <Files className="h-4 w-4 mr-1" />
+                            <Files className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                             {case_.evidenceCount} evidence
                           </span>
                         </div>
-                        <Eye className="h-4 w-4 text-[#1f7a8c]" />
+                        <Eye className="hidden sm:block h-4 w-4 text-[#1f7a8c]" />
                       </div>
                     </div>
                   </div>
@@ -269,12 +269,12 @@ export default function DashboardPage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8">
-              <Files className="h-12 w-12 text-[#1f7a8c]/30 mx-auto mb-4" />
-              <p className="text-[#022b3a]/60">No cases yet. Create your first case to get started.</p>
+            <div className="text-center py-6 sm:py-8">
+              <Files className="h-10 w-10 sm:h-12 sm:w-12 text-[#1f7a8c]/30 mx-auto mb-3 sm:mb-4" />
+              <p className="text-sm sm:text-base text-[#022b3a]/60 mb-3 sm:mb-4">No cases yet. Create your first case to get started.</p>
               <Button 
                 onClick={() => router.push('/dashboard/cases/new')}
-                className="mt-4 bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white"
+                className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white text-sm sm:text-base px-4 py-2"
               >
                 Create Case
               </Button>
@@ -283,35 +283,35 @@ export default function DashboardPage() {
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 border border-[#1f7a8c]/20 shadow-xl">
-          <h2 className="text-xl font-bold text-[#022b3a] mb-6">Recent Activity</h2>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between py-3 border-b border-[#1f7a8c]/10">
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-[#1f7a8c] rounded-full"></div>
+        <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 sm:p-6 border border-[#1f7a8c]/20 shadow-xl">
+          <h2 className="text-lg sm:text-xl font-bold text-[#022b3a] mb-4 sm:mb-6">Recent Activity</h2>
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex items-center justify-between py-2 sm:py-3 border-b border-[#1f7a8c]/10">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="w-2 h-2 bg-[#1f7a8c] rounded-full flex-shrink-0"></div>
                 <div>
-                  <p className="font-medium text-[#022b3a]">New evidence uploaded to Case #2023-001</p>
-                  <p className="text-sm text-[#022b3a]/60">2 hours ago</p>
+                  <p className="font-medium text-sm sm:text-base text-[#022b3a]">New evidence uploaded to Case #2023-001</p>
+                  <p className="text-xs sm:text-sm text-[#022b3a]/60">2 hours ago</p>
                 </div>
               </div>
             </div>
             
-            <div className="flex items-center justify-between py-3 border-b border-[#1f7a8c]/10">
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-[#022b3a] rounded-full"></div>
+            <div className="flex items-center justify-between py-2 sm:py-3 border-b border-[#1f7a8c]/10">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="w-2 h-2 bg-[#022b3a] rounded-full flex-shrink-0"></div>
                 <div>
-                  <p className="font-medium text-[#022b3a]">Case #2023-002 status updated to Closed</p>
-                  <p className="text-sm text-[#022b3a]/60">5 hours ago</p>
+                  <p className="font-medium text-sm sm:text-base text-[#022b3a]">Case #2023-002 status updated to Closed</p>
+                  <p className="text-xs sm:text-sm text-[#022b3a]/60">5 hours ago</p>
                 </div>
               </div>
             </div>
             
-            <div className="flex items-center justify-between py-3">
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-[#bfdbf7] rounded-full"></div>
+            <div className="flex items-center justify-between py-2 sm:py-3">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="w-2 h-2 bg-[#bfdbf7] rounded-full flex-shrink-0"></div>
                 <div>
-                  <p className="font-medium text-[#022b3a]">Chain of custody verified for Evidence #EV-001</p>
-                  <p className="text-sm text-[#022b3a]/60">1 day ago</p>
+                  <p className="font-medium text-sm sm:text-base text-[#022b3a]">Chain of custody verified for Evidence #EV-001</p>
+                  <p className="text-xs sm:text-sm text-[#022b3a]/60">1 day ago</p>
                 </div>
               </div>
             </div>

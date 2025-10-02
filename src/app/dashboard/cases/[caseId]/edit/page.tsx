@@ -162,10 +162,10 @@ export default function EditCasePage() {
 
   if (loading) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6 lg:p-8">
         <div className="animate-pulse">
-          <div className="bg-gray-200 h-8 w-64 rounded mb-8"></div>
-          <div className="bg-white/95 rounded-2xl p-6 border border-[#1f7a8c]/20 shadow-xl">
+          <div className="bg-gray-200 h-8 w-48 sm:w-64 rounded mb-6 sm:mb-8"></div>
+          <div className="bg-white/95 rounded-2xl p-4 sm:p-6 border border-[#1f7a8c]/20 shadow-xl">
             <div className="space-y-4">
               <div className="bg-gray-200 h-4 w-1/4 rounded"></div>
               <div className="bg-gray-200 h-10 rounded"></div>
@@ -180,12 +180,12 @@ export default function EditCasePage() {
 
   if (error) {
     return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6 lg:p-8">
         <div className="text-center py-12">
-          <div className="text-red-500 mb-4">{error}</div>
+          <div className="text-sm sm:text-base text-red-500 mb-4">{error}</div>
           <Button 
             onClick={() => router.push('/dashboard/cases')}
-            className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white"
+            className="text-sm sm:text-base bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Cases
@@ -196,37 +196,38 @@ export default function EditCasePage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="outline"
-              onClick={() => router.push(`/dashboard/cases/${caseId}`)}
-              className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Case
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold text-[#022b3a]">Update Case</h1>
-              <p className="text-[#022b3a]/70">Update case information and manage evidence</p>
-            </div>
-          </div>
+      <div className="mb-6 sm:mb-8">
+        {/* Back Button */}
+        <div className="mb-4">
+          <Button 
+            variant="outline"
+            onClick={() => router.push(`/dashboard/cases/${caseId}`)}
+            className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Case
+          </Button>
+        </div>
+        
+        {/* Title */}
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#022b3a] mb-2">Update Case</h1>
+          <p className="text-sm sm:text-base text-[#022b3a]/70">Update case information and manage evidence</p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         {/* Main Form */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
           {/* Basic Information */}
-          <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
-            <h2 className="text-xl font-bold text-[#022b3a] mb-6">Case Information</h2>
+          <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+            <h2 className="text-lg sm:text-xl font-bold text-[#022b3a] mb-4 sm:mb-6">Case Information</h2>
             
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <Label htmlFor="title" className="text-[#022b3a] font-medium">
+                <Label htmlFor="title" className="text-sm sm:text-base text-[#022b3a] font-medium">
                   Case Title *
                 </Label>
                 <Input
@@ -236,13 +237,13 @@ export default function EditCasePage() {
                   onChange={handleInputChange}
                   placeholder="Enter case title"
                   required
-                  className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                  className="mt-1 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
                 />
               </div>
 
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <Label htmlFor="description" className="text-[#022b3a] font-medium">
+                  <Label htmlFor="description" className="text-sm sm:text-base text-[#022b3a] font-medium">
                     Description *
                   </Label>
                   <span className="text-xs text-[#022b3a]/60">
@@ -258,7 +259,7 @@ export default function EditCasePage() {
                     placeholder="Provide a detailed description of the case..."
                     required
                     rows={6}
-                    className="mt-1 w-full px-4 py-3 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-2 focus:ring-[#1f7a8c]/20 bg-gradient-to-r from-[#1f7a8c]/5 to-[#022b3a]/5 transition-all duration-200 resize-y min-h-[150px]"
+                    className="mt-1 w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-2 focus:ring-[#1f7a8c]/20 bg-gradient-to-r from-[#1f7a8c]/5 to-[#022b3a]/5 transition-all duration-200 resize-y min-h-[120px] sm:min-h-[150px]"
                   />
                 </div>
                 <p className="mt-1 text-xs text-[#022b3a]/60 flex items-start">
@@ -267,9 +268,9 @@ export default function EditCasePage() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
-                  <Label htmlFor="category" className="text-[#022b3a] font-medium">
+                  <Label htmlFor="category" className="text-sm sm:text-base text-[#022b3a] font-medium">
                     Category *
                   </Label>
                   <select
@@ -278,7 +279,7 @@ export default function EditCasePage() {
                     value={formData.category}
                     onChange={handleInputChange}
                     required
-                    className="mt-1 w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
+                    className="mt-1 w-full px-3 py-2 text-sm sm:text-base border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
                   >
                     <option value="">Select a category</option>
                     <option value="Theft">Theft</option>
@@ -301,13 +302,13 @@ export default function EditCasePage() {
                       value={formData.customCategory || ''}
                       onChange={handleInputChange}
                       placeholder="Enter custom category"
-                      className="mt-2 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                      className="mt-2 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
                     />
                   )}
                 </div>
 
                 <div>
-                  <Label htmlFor="location" className="text-[#022b3a] font-medium">
+                  <Label htmlFor="location" className="text-sm sm:text-base text-[#022b3a] font-medium">
                     Location *
                   </Label>
                   <Input
@@ -317,14 +318,14 @@ export default function EditCasePage() {
                     onChange={handleInputChange}
                     placeholder="Enter location"
                     required
-                    className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                    className="mt-1 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
-                  <Label htmlFor="priority" className="text-[#022b3a] font-medium">
+                  <Label htmlFor="priority" className="text-sm sm:text-base text-[#022b3a] font-medium">
                     Priority *
                   </Label>
                   <select
@@ -333,7 +334,7 @@ export default function EditCasePage() {
                     value={formData.priority}
                     onChange={handleInputChange}
                     required
-                    className="mt-1 w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
+                    className="mt-1 w-full px-3 py-2 text-sm sm:text-base border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
                   >
                     <option value="LOW">Low</option>
                     <option value="MEDIUM">Medium</option>
@@ -343,7 +344,7 @@ export default function EditCasePage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="status" className="text-[#022b3a] font-medium">
+                  <Label htmlFor="status" className="text-sm sm:text-base text-[#022b3a] font-medium">
                     Status *
                   </Label>
                   <select
@@ -352,7 +353,7 @@ export default function EditCasePage() {
                     value={formData.status}
                     onChange={handleInputChange}
                     required
-                    className="mt-1 w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
+                    className="mt-1 w-full px-3 py-2 text-sm sm:text-base border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
                   >
                     <option value="OPEN">Open</option>
                     <option value="IN_PROGRESS">In Progress</option>
@@ -367,13 +368,13 @@ export default function EditCasePage() {
           </Card>
 
           {/* Evidence Section */}
-          <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-[#022b3a]">Evidence ({formData.evidence.length})</h2>
+          <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-xl font-bold text-[#022b3a]">Evidence ({formData.evidence.length})</h2>
               <Button 
                 type="button"
                 onClick={() => setShowUploadForm(true)}
-                className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white"
+                className="w-full sm:w-auto text-sm sm:text-base bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Evidence
@@ -382,25 +383,25 @@ export default function EditCasePage() {
 
             {formData.evidence.length === 0 ? (
               <div className="text-center py-8 border-2 border-dashed border-[#1f7a8c]/30 rounded-lg">
-                <Upload className="h-12 w-12 text-[#1f7a8c]/30 mx-auto mb-4" />
-                <p className="text-[#022b3a]/60 mb-4">No evidence files yet</p>
+                <Upload className="h-10 w-10 sm:h-12 sm:w-12 text-[#1f7a8c]/30 mx-auto mb-4" />
+                <p className="text-sm sm:text-base text-[#022b3a]/60 mb-4">No evidence files yet</p>
                 <Button 
                   type="button"
                   onClick={() => setShowUploadForm(true)}
-                  className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white"
+                  className="text-sm sm:text-base bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Upload Evidence
                 </Button>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {formData.evidence.map((evidence) => (
-                  <div key={evidence.id} className="border border-[#1f7a8c]/20 rounded-lg p-4">
+                  <div key={evidence.id} className="border border-[#1f7a8c]/20 rounded-lg p-3 sm:p-4">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-[#022b3a] mb-2">{evidence.filename}</h3>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-[#022b3a]/70">
+                        <h3 className="text-sm sm:text-base font-semibold text-[#022b3a] mb-2">{evidence.filename}</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 text-xs sm:text-sm text-[#022b3a]/70">
                           <div>
                             <span className="font-medium">Type:</span> {evidence.evidenceType}
                           </div>
@@ -415,7 +416,7 @@ export default function EditCasePage() {
                           </div>
                         </div>
                         {evidence.notes && (
-                          <p className="text-sm text-[#022b3a]/80 mt-2">{evidence.notes}</p>
+                          <p className="text-xs sm:text-sm text-[#022b3a]/80 mt-2">{evidence.notes}</p>
                         )}
                       </div>
                     </div>
@@ -427,15 +428,15 @@ export default function EditCasePage() {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Actions */}
-          <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
-            <h3 className="text-lg font-bold text-[#022b3a] mb-4">Actions</h3>
+          <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+            <h3 className="text-base sm:text-lg font-bold text-[#022b3a] mb-3 sm:mb-4">Actions</h3>
             <div className="space-y-3">
               <Button 
                 type="submit"
                 disabled={saving}
-                className="w-full bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] hover:from-[#022b3a] hover:to-[#1f7a8c] text-white"
+                className="w-full text-sm sm:text-base bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] hover:from-[#022b3a] hover:to-[#1f7a8c] text-white"
               >
                 <Save className="h-4 w-4 mr-2" />
                 {saving ? 'Updating...' : 'Update Case'}
@@ -445,7 +446,7 @@ export default function EditCasePage() {
                 type="button"
                 variant="outline"
                 onClick={() => router.push(`/dashboard/cases/${caseId}`)}
-                className="w-full border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
+                className="w-full text-sm sm:text-base border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
               >
                 Cancel
               </Button>
@@ -453,14 +454,14 @@ export default function EditCasePage() {
           </Card>
 
           {/* Case Summary */}
-          <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
-            <h3 className="text-lg font-bold text-[#022b3a] mb-4">Summary</h3>
+          <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+            <h3 className="text-base sm:text-lg font-bold text-[#022b3a] mb-3 sm:mb-4">Summary</h3>
             <div className="space-y-3">
-              <div className="flex justify-between items-center text-sm">
+              <div className="flex justify-between items-center text-xs sm:text-sm">
                 <span className="text-[#022b3a]/70">Evidence Items</span>
                 <span className="font-semibold text-[#022b3a]">{formData.evidence.length}</span>
               </div>
-              <div className="flex justify-between items-center text-sm">
+              <div className="flex justify-between items-center text-xs sm:text-sm">
                 <span className="text-[#022b3a]/70">Priority</span>
                 <span className={`px-2 py-1 text-xs rounded-full ${
                   formData.priority === 'CRITICAL' ? 'bg-red-100 text-red-600' :
@@ -471,7 +472,7 @@ export default function EditCasePage() {
                   {formData.priority}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-sm">
+              <div className="flex justify-between items-center text-xs sm:text-sm">
                 <span className="text-[#022b3a]/70">Status</span>
                 <span className={`px-2 py-1 text-xs rounded-full ${
                   formData.status === 'OPEN' ? 'bg-blue-100 text-blue-600' :
@@ -492,9 +493,9 @@ export default function EditCasePage() {
       {/* Upload Form Modal */}
       {showUploadForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-[#022b3a]">Add Evidence</h2>
+          <div className="bg-white rounded-2xl p-4 sm:p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 sm:mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#022b3a]">Add Evidence</h2>
               <Button 
                 variant="outline"
                 onClick={() => setShowUploadForm(false)}

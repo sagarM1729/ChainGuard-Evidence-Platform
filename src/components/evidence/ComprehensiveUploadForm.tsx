@@ -176,21 +176,21 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-        <div className="flex items-center mb-6">
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6">
+        <div className="flex items-center mb-4 sm:mb-6">
           <div className="p-2 bg-[#1f7a8c] rounded-lg mr-3">
-            <Shield className="w-6 h-6 text-white" />
+            <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Upload Evidence</h2>
-            <p className="text-sm text-gray-600">Secure IPFS storage with blockchain verification</p>
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900">Upload Evidence</h2>
+            <p className="text-xs sm:text-sm text-gray-600">Secure IPFS storage with blockchain verification</p>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           {/* File Drop Zone */}
           <div
-            className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+            className={`border-2 border-dashed rounded-lg p-4 sm:p-6 lg:p-8 text-center transition-colors ${
               selectedFile 
                 ? 'border-green-300 bg-green-50' 
                 : 'border-gray-300 bg-gray-50 hover:border-[#1f7a8c] hover:bg-blue-50'
@@ -199,13 +199,13 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
             onDragOver={handleDragOver}
           >
             {selectedFile ? (
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 <div className="flex items-center justify-center">
-                  <File className="w-12 h-12 text-green-500" />
+                  <File className="w-10 h-10 sm:w-12 sm:h-12 text-green-500" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">{selectedFile.name}</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm sm:text-base font-medium text-gray-900 break-all">{selectedFile.name}</p>
+                  <p className="text-xs sm:text-sm text-gray-600">
                     {formatFileSize(selectedFile.size)} • {selectedFile.type || 'Unknown type'}
                   </p>
                 </div>
@@ -214,26 +214,26 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
                   variant="outline"
                   size="sm"
                   onClick={clearFile}
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  className="text-sm text-red-600 hover:text-red-700 hover:bg-red-50"
                 >
                   <X className="w-4 h-4 mr-1" />
                   Remove
                 </Button>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 <div className="flex items-center justify-center">
-                  <Upload className="w-12 h-12 text-gray-400" />
+                  <Upload className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400" />
                 </div>
                 <div>
-                  <p className="text-lg font-medium text-gray-900">Drop files here</p>
-                  <p className="text-sm text-gray-600">or click to browse</p>
+                  <p className="text-base sm:text-lg font-medium text-gray-900">Drop files here</p>
+                  <p className="text-xs sm:text-sm text-gray-600">or click to browse</p>
                 </div>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => fileInputRef.current?.click()}
-                  className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
+                  className="text-sm sm:text-base border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
                 >
                   Choose File
                 </Button>
@@ -250,16 +250,16 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
           />
 
           {/* Evidence Type & Category */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <Label htmlFor="evidenceType" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="evidenceType" className="text-xs sm:text-sm font-medium text-gray-700">
                 Evidence Type
               </Label>
               <select
                 id="evidenceType"
                 value={evidenceType}
                 onChange={(e) => setEvidenceType(e.target.value as any)}
-                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-[#1f7a8c] focus:border-transparent"
+                className="mt-1 w-full text-sm sm:text-base rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-[#1f7a8c] focus:border-transparent"
               >
                 <option value="PHYSICAL">Physical</option>
                 <option value="DOCUMENT">Document</option>
@@ -271,14 +271,14 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
             </div>
             
             <div>
-              <Label htmlFor="category" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="category" className="text-xs sm:text-sm font-medium text-gray-700">
                 Category
               </Label>
               <select
                 id="category"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-[#1f7a8c] focus:border-transparent"
+                className="mt-1 w-full text-sm sm:text-base rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-[#1f7a8c] focus:border-transparent"
               >
                 <option value="">Select Category</option>
                 <option value="Weapon">Weapon</option>
@@ -303,16 +303,16 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
                   value={customCategory}
                   onChange={(e) => setCustomCategory(e.target.value)}
                   placeholder="Enter custom evidence category"
-                  className="mt-2 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                  className="mt-2 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
                 />
               )}
             </div>
           </div>
 
           {/* Collection Date & Time */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
             <div>
-              <Label htmlFor="collectedAt" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="collectedAt" className="text-xs sm:text-sm font-medium text-gray-700">
                 Collection Date
               </Label>
               <Input
@@ -320,11 +320,11 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
                 type="date"
                 value={collectedAt}
                 onChange={(e) => setCollectedAt(e.target.value)}
-                className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                className="mt-1 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
               />
             </div>
             <div>
-              <Label htmlFor="collectedTime" className="text-sm font-medium text-gray-700">
+              <Label htmlFor="collectedTime" className="text-xs sm:text-sm font-medium text-gray-700">
                 Collection Time
               </Label>
               <Input
@@ -332,14 +332,14 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
                 type="time"
                 value={collectedTime}
                 onChange={(e) => setCollectedTime(e.target.value)}
-                className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                className="mt-1 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
               />
             </div>
           </div>
 
           {/* Collected By */}
           <div>
-            <Label htmlFor="collectedBy" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="collectedBy" className="text-xs sm:text-sm font-medium text-gray-700">
               Collected By
             </Label>
             <Input
@@ -347,13 +347,13 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
               value={collectedBy}
               onChange={(e) => setCollectedBy(e.target.value)}
               placeholder="Officer name"
-              className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+              className="mt-1 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
             />
           </div>
 
           {/* Location */}
           <div>
-            <Label htmlFor="location" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="location" className="text-xs sm:text-sm font-medium text-gray-700">
               Collection Location
             </Label>
             <Input
@@ -361,13 +361,13 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="On the counter, next to the cash register"
-              className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+              className="mt-1 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
             />
           </div>
 
           {/* Tags */}
           <div>
-            <Label htmlFor="tags" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="tags" className="text-xs sm:text-sm font-medium text-gray-700">
               Tags (comma-separated)
             </Label>
             <Input
@@ -375,13 +375,13 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
               value={tags.join(', ')}
               onChange={(e) => handleTagsChange(e.target.value)}
               placeholder="e.g., weapon, fingerprint, digital"
-              className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+              className="mt-1 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
             />
           </div>
 
           {/* Notes */}
           <div>
-            <Label htmlFor="notes" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="notes" className="text-xs sm:text-sm font-medium text-gray-700">
               Notes (Optional)
             </Label>
             <textarea
@@ -390,69 +390,77 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Add any relevant notes about this evidence..."
               rows={3}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-[#1f7a8c] focus:border-transparent resize-vertical"
+              className="mt-1 w-full text-sm sm:text-base rounded-lg border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-[#1f7a8c] focus:border-transparent resize-vertical"
             />
           </div>
 
           {/* Error Display */}
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start space-x-3">
-              <AlertCircle className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-              <p className="text-red-700 text-sm">{error}</p>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 flex items-start space-x-2 sm:space-x-3">
+              <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-500 mt-0.5 flex-shrink-0" />
+              <p className="text-red-700 text-xs sm:text-sm">{error}</p>
             </div>
           )}
 
           {/* Success Display */}
           {uploadResult && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-              <div className="flex items-start space-x-3 mb-4">
-                <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0" />
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 sm:p-6">
+              <div className="flex items-start space-x-2 sm:space-x-3 mb-3 sm:mb-4">
+                <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-500 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-green-800">Evidence Uploaded Successfully!</h3>
-                  <p className="text-green-700 text-sm">Your evidence has been securely stored on IPFS with blockchain verification.</p>
+                  <h3 className="text-sm sm:text-base font-semibold text-green-800">Evidence Uploaded Successfully!</h3>
+                  <p className="text-green-700 text-xs sm:text-sm">Your evidence has been securely stored on IPFS with blockchain verification.</p>
                 </div>
               </div>
               
-              <div className="space-y-3 text-sm">
-                <div className="flex items-center space-x-2">
-                  <Hash className="w-4 h-4 text-gray-500" />
-                  <span className="font-medium">IPFS CID:</span>
-                  <code className="bg-gray-100 px-2 py-1 rounded text-xs font-mono">
+              <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                  <div className="flex items-center space-x-2">
+                    <Hash className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
+                    <span className="font-medium">IPFS CID:</span>
+                  </div>
+                  <code className="bg-gray-100 px-2 py-1 rounded text-xs font-mono break-all">
                     {uploadResult.ipfsCid}
                   </code>
                 </div>
                 
-                <div className="flex items-center space-x-2">
-                  <Link className="w-4 h-4 text-gray-500" />
-                  <span className="font-medium">Retrieval URL:</span>
+                <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                  <div className="flex items-center space-x-2">
+                    <Link className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
+                    <span className="font-medium">Retrieval URL:</span>
+                  </div>
                   <a 
                     href={uploadResult.retrievalUrl} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-[#1f7a8c] hover:text-[#022b3a] underline"
+                    className="text-[#1f7a8c] hover:text-[#022b3a] underline break-all"
                   >
                     View on IPFS
                   </a>
                 </div>
                 
-                <div className="flex items-center space-x-2">
-                  <Shield className="w-4 h-4 text-gray-500" />
-                  <span className="font-medium">File Hash:</span>
-                  <code className="bg-gray-100 px-2 py-1 rounded text-xs font-mono">
+                <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                  <div className="flex items-center space-x-2">
+                    <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
+                    <span className="font-medium">File Hash:</span>
+                  </div>
+                  <code className="bg-gray-100 px-2 py-1 rounded text-xs font-mono break-all">
                     {uploadResult.fileHash.substring(0, 16)}...
                   </code>
                 </div>
                 
-                <div className="flex items-center space-x-2">
-                  <Chain className="w-4 h-4 text-gray-500" />
-                  <span className="font-medium">Merkle Root:</span>
-                  <code className="bg-gray-100 px-2 py-1 rounded text-xs font-mono">
+                <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                  <div className="flex items-center space-x-2">
+                    <Chain className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
+                    <span className="font-medium">Merkle Root:</span>
+                  </div>
+                  <code className="bg-gray-100 px-2 py-1 rounded text-xs font-mono break-all">
                     {uploadResult.merkleRoot}
                   </code>
                 </div>
 
                 <div className="flex items-center space-x-2">
-                  <Shield className="w-4 h-4 text-gray-500" />
+                  <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-gray-500" />
                   <span className="font-medium">Merkle Proof:</span>
                   <span className="text-gray-600">
                     {uploadResult.merkleProof.siblings.length} sibling nodes
@@ -466,16 +474,16 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
           <Button
             type="submit"
             disabled={!selectedFile || isUploading}
-            className="w-full bg-[#1f7a8c] hover:bg-[#022b3a] text-white py-3 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full text-sm sm:text-base bg-[#1f7a8c] hover:bg-[#022b3a] text-white py-2.5 sm:py-3 flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isUploading ? (
               <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 <span>Uploading to IPFS...</span>
               </>
             ) : (
               <>
-                <Shield className="w-5 h-5" />
+                <Shield className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>Upload Evidence</span>
               </>
             )}
@@ -483,25 +491,25 @@ export default function ComprehensiveUploadForm({ caseId, onSuccess, onError }: 
         </form>
 
         {/* Info Section */}
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-900 mb-3">Security Features</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-gray-600">
+        <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
+          <h3 className="text-xs sm:text-sm font-semibold text-gray-900 mb-2 sm:mb-3">Security Features</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 text-xs text-gray-600">
             <div className="flex items-start space-x-2">
-              <Shield className="w-4 h-4 text-[#1f7a8c] mt-0.5 flex-shrink-0" />
+              <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-[#1f7a8c] mt-0.5 flex-shrink-0" />
               <div>
                 <p className="font-medium text-gray-800">IPFS Storage</p>
                 <p>Immutable content addressing</p>
               </div>
             </div>
             <div className="flex items-start space-x-2">
-              <Hash className="w-4 h-4 text-[#1f7a8c] mt-0.5 flex-shrink-0" />
+              <Hash className="w-3 h-3 sm:w-4 sm:h-4 text-[#1f7a8c] mt-0.5 flex-shrink-0" />
               <div>
                 <p className="font-medium text-gray-800">File Integrity</p>
                 <p>SHA-256 hash verification</p>
               </div>
             </div>
             <div className="flex items-start space-x-2">
-              <Chain className="w-4 h-4 text-[#1f7a8c] mt-0.5 flex-shrink-0" />
+              <Chain className="w-3 h-3 sm:w-4 sm:h-4 text-[#1f7a8c] mt-0.5 flex-shrink-0" />
               <div>
                 <p className="font-medium text-gray-800">Merkle Ledger</p>
                 <p>Case-level integrity root</p>
