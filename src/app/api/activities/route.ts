@@ -15,6 +15,9 @@ export async function GET(request: NextRequest) {
     const skip = parseInt(searchParams.get('skip') || '0')
 
     const activities = await prisma.activity.findMany({
+      where: {
+        userId: session.user.id
+      },
       take: limit,
       skip: skip,
       orderBy: {

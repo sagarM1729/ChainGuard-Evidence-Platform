@@ -9,9 +9,9 @@ import { Card } from "@/components/ui/card"
 
 interface CaseStats {
   totalCases: number
-  totalEvidence: number
+  closedCases: number
   activeOfficers: number
-  pendingReviews: number
+  criticalCases: number
 }
 
 interface RecentCase {
@@ -40,9 +40,9 @@ export default function DashboardPage() {
   const router = useRouter()
   const [stats, setStats] = useState<CaseStats>({
     totalCases: 0,
-    totalEvidence: 0,
+    closedCases: 0,
     activeOfficers: 0,
-    pendingReviews: 0
+    criticalCases: 0
   })
   const [recentCases, setRecentCases] = useState<RecentCase[]>([])
   const [activities, setActivities] = useState<Activity[]>([])
@@ -68,11 +68,19 @@ export default function DashboardPage() {
           cases = []
         }
         
+        // Fetch active officers count
+        const usersResponse = await fetch('/api/users/count')
+        let activeOfficersCount = 0
+        if (usersResponse.ok) {
+          const userData = await usersResponse.json()
+          activeOfficersCount = userData.count || 0
+        }
+        
         setStats({
           totalCases: cases.length,
-          totalEvidence: cases.reduce((sum: number, c: any) => sum + (c.evidence?.length || 0), 0),
-          activeOfficers: 12, // Static for now
-          pendingReviews: cases.filter((c: any) => c.status === 'UNDER_REVIEW').length
+          closedCases: cases.filter((c: any) => c.status === 'CLOSED').length,
+          activeOfficers: activeOfficersCount,
+          criticalCases: cases.filter((c: any) => c.priority === 'CRITICAL' || c.priority === 'HIGH').length
         })
         
         // Sort by creation date and take first 5
@@ -93,9 +101,9 @@ export default function DashboardPage() {
         console.error('Failed to fetch cases:', response.status, response.statusText)
         setStats({
           totalCases: 0,
-          totalEvidence: 0,
-          activeOfficers: 12,
-          pendingReviews: 0
+          closedCases: 0,
+          activeOfficers: 0,
+          criticalCases: 0
         })
         setRecentCases([])
       }
@@ -230,11 +238,11 @@ export default function DashboardPage() {
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 md:p-5 border border-[#1f7a8c]/20 shadow-xl">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[#022b3a]/60 text-sm font-medium">Evidence Items</p>
-              <p className="text-2xl font-bold text-[#022b3a]">{loading ? '...' : stats.totalEvidence}</p>
+              <p className="text-[#022b3a]/60 text-sm font-medium">Closed Cases</p>
+              <p className="text-2xl font-bold text-[#022b3a]">{loading ? '...' : stats.closedCases}</p>
             </div>
             <div className="p-3 bg-gradient-to-r from-[#022b3a] to-[#1f7a8c] rounded-xl">
-              <TrendingUp className="h-6 w-6 text-white" />
+              <CheckCircle className="h-6 w-6 text-white" />
             </div>
           </div>
         </div>
@@ -243,9 +251,9 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[#022b3a]/60 text-sm font-medium">Active Officers</p>
-              <p className="text-2xl font-bold text-[#022b3a]">{stats.activeOfficers}</p>
+              <p className="text-2xl font-bold text-[#022b3a]">{loading ? '...' : stats.activeOfficers}</p>
             </div>
-            <div className="p-3 bg-gradient-to-r from-[#bfdbf7] to-[#1f7a8c] rounded-xl">
+            <div className="p-3 bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] rounded-xl">
               <Users className="h-6 w-6 text-white" />
             </div>
           </div>
@@ -254,10 +262,10 @@ export default function DashboardPage() {
         <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 md:p-5 border border-[#1f7a8c]/20 shadow-xl">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-[#022b3a]/60 text-sm font-medium">Pending Reviews</p>
-              <p className="text-2xl font-bold text-[#022b3a]">{loading ? '...' : stats.pendingReviews}</p>
+              <p className="text-[#022b3a]/60 text-sm font-medium">High Priority Cases</p>
+              <p className="text-2xl font-bold text-[#022b3a]">{loading ? '...' : stats.criticalCases}</p>
             </div>
-            <div className="p-3 bg-gradient-to-r from-[#1f7a8c] to-[#bfdbf7] rounded-xl">
+            <div className="p-3 bg-gradient-to-r from-[#022b3a] to-[#1f7a8c] rounded-xl">
               <AlertCircle className="h-6 w-6 text-white" />
             </div>
           </div>
