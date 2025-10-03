@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { randomUUID } from "crypto"
 
 export async function GET(
   req: NextRequest,
@@ -78,6 +79,12 @@ export async function PUT(
         id: caseId,
         officerId: session.user.id,
       },
+      select: {
+        id: true,
+        caseNumber: true,
+        title: true,
+        status: true,
+      }
     })
 
     if (!case_) {
@@ -119,6 +126,49 @@ export async function PUT(
         },
       },
     })
+
+    // Log activity based on what changed
+    const statusChanged = status && case_.status !== status
+    
+    if (statusChanged) {
+      // Check if case is being closed
+      if (status === 'CLOSED') {
+        await prisma.activity.create({
+          data: {
+            id: randomUUID(),
+            type: 'CASE_CLOSED',
+            title: 'Case Closed',
+            description: `Closed case ${case_.caseNumber}: ${title || case_.title}`,
+            userId: session.user.id,
+            caseId,
+          },
+        })
+      } else {
+        // Log status change activity
+        await prisma.activity.create({
+          data: {
+            id: randomUUID(),
+            type: 'CASE_STATUS_CHANGED',
+            title: 'Case Status Changed',
+            description: `Changed status of case ${case_.caseNumber} from ${case_.status} to ${status}`,
+            userId: session.user.id,
+            caseId,
+          },
+        })
+      }
+    } else {
+      // Log general update activity
+      await prisma.activity.create({
+        data: {
+          id: randomUUID(),
+          type: 'CASE_UPDATED',
+          title: 'Case Updated',
+          description: `Updated case ${case_.caseNumber}: ${title || case_.title}`,
+          userId: session.user.id,
+          caseId,
+        },
+      })
+    }
 
     return NextResponse.json(updatedCase)
   } catch (error) {

@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Verify User Exists (but don't reveal if they don't)
-    const user = await (prisma as any).user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email }
     })
 
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
 
     // Delete any existing tokens for this email
-    await (prisma as any).passwordResetToken.deleteMany({
+    await prisma.password_reset_tokens.deleteMany({
       where: { email }
     })
 
@@ -54,8 +54,9 @@ export async function POST(req: NextRequest) {
     await cleanupAllExpiredTokens()
 
     // Store the Hashed OTP
-    await (prisma as any).passwordResetToken.create({
+    await prisma.password_reset_tokens.create({
       data: {
+        id: crypto.randomUUID(),
         email,
         token: hashedOTP,
         expiresAt

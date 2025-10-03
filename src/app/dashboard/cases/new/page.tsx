@@ -95,37 +95,38 @@ export default function NewCasePage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="outline"
-              onClick={() => router.push('/dashboard/cases')}
-              className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Cases
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold text-[#022b3a]">Create New Case</h1>
-              <p className="text-[#022b3a]/70">Start a new investigation and organize evidence</p>
-            </div>
-          </div>
+      <div className="mb-6 sm:mb-8">
+        {/* Back Button */}
+        <div className="mb-4">
+          <Button 
+            variant="outline"
+            onClick={() => router.push('/dashboard/cases')}
+            className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Cases
+          </Button>
+        </div>
+        
+        {/* Title */}
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#022b3a] mb-2">Create New Case</h1>
+          <p className="text-sm sm:text-base text-[#022b3a]/70">Start a new investigation and organize evidence</p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
         {/* Main Form */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
           {/* Basic Information */}
-          <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
-            <h2 className="text-xl font-bold text-[#022b3a] mb-6">Case Information</h2>
+          <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+            <h2 className="text-lg sm:text-xl font-bold text-[#022b3a] mb-4 sm:mb-6">Case Information</h2>
             
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <Label htmlFor="title" className="text-[#022b3a] font-medium">
+                <Label htmlFor="title" className="text-sm sm:text-base text-[#022b3a] font-medium">
                   Case Title *
                 </Label>
                 <Input
@@ -135,13 +136,13 @@ export default function NewCasePage() {
                   onChange={handleInputChange}
                   placeholder="Enter a descriptive case title"
                   required
-                  className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                  className="mt-1 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
                 />
               </div>
 
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <Label htmlFor="description" className="text-[#022b3a] font-medium">
+                  <Label htmlFor="description" className="text-sm sm:text-base text-[#022b3a] font-medium">
                     Case Description *
                   </Label>
                   <span className="text-xs text-[#022b3a]/60">
@@ -157,7 +158,7 @@ export default function NewCasePage() {
                     placeholder="Provide a detailed description of the case..."
                     required
                     rows={6}
-                    className="mt-1 w-full px-4 py-3 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-2 focus:ring-[#1f7a8c]/20 bg-gradient-to-r from-[#1f7a8c]/5 to-[#022b3a]/5 transition-all duration-200 resize-y min-h-[150px]"
+                    className="mt-1 w-full px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-2 focus:ring-[#1f7a8c]/20 bg-gradient-to-r from-[#1f7a8c]/5 to-[#022b3a]/5 transition-all duration-200 resize-y min-h-[120px] sm:min-h-[150px]"
                   />
                 </div>
                 <p className="mt-1 text-xs text-[#022b3a]/60 flex items-start">
@@ -166,9 +167,9 @@ export default function NewCasePage() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
-                  <Label htmlFor="category" className="text-[#022b3a] font-medium">
+                  <Label htmlFor="category" className="text-sm sm:text-base text-[#022b3a] font-medium">
                     Case Category
                   </Label>
                   <select
@@ -176,7 +177,7 @@ export default function NewCasePage() {
                     name="category"
                     value={formData.category}
                     onChange={handleInputChange}
-                    className="mt-1 w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
+                    className="mt-1 w-full px-3 py-2 text-sm sm:text-base border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
                   >
                     <option value="">Select a category</option>
                     <option value="Theft">Theft</option>
@@ -199,13 +200,13 @@ export default function NewCasePage() {
                       value={formData.customCategory || ''}
                       onChange={handleInputChange}
                       placeholder="Enter custom category"
-                      className="mt-2 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                      className="mt-2 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
                     />
                   )}
                 </div>
 
                 <div>
-                  <Label htmlFor="location" className="text-[#022b3a] font-medium">
+                  <Label htmlFor="location" className="text-sm sm:text-base text-[#022b3a] font-medium">
                     Case Location / Address of Incident
                   </Label>
                   <Input
@@ -214,13 +215,13 @@ export default function NewCasePage() {
                     value={formData.location}
                     onChange={handleInputChange}
                     placeholder="123 Main Street, Sector 17, Navi Mumbai"
-                    className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                    className="mt-1 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="priority" className="text-[#022b3a] font-medium">
+                <Label htmlFor="priority" className="text-sm sm:text-base text-[#022b3a] font-medium">
                   Priority Level
                 </Label>
                 <select
@@ -228,7 +229,7 @@ export default function NewCasePage() {
                   name="priority"
                   value={formData.priority}
                   onChange={handleInputChange}
-                  className="mt-1 w-full px-3 py-2 border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
+                  className="mt-1 w-full px-3 py-2 text-sm sm:text-base border border-[#1f7a8c]/20 rounded-lg focus:border-[#1f7a8c] focus:ring-1 focus:ring-[#1f7a8c]/20 bg-white"
                 >
                   <option value="LOW">Low Priority</option>
                   <option value="MEDIUM">Medium Priority</option>
@@ -240,13 +241,13 @@ export default function NewCasePage() {
           </Card>
 
           {/* Incident Details */}
-          <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
-            <h2 className="text-xl font-bold text-[#022b3a] mb-6">Incident Details</h2>
+          <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+            <h2 className="text-lg sm:text-xl font-bold text-[#022b3a] mb-4 sm:mb-6">Incident Details</h2>
             
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
-                  <Label htmlFor="incidentDate" className="text-[#022b3a] font-medium">
+                  <Label htmlFor="incidentDate" className="text-sm sm:text-base text-[#022b3a] font-medium">
                     Date of Incident
                   </Label>
                   <Input
@@ -255,12 +256,12 @@ export default function NewCasePage() {
                     type="date"
                     value={formData.incidentDate}
                     onChange={handleInputChange}
-                    className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                    className="mt-1 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="incidentTime" className="text-[#022b3a] font-medium">
+                  <Label htmlFor="incidentTime" className="text-sm sm:text-base text-[#022b3a] font-medium">
                     Time of Incident
                   </Label>
                   <Input
@@ -269,14 +270,14 @@ export default function NewCasePage() {
                     type="time"
                     value={formData.incidentTime}
                     onChange={handleInputChange}
-                    className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                    className="mt-1 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
-                  <Label htmlFor="reportedDate" className="text-[#022b3a] font-medium">
+                  <Label htmlFor="reportedDate" className="text-sm sm:text-base text-[#022b3a] font-medium">
                     Date Reported
                   </Label>
                   <Input
@@ -285,12 +286,12 @@ export default function NewCasePage() {
                     type="date"
                     value={formData.reportedDate}
                     onChange={handleInputChange}
-                    className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                    className="mt-1 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="reportedTime" className="text-[#022b3a] font-medium">
+                  <Label htmlFor="reportedTime" className="text-sm sm:text-base text-[#022b3a] font-medium">
                     Time Reported
                   </Label>
                   <Input
@@ -299,7 +300,7 @@ export default function NewCasePage() {
                     type="time"
                     value={formData.reportedTime}
                     onChange={handleInputChange}
-                    className="mt-1 border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
+                    className="mt-1 text-sm sm:text-base border-[#1f7a8c]/20 focus:border-[#1f7a8c] focus:ring-[#1f7a8c]/20"
                   />
                 </div>
               </div>
@@ -307,12 +308,12 @@ export default function NewCasePage() {
           </Card>
 
           {/* Info Card about Evidence */}
-          <Card className="p-6 border-[#1f7a8c]/20 bg-gradient-to-r from-[#1f7a8c]/5 to-[#022b3a]/5 backdrop-blur-sm shadow-xl">
+          <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-gradient-to-r from-[#1f7a8c]/5 to-[#022b3a]/5 backdrop-blur-sm shadow-xl">
             <div className="flex items-start space-x-3">
-              <FileText className="h-6 w-6 text-[#1f7a8c] mt-1 flex-shrink-0" />
+              <FileText className="h-5 w-5 sm:h-6 sm:w-6 text-[#1f7a8c] mt-1 flex-shrink-0" />
               <div>
-                <h3 className="text-lg font-bold text-[#022b3a] mb-2">Add Evidence Later</h3>
-                <p className="text-sm text-[#022b3a]/70 leading-relaxed">
+                <h3 className="text-base sm:text-lg font-bold text-[#022b3a] mb-2">Add Evidence Later</h3>
+                <p className="text-xs sm:text-sm text-[#022b3a]/70 leading-relaxed">
                   Create the case first, then you&apos;ll be redirected to the case details page where you can securely upload and manage all evidence files.
                 </p>
               </div>
@@ -321,15 +322,15 @@ export default function NewCasePage() {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Actions */}
-          <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
-            <h3 className="text-lg font-bold text-[#022b3a] mb-4">Actions</h3>
+          <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+            <h3 className="text-base sm:text-lg font-bold text-[#022b3a] mb-3 sm:mb-4">Actions</h3>
             <div className="space-y-3">
               <Button 
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] hover:from-[#022b3a] hover:to-[#1f7a8c] text-white"
+                className="w-full text-sm sm:text-base bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] hover:from-[#022b3a] hover:to-[#1f7a8c] text-white"
               >
                 <Save className="h-4 w-4 mr-2" />
                 {isSubmitting ? 'Creating Case...' : 'Create Case'}
@@ -339,7 +340,7 @@ export default function NewCasePage() {
                 type="button"
                 variant="outline"
                 onClick={() => router.push('/dashboard/cases')}
-                className="w-full border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
+                className="w-full text-sm sm:text-base border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
               >
                 Cancel
               </Button>
@@ -347,14 +348,14 @@ export default function NewCasePage() {
           </Card>
 
           {/* Case Preview */}
-          <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
-            <h3 className="text-lg font-bold text-[#022b3a] mb-4">Case Preview</h3>
+          <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+            <h3 className="text-base sm:text-lg font-bold text-[#022b3a] mb-3 sm:mb-4">Case Preview</h3>
             <div className="space-y-3">
-              <div className="flex justify-between items-center text-sm">
+              <div className="flex justify-between items-center text-xs sm:text-sm">
                 <span className="text-[#022b3a]/70">Category</span>
-                <span className="font-semibold text-[#022b3a]">{formData.category || 'Not selected'}</span>
+                <span className="font-semibold text-[#022b3a] truncate ml-2">{formData.category || 'Not selected'}</span>
               </div>
-              <div className="flex justify-between items-center text-sm">
+              <div className="flex justify-between items-center text-xs sm:text-sm">
                 <span className="text-[#022b3a]/70">Priority</span>
                 <span className={`px-2 py-1 text-xs rounded-full ${
                   formData.priority === 'CRITICAL' ? 'bg-red-100 text-red-600' :
@@ -365,17 +366,17 @@ export default function NewCasePage() {
                   {formData.priority}
                 </span>
               </div>
-              <div className="flex justify-between items-center text-sm">
+              <div className="flex justify-between items-center text-xs sm:text-sm">
                 <span className="text-[#022b3a]/70">Created By</span>
-                <span className="text-[#022b3a]">{session?.user?.name || 'Officer'}</span>
+                <span className="text-[#022b3a] truncate ml-2">{session?.user?.name || 'Officer'}</span>
               </div>
             </div>
           </Card>
 
           {/* Help */}
-          <Card className="p-6 border-[#1f7a8c]/20 bg-gradient-to-r from-[#1f7a8c]/5 to-[#022b3a]/5 backdrop-blur-sm shadow-xl">
-            <h3 className="text-lg font-bold text-[#022b3a] mb-4">Tips</h3>
-            <ul className="text-sm text-[#022b3a]/80 space-y-2">
+          <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-gradient-to-r from-[#1f7a8c]/5 to-[#022b3a]/5 backdrop-blur-sm shadow-xl">
+            <h3 className="text-base sm:text-lg font-bold text-[#022b3a] mb-3 sm:mb-4">Tips</h3>
+            <ul className="text-xs sm:text-sm text-[#022b3a]/80 space-y-2">
               <li>• Be specific and detailed in your case description</li>
               <li>• Set appropriate priority levels for proper handling</li>
               <li>• Use relevant categories for easy organization</li>

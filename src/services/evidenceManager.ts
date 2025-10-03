@@ -91,7 +91,7 @@ class EvidenceManager {
           filesize: metadata.filesize,
           notes: metadata.notes,
           ipfsCid: ipfsCid,
-          ipfsHash: ipfsCid, // Legacy compatibility
+          ipfsHash: `${ipfsCid}-${Date.now()}`, // Make unique by adding timestamp
           fileHash: fileHash,
           retrievalUrl: retrievalUrl,
           custodyChain: JSON.stringify([{

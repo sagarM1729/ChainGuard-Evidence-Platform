@@ -1,10 +1,4 @@
-// ⭐📲 Next.js configuration with PWA wrapper (placeholder)
-import withPWA from 'next-pwa'
-const pwa = withPWA({
-	dest: 'public',
-	disable: process.env.NODE_ENV === 'development'
-})
-
+// ⭐ Next.js configuration
 const nextConfig = {
 	reactStrictMode: true,
 	experimental: {
@@ -20,4 +14,4 @@ const nextConfig = {
 	}
 }
 
-export default pwa(nextConfig)
+export default nextConfig

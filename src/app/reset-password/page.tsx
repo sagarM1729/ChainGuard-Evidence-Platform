@@ -59,13 +59,13 @@ function ResetPasswordForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#e1e5f2] to-[#bfdbf7] flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-[#1f7a8c]/20">
+    <div className="min-h-screen bg-gradient-to-br from-[#e1e5f2] to-[#bfdbf7] flex items-center justify-center p-4 sm:p-6 py-8">
+      <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-6 sm:p-8 border border-[#1f7a8c]/20">
         {/* Back Button */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <Link 
             href="/forgot-password" 
-            className="inline-flex items-center text-[#1f7a8c] hover:text-[#022b3a] transition-colors font-medium"
+            className="inline-flex items-center text-[#1f7a8c] hover:text-[#022b3a] transition-colors font-medium text-sm sm:text-base"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Forgot Password
@@ -73,40 +73,40 @@ function ResetPasswordForm() {
         </div>
 
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] rounded-2xl shadow-lg">
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="flex justify-center mb-3 sm:mb-4">
+            <div className="p-2.5 sm:p-3 bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] rounded-2xl shadow-lg">
               <Image 
                 src="/blockchain.png" 
                 alt="ChainGuard Logo" 
-                width={48} 
-                height={48}
-                className="object-contain filter brightness-0 invert"
+                width={40} 
+                height={40}
+                className="object-contain filter brightness-0 invert sm:w-12 sm:h-12"
               />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-[#022b3a] mb-2">Reset Password</h1>
-          <p className="text-[#022b3a]/70">Enter the 6-digit code sent to your email and your new password</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#022b3a] mb-2">Reset Password</h1>
+          <p className="text-sm sm:text-base text-[#022b3a]/70 px-2">Enter the 6-digit code sent to your email and your new password</p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           {/* Error Message */}
           {error && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
-              <p className="text-sm text-red-600 font-medium">{error}</p>
+            <div className="p-3 sm:p-4 bg-red-50 border border-red-200 rounded-xl">
+              <p className="text-xs sm:text-sm text-red-600 font-medium">{error}</p>
             </div>
           )}
 
           {/* Email Field */}
           <div>
-            <Label htmlFor="email" className="text-[#022b3a] font-semibold mb-2 block">Email address</Label>
+            <Label htmlFor="email" className="text-[#022b3a] font-semibold mb-1.5 sm:mb-2 block text-sm sm:text-base">Email address</Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-[#1f7a8c]/20 rounded-xl bg-white/80 text-[#022b3a] placeholder-[#022b3a]/50 focus:border-[#1f7a8c] focus:outline-none focus:ring-2 focus:ring-[#1f7a8c]/20 transition-all outline-none"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 border-[#1f7a8c]/20 rounded-xl bg-white/80 text-[#022b3a] placeholder-[#022b3a]/50 focus:border-[#1f7a8c] focus:outline-none focus:ring-2 focus:ring-[#1f7a8c]/20 transition-all outline-none text-sm sm:text-base"
               placeholder="Enter your email address"
               required
               disabled={isLoading}
@@ -115,31 +115,31 @@ function ResetPasswordForm() {
 
           {/* OTP Field */}
           <div>
-            <Label htmlFor="otp" className="text-[#022b3a] font-semibold mb-2 block">Reset Code</Label>
+            <Label htmlFor="otp" className="text-[#022b3a] font-semibold mb-1.5 sm:mb-2 block text-sm sm:text-base">Reset Code</Label>
             <Input
               id="otp"
               type="text"
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              className="w-full px-4 py-3 border-2 border-[#1f7a8c]/20 rounded-xl bg-white/80 text-[#022b3a] placeholder-[#022b3a]/50 focus:border-[#1f7a8c] focus:outline-none focus:ring-2 focus:ring-[#1f7a8c]/20 transition-all outline-none text-center text-lg tracking-widest"
+              className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 border-[#1f7a8c]/20 rounded-xl bg-white/80 text-[#022b3a] placeholder-[#022b3a]/50 focus:border-[#1f7a8c] focus:outline-none focus:ring-2 focus:ring-[#1f7a8c]/20 transition-all outline-none text-center text-base sm:text-lg tracking-widest"
               placeholder="000000"
               maxLength={6}
               required
               disabled={isLoading}
             />
-            <p className="text-xs text-[#022b3a]/60 mt-2">Enter the 6-digit code sent to your email</p>
+            <p className="text-[10px] sm:text-xs text-[#022b3a]/60 mt-1.5 sm:mt-2">Enter the 6-digit code sent to your email</p>
           </div>
 
           {/* New Password Field */}
           <div>
-            <Label htmlFor="newPassword" className="text-[#022b3a] font-semibold mb-2 block">New Password</Label>
+            <Label htmlFor="newPassword" className="text-[#022b3a] font-semibold mb-1.5 sm:mb-2 block text-sm sm:text-base">New Password</Label>
             <div className="relative">
               <Input
                 id="newPassword"
                 type={showPassword ? "text" : "password"}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full px-4 py-3 pr-12 border-2 border-[#1f7a8c]/20 rounded-xl bg-white/80 text-[#022b3a] placeholder-[#022b3a]/50 focus:border-[#1f7a8c] focus:outline-none focus:ring-2 focus:ring-[#1f7a8c]/20 transition-all outline-none"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 pr-10 sm:pr-12 border-2 border-[#1f7a8c]/20 rounded-xl bg-white/80 text-[#022b3a] placeholder-[#022b3a]/50 focus:border-[#1f7a8c] focus:outline-none focus:ring-2 focus:ring-[#1f7a8c]/20 transition-all outline-none text-sm sm:text-base"
                 placeholder="Enter your new password"
                 required
                 disabled={isLoading}
@@ -148,20 +148,20 @@ function ResetPasswordForm() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#022b3a]/60 hover:text-[#1f7a8c] transition-colors"
+                className="absolute right-3 sm:right-4 top-1/2 transform -translate-y-1/2 text-[#022b3a]/60 hover:text-[#1f7a8c] transition-colors"
                 disabled={isLoading}
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPassword ? <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Eye className="w-4 h-4 sm:w-5 sm:h-5" />}
               </button>
             </div>
-            <p className="text-xs text-[#022b3a]/60 mt-2">Use 8+ characters with letters, numbers & symbols</p>
+            <p className="text-[10px] sm:text-xs text-[#022b3a]/60 mt-1.5 sm:mt-2">Use 8+ characters with letters, numbers & symbols</p>
           </div>
 
           {/* Submit Button */}
           <Button 
             type="submit" 
             disabled={isLoading || otp.length !== 6}
-            className="group relative w-full bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
+            className="group relative w-full bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white py-3 sm:py-4 px-6 rounded-xl font-bold text-base sm:text-lg shadow-lg active:shadow-xl sm:hover:shadow-xl transform active:scale-[0.98] sm:hover:scale-[1.02] transition-all duration-300 overflow-hidden disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-[#022b3a] to-[#1f7a8c] opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out"></div>
             <span className="relative z-10">
@@ -171,8 +171,8 @@ function ResetPasswordForm() {
         </form>
 
         {/* Bottom Link */}
-        <div className="text-center mt-8 pt-6 border-t border-[#1f7a8c]/20">
-          <p className="text-[#022b3a]">
+        <div className="text-center mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-[#1f7a8c]/20">
+          <p className="text-sm sm:text-base text-[#022b3a]">
             Didn&apos;t receive a code?{" "}
             <Link href="/forgot-password" className="text-[#1f7a8c] hover:text-[#022b3a] font-semibold hover:underline transition-colors">
               Try again

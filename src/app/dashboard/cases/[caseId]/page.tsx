@@ -180,35 +180,44 @@ export default function CaseDetailsPage() {
   }
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="outline"
-              onClick={() => router.push('/dashboard/cases')}
-              className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Cases
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold text-[#022b3a]">{case_.title}</h1>
-              <div className="flex items-center space-x-3 mt-2">
-                <span className={`px-3 py-1 text-sm font-medium rounded-full border ${getStatusColor(case_.status)}`}>
-                  {case_.status.replace('_', ' ')}
-                </span>
-                <span className={`px-3 py-1 text-sm font-medium rounded-full border ${getPriorityColor(case_.priority)}`}>
-                  {case_.priority}
-                </span>
-              </div>
+      <div className="mb-6 sm:mb-8">
+        {/* Back Button */}
+        <div className="mb-3 sm:mb-4">
+          <Button 
+            variant="outline"
+            onClick={() => router.push('/dashboard/cases')}
+            className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200 text-sm sm:text-base"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Cases
+          </Button>
+        </div>
+        
+        {/* Title and Actions */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between space-y-3 sm:space-y-0">
+          <div className="flex-1">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#022b3a] mb-2">{case_.title}</h1>
+            <div className="flex items-center gap-2 mb-3">
+              <Hash className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#1f7a8c]/60" />
+              <span className="text-xs sm:text-sm text-[#022b3a]/60 font-mono">
+                Case Number: {case_.caseNumber}
+              </span>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <span className={`px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium rounded-full border ${getStatusColor(case_.status)}`}>
+                {case_.status.replace('_', ' ')}
+              </span>
+              <span className={`px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium rounded-full border ${getPriorityColor(case_.priority)}`}>
+                {case_.priority}
+              </span>
             </div>
           </div>
-          <div className="flex space-x-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
             <Button 
               onClick={() => setShowUploadForm(true)}
-              className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] hover:from-[#022b3a] hover:to-[#1f7a8c] text-white"
+              className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] hover:from-[#022b3a] hover:to-[#1f7a8c] text-white text-sm sm:text-base w-full sm:w-auto"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add Evidence
@@ -216,7 +225,7 @@ export default function CaseDetailsPage() {
             <Button 
               variant="outline"
               onClick={() => router.push(`/dashboard/cases/${case_.id}/edit`)}
-              className="border border-[#022b3a]/30 bg-white text-[#022b3a] hover:bg-[#022b3a]/10 hover:border-[#022b3a]/40 hover:text-[#022b3a] active:scale-95 transition-colors duration-200"
+              className="border border-[#022b3a]/30 bg-white text-[#022b3a] hover:bg-[#022b3a]/10 hover:border-[#022b3a]/40 hover:text-[#022b3a] active:scale-95 transition-colors duration-200 text-sm sm:text-base w-full sm:w-auto"
             >
               <Edit className="h-4 w-4 mr-2" />
               Update Case
@@ -226,36 +235,40 @@ export default function CaseDetailsPage() {
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* Case Information */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-6 sm:space-y-8">
           {/* Case Details Card */}
-          <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
-            <h2 className="text-xl font-bold text-[#022b3a] mb-6">Case Information</h2>
+          <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+            <h2 className="text-lg sm:text-xl font-bold text-[#022b3a] mb-4 sm:mb-6">Case Information</h2>
             
             {/* Description - Full Width */}
-            <div className="mb-6">
-              <label className="text-sm font-medium text-[#022b3a]/70">Description</label>
+            <div className="mb-4 sm:mb-6">
+              <label className="text-xs sm:text-sm font-medium text-[#022b3a]/70">Description</label>
               <div className="mt-2 bg-gradient-to-r from-[#1f7a8c]/5 to-[#022b3a]/5 rounded-lg border border-[#1f7a8c]/10">
-                <div className="relative p-4">
-                  <p className={`text-[#022b3a] whitespace-pre-wrap break-words leading-relaxed ${!isDescriptionExpanded && case_.description.length > 300 ? 'line-clamp-4' : ''}`}>
+                <div className="relative p-3 sm:p-4">
+                  <p className={`text-sm sm:text-base text-[#022b3a] whitespace-pre-wrap break-words leading-relaxed ${!isDescriptionExpanded && case_.description.length > 200 ? 'line-clamp-3' : ''}`}>
                     {case_.description}
                   </p>
                 </div>
-                {case_.description.length > 300 && (
-                  <div className="px-4 pb-3 pt-0">
+                {case_.description.length > 200 && (
+                  <div className="px-3 sm:px-4 pb-3 pt-0">
                     <button
-                      onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                      className="flex items-center text-sm font-medium text-[#1f7a8c] hover:text-[#022b3a] transition-colors"
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setIsDescriptionExpanded(!isDescriptionExpanded)
+                      }}
+                      className="flex items-center text-xs sm:text-sm font-medium text-[#1f7a8c] hover:text-[#022b3a] transition-colors"
                     >
                       {isDescriptionExpanded ? (
                         <>
-                          <ChevronUp className="h-4 w-4 mr-1" />
+                          <ChevronUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                           Show Less
                         </>
                       ) : (
                         <>
-                          <ChevronDown className="h-4 w-4 mr-1" />
+                          <ChevronDown className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                           Show More
                         </>
                       )}
@@ -265,53 +278,53 @@ export default function CaseDetailsPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <div>
-                <label className="text-sm font-medium text-[#022b3a]/70">Category</label>
-                <p className="mt-1 text-[#022b3a]">{case_.category}</p>
+                <label className="text-xs sm:text-sm font-medium text-[#022b3a]/70">Category</label>
+                <p className="mt-1 text-sm sm:text-base text-[#022b3a]">{case_.category}</p>
               </div>
               
               <div>
-                <label className="text-sm font-medium text-[#022b3a]/70">Location</label>
+                <label className="text-xs sm:text-sm font-medium text-[#022b3a]/70">Location</label>
                 <div className="flex items-center mt-1">
-                  <MapPin className="h-4 w-4 text-[#1f7a8c] mr-1" />
-                  <span className="text-[#022b3a]">{case_.location}</span>
+                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-[#1f7a8c] mr-1 flex-shrink-0" />
+                  <span className="text-sm sm:text-base text-[#022b3a] truncate">{case_.location}</span>
                 </div>
               </div>
               
               <div>
-                <label className="text-sm font-medium text-[#022b3a]/70">Assigned To</label>
+                <label className="text-xs sm:text-sm font-medium text-[#022b3a]/70">Assigned To</label>
                 <div className="flex items-center mt-1">
-                  <User className="h-4 w-4 text-[#1f7a8c] mr-1" />
-                  <span className="text-[#022b3a]">{case_.User?.name || case_.User?.email || case_.officerId}</span>
+                  <User className="h-3 w-3 sm:h-4 sm:w-4 text-[#1f7a8c] mr-1 flex-shrink-0" />
+                  <span className="text-sm sm:text-base text-[#022b3a] truncate">{case_.User?.name || case_.User?.email || case_.officerId}</span>
                 </div>
               </div>
               
               <div>
-                <label className="text-sm font-medium text-[#022b3a]/70">Created</label>
+                <label className="text-xs sm:text-sm font-medium text-[#022b3a]/70">Created</label>
                 <div className="flex items-center mt-1">
-                  <Calendar className="h-4 w-4 text-[#1f7a8c] mr-1" />
-                  <span className="text-[#022b3a]">{new Date(case_.createdAt).toLocaleDateString()}</span>
+                  <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-[#1f7a8c] mr-1 flex-shrink-0" />
+                  <span className="text-sm sm:text-base text-[#022b3a]">{new Date(case_.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
               
               <div>
-                <label className="text-sm font-medium text-[#022b3a]/70">Last Updated</label>
+                <label className="text-xs sm:text-sm font-medium text-[#022b3a]/70">Last Updated</label>
                 <div className="flex items-center mt-1">
-                  <Clock className="h-4 w-4 text-[#1f7a8c] mr-1" />
-                  <span className="text-[#022b3a]">{new Date(case_.updatedAt).toLocaleDateString()}</span>
+                  <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-[#1f7a8c] mr-1 flex-shrink-0" />
+                  <span className="text-sm sm:text-base text-[#022b3a]">{new Date(case_.updatedAt).toLocaleDateString()}</span>
                 </div>
               </div>
             </div>
           </Card>
 
           {/* Evidence Section */}
-          <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-[#022b3a]">Evidence ({case_.evidence.length})</h2>
+          <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 space-y-3 sm:space-y-0">
+              <h2 className="text-lg sm:text-xl font-bold text-[#022b3a]">Evidence ({case_.evidence.length})</h2>
               <Button 
                 onClick={() => setShowUploadForm(true)}
-                className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white"
+                className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white text-sm sm:text-base w-full sm:w-auto"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Evidence
@@ -319,32 +332,32 @@ export default function CaseDetailsPage() {
             </div>
 
             {case_.evidence.length === 0 ? (
-              <div className="text-center py-8">
-                <FileText className="h-12 w-12 text-[#1f7a8c]/30 mx-auto mb-4" />
-                <p className="text-[#022b3a]/60 mb-4">No evidence uploaded yet</p>
+              <div className="text-center py-6 sm:py-8">
+                <FileText className="h-10 w-10 sm:h-12 sm:w-12 text-[#1f7a8c]/30 mx-auto mb-3 sm:mb-4" />
+                <p className="text-sm sm:text-base text-[#022b3a]/60 mb-3 sm:mb-4">No evidence uploaded yet</p>
                 <Button 
                   onClick={() => setShowUploadForm(true)}
-                  className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white"
+                  className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white text-sm sm:text-base"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   Upload First Evidence
                 </Button>
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {case_.evidence.map((evidence) => (
-                  <div key={evidence.id} className="border border-[#1f7a8c]/20 rounded-lg p-4 hover:shadow-lg transition-shadow">
-                    <div className="flex justify-between items-start">
+                  <div key={evidence.id} className="border border-[#1f7a8c]/20 rounded-lg p-3 sm:p-4 hover:shadow-lg transition-shadow">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-3 sm:space-y-0">
                       <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <FileText className="h-5 w-5 text-[#1f7a8c]" />
-                          <h3 className="font-semibold text-[#022b3a]">{evidence.filename}</h3>
+                        <div className="flex items-center flex-wrap gap-2 mb-2">
+                          <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-[#1f7a8c] flex-shrink-0" />
+                          <h3 className="font-semibold text-sm sm:text-base text-[#022b3a] break-all">{evidence.filename}</h3>
                           {evidence.verified && (
-                            <CheckCircle className="h-4 w-4 text-green-500" />
+                            <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
                           )}
                         </div>
                         
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-[#022b3a]/70 mb-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4 text-xs sm:text-sm text-[#022b3a]/70 mb-3">
                           <div>
                             <span className="font-medium">Type:</span> {evidence.evidenceType}
                           </div>
@@ -354,19 +367,19 @@ export default function CaseDetailsPage() {
                           <div>
                             <span className="font-medium">Collected:</span> {new Date(evidence.collectedAt).toLocaleDateString()}
                           </div>
-                          <div>
+                          <div className="truncate">
                             <span className="font-medium">By:</span> {evidence.collectedBy}
                           </div>
                         </div>
                         
                         {evidence.notes && (
-                          <p className="text-sm text-[#022b3a]/80 mb-3">{evidence.notes}</p>
+                          <p className="text-xs sm:text-sm text-[#022b3a]/80 mb-3">{evidence.notes}</p>
                         )}
                         
                         {evidence.tags && evidence.tags.length > 0 && (
                           <div className="flex flex-wrap gap-1 mb-3">
                             {evidence.tags.map((tag, index) => (
-                              <span key={index} className="px-2 py-1 bg-[#1f7a8c]/10 text-[#1f7a8c] text-xs rounded-full">
+                              <span key={index} className="px-2 py-0.5 sm:py-1 bg-[#1f7a8c]/10 text-[#1f7a8c] text-[10px] sm:text-xs rounded-full">
                                 {tag}
                               </span>
                             ))}
@@ -374,21 +387,21 @@ export default function CaseDetailsPage() {
                         )}
                         
                         {evidence.merkleRoot && (
-                          <div className="flex items-center text-sm text-[#022b3a]/70 mb-2">
-                            <Shield className="h-4 w-4 text-green-500 mr-2" />
+                          <div className="flex items-center text-xs sm:text-sm text-[#022b3a]/70 mb-2">
+                            <Shield className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 mr-2 flex-shrink-0" />
                             <span>Merkle ledger verified</span>
                           </div>
                         )}
                         
                         {evidence.ipfsCid && (
-                          <div className="flex items-center text-sm text-[#022b3a]/70">
-                            <Hash className="h-4 w-4 text-[#1f7a8c] mr-2" />
-                            <span className="font-mono text-xs">{evidence.ipfsCid}</span>
+                          <div className="flex items-center text-xs sm:text-sm text-[#022b3a]/70">
+                            <Hash className="h-3 w-3 sm:h-4 sm:w-4 text-[#1f7a8c] mr-2 flex-shrink-0" />
+                            <span className="font-mono text-[10px] sm:text-xs break-all">{evidence.ipfsCid}</span>
                           </div>
                         )}
                       </div>
                       
-                      <div className="flex space-x-2 ml-4">
+                      <div className="flex sm:flex-col gap-2 sm:ml-4">
                         {evidence.retrievalUrl && (
                           <Button
                             variant="outline"
@@ -401,9 +414,10 @@ export default function CaseDetailsPage() {
                                 window.open(evidence.retrievalUrl, '_blank')
                               }
                             }}
-                            className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
+                            className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200 flex-1 sm:flex-none"
                           >
-                            <Eye className="h-4 w-4" />
+                            <Eye className="h-4 w-4 sm:mr-0" />
+                            <span className="sm:hidden ml-2">View</span>
                           </Button>
                         )}
                         <Button
@@ -422,9 +436,10 @@ export default function CaseDetailsPage() {
                               }
                             }
                           }}
-                          className="border border-[#022b3a]/30 bg-white text-[#022b3a] hover:bg-[#022b3a]/10 hover:border-[#022b3a]/40 hover:text-[#022b3a] active:scale-95 transition-colors duration-200"
+                          className="border border-[#022b3a]/30 bg-white text-[#022b3a] hover:bg-[#022b3a]/10 hover:border-[#022b3a]/40 hover:text-[#022b3a] active:scale-95 transition-colors duration-200 flex-1 sm:flex-none"
                         >
-                          <Download className="h-4 w-4" />
+                          <Download className="h-4 w-4 sm:mr-0" />
+                          <span className="sm:hidden ml-2">Download</span>
                         </Button>
                       </div>
                     </div>
@@ -436,40 +451,40 @@ export default function CaseDetailsPage() {
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* AI Intelligence Engine */}
           <AIIntelligenceEngine caseId={case_.id} />
 
           {/* Evidence Chain Integrity Status */}
-          <Card className="p-4 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+          <Card className="p-3 sm:p-4 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Shield className="h-5 w-5 text-[#1f7a8c]" />
-                <h3 className="text-sm font-bold text-[#022b3a]">Chain Integrity</h3>
+                <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-[#1f7a8c]" />
+                <h3 className="text-xs sm:text-sm font-bold text-[#022b3a]">Chain Integrity</h3>
               </div>
               {case_.merkleRoot ? (
                 case_.evidence.length > 0 && case_.evidence.every(e => e.verified) ? (
-                  <div className="flex items-center space-x-1 px-3 py-1 bg-green-100 border border-green-200 rounded-full">
-                    <CheckCircle className="h-4 w-4 text-green-600" />
-                    <span className="text-xs font-semibold text-green-700">✓ Verified</span>
+                  <div className="flex items-center space-x-1 px-2 sm:px-3 py-1 bg-green-100 border border-green-200 rounded-full">
+                    <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
+                    <span className="text-[10px] sm:text-xs font-semibold text-green-700">✓ Verified</span>
                   </div>
                 ) : (
-                  <div className="flex items-center space-x-1 px-3 py-1 bg-red-100 border border-red-200 rounded-full">
-                    <AlertCircle className="h-4 w-4 text-red-600" />
-                    <span className="text-xs font-semibold text-red-700">✗ Tampered</span>
+                  <div className="flex items-center space-x-1 px-2 sm:px-3 py-1 bg-red-100 border border-red-200 rounded-full">
+                    <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />
+                    <span className="text-[10px] sm:text-xs font-semibold text-red-700">✗ Tampered</span>
                   </div>
                 )
               ) : (
-                <div className="flex items-center space-x-1 px-3 py-1 bg-gray-100 border border-gray-200 rounded-full">
-                  <Clock className="h-4 w-4 text-gray-600" />
-                  <span className="text-xs font-semibold text-gray-700">Pending</span>
+                <div className="flex items-center space-x-1 px-2 sm:px-3 py-1 bg-gray-100 border border-gray-200 rounded-full">
+                  <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-gray-600" />
+                  <span className="text-[10px] sm:text-xs font-semibold text-gray-700">Pending</span>
                 </div>
               )}
             </div>
             {case_.merkleRoot && (
-              <div className="mt-3 pt-3 border-t border-[#1f7a8c]/10">
-                <p className="text-xs text-[#022b3a]/60 mb-1">Evidence Status:</p>
-                <div className="flex items-center justify-between text-xs">
+              <div className="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-[#1f7a8c]/10">
+                <p className="text-[10px] sm:text-xs text-[#022b3a]/60 mb-1">Evidence Status:</p>
+                <div className="flex items-center justify-between text-[10px] sm:text-xs">
                   <span className="text-[#022b3a]/70">
                     {case_.evidence.filter(e => e.verified).length} / {case_.evidence.length} verified
                   </span>
@@ -486,28 +501,28 @@ export default function CaseDetailsPage() {
           </Card>
 
           {/* Quick Stats */}
-          <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
-            <h3 className="text-lg font-bold text-[#022b3a] mb-4">Quick Stats</h3>
-            <div className="space-y-4">
+          <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+            <h3 className="text-base sm:text-lg font-bold text-[#022b3a] mb-3 sm:mb-4">Quick Stats</h3>
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-[#022b3a]/70">Total Evidence</span>
-                <span className="font-semibold text-[#022b3a]">{case_.evidence.length}</span>
+                <span className="text-xs sm:text-sm text-[#022b3a]/70">Total Evidence</span>
+                <span className="font-semibold text-sm sm:text-base text-[#022b3a]">{case_.evidence.length}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[#022b3a]/70">Verified Items</span>
-                <span className="font-semibold text-[#022b3a]">
+                <span className="text-xs sm:text-sm text-[#022b3a]/70">Verified Items</span>
+                <span className="font-semibold text-sm sm:text-base text-[#022b3a]">
                   {case_.evidence.filter(e => e.verified).length}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-[#022b3a]/70">Merkle Records</span>
-                <span className="font-semibold text-[#022b3a]">
+                <span className="text-xs sm:text-sm text-[#022b3a]/70">Merkle Records</span>
+                <span className="font-semibold text-sm sm:text-base text-[#022b3a]">
                   {case_.evidence.filter(e => e.merkleRoot).length}
                 </span>
               </div>
               <div className="flex justify-between items-start">
-                <span className="text-[#022b3a]/70">Case Merkle Root</span>
-                <span className="font-mono text-xs text-[#022b3a] max-w-[180px] text-right break-all">
+                <span className="text-xs sm:text-sm text-[#022b3a]/70">Case Merkle Root</span>
+                <span className="font-mono text-[10px] sm:text-xs text-[#022b3a] max-w-[120px] sm:max-w-[180px] text-right break-all">
                   {case_.merkleRoot ?? 'Pending'}
                 </span>
               </div>
@@ -515,19 +530,19 @@ export default function CaseDetailsPage() {
           </Card>
 
           {/* Recent Activity */}
-          <Card className="p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
-            <h3 className="text-lg font-bold text-[#022b3a] mb-4">Recent Activity</h3>
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-[#1f7a8c] rounded-full"></div>
-                <div className="text-sm">
+          <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
+            <h3 className="text-base sm:text-lg font-bold text-[#022b3a] mb-3 sm:mb-4">Recent Activity</h3>
+            <div className="space-y-2 sm:space-y-3">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="w-2 h-2 bg-[#1f7a8c] rounded-full flex-shrink-0"></div>
+                <div className="text-xs sm:text-sm">
                   <p className="text-[#022b3a]">Case updated</p>
                   <p className="text-[#022b3a]/60">{new Date(case_.updatedAt).toLocaleDateString()}</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-2 h-2 bg-[#022b3a] rounded-full"></div>
-                <div className="text-sm">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="w-2 h-2 bg-[#022b3a] rounded-full flex-shrink-0"></div>
+                <div className="text-xs sm:text-sm">
                   <p className="text-[#022b3a]">Case created</p>
                   <p className="text-[#022b3a]/60">{new Date(case_.createdAt).toLocaleDateString()}</p>
                 </div>
@@ -540,13 +555,13 @@ export default function CaseDetailsPage() {
       {/* Upload Form Modal */}
       {showUploadForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-[#022b3a]">Add Evidence</h2>
+          <div className="bg-white rounded-2xl p-4 sm:p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 sm:mb-6">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#022b3a]">Add Evidence</h2>
               <Button 
                 variant="outline"
                 onClick={() => setShowUploadForm(false)}
-                className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200"
+                className="border border-[#1f7a8c]/30 bg-white text-[#1f7a8c] hover:bg-[#1f7a8c]/10 hover:border-[#1f7a8c]/40 hover:text-[#1f7a8c] active:scale-95 transition-colors duration-200 text-sm sm:text-base"
               >
                 Cancel
               </Button>

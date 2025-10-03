@@ -1,0 +1,422 @@
+{
+  "exportDate": "2025-10-02T17:32:32.875Z",
+  "tables": {
+    "cases": [
+      {
+        "id": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+        "caseNumber": "CASE-1759357655106-0001",
+        "title": "Assassination of Political Activist Charlie Kirk",
+        "description": "On September 10, 2025, at approximately 12:23 PM, conservative political activist and Turning Point USA founder Charlie Kirk was fatally shot while speaking at an outdoor event on the campus of Utah Valley University in Orem, Utah. Kirk was struck by a single rifle shot to the neck, believed to have been fired from the roof of the nearby Losee Center, about 142 yards away. He was immediately transported to Timpanogos Regional Hospital but was pronounced dead shortly after",
+        "createdAt": "2025-10-01T22:27:35.109Z",
+        "updatedAt": "2025-10-01T22:33:35.935Z",
+        "officerId": "301626c2-0115-449e-a1d7-03c8a57393d2",
+        "merkleRoot": "31c29b4e29d8cad170ef45c95ab8419686a544e36963abda5696f8a9d0bbcdf0",
+        "category": "Assault",
+        "dateClosed": null,
+        "dateOpened": "2025-10-01T22:27:35.109Z",
+        "location": "United States",
+        "priority": "HIGH",
+        "status": "OPEN",
+        "evidence": [
+          {
+            "id": "f64fd66b-5f97-4b58-9edd-bde09b64a44b",
+            "filename": "charkie-kirk-killer-jpg-1757644122613_1757644123206-600x338.jpg",
+            "filetype": "image/jpeg",
+            "notes": "suspect found jumping from university terrace , he was in all black clothes\r\n",
+            "ipfsHash": "bafkreides4rgdxcphedhn4zchw5ia6l6d4tbrr34dzprq64v5jgqlrjn7e",
+            "blockchainTxId": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+            "createdAt": "2025-10-01T22:29:12.320Z",
+            "updatedAt": "2025-10-01T22:29:13.531Z",
+            "caseId": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+            "accessLevel": "RESTRICTED",
+            "blockchainHash": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+            "merkleProof": {
+              "leaf": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+              "root": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+              "siblings": []
+            },
+            "category": "",
+            "collectedAt": "2025-09-30T22:27:00.000Z",
+            "collectedBy": "sagar",
+            "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-01T22:29:13.529Z\",\"location\":\"university terrace\"}]",
+            "deviceInfo": null,
+            "encryptionKey": null,
+            "evidenceType": "OTHER",
+            "fileHash": "64972261dc4f390676f3223dba80797e1f2618c77c1e5f187b95ea4d05c52df9",
+            "filesize": 36734,
+            "ipfsCid": "bafkreides4rgdxcphedhn4zchw5ia6l6d4tbrr34dzprq64v5jgqlrjn7e",
+            "isEncrypted": true,
+            "verified": true,
+            "location": "university terrace",
+            "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreides4rgdxcphedhn4zchw5ia6l6d4tbrr34dzprq64v5jgqlrjn7e",
+            "tags": []
+          },
+          {
+            "id": "cd740073-2940-4123-b3fc-c8eae4ab6ffd",
+            "filename": "download (1).jpeg",
+            "filetype": "image/jpeg",
+            "notes": "gun found wrapped in towel in the bushes of university",
+            "ipfsHash": "bafkreigiwryxljd4wsj2sichyv56tb72on2txng7k3cl4e2ldcgpnolmvu",
+            "blockchainTxId": "828586662d76f27a33693793a098ce1a81283ebd5f3a47218bb02d11b56b6549",
+            "createdAt": "2025-10-01T22:31:13.126Z",
+            "updatedAt": "2025-10-01T22:31:13.721Z",
+            "caseId": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+            "accessLevel": "RESTRICTED",
+            "blockchainHash": "381fada72a95078970f24ff972cd7ccbafb557d7433b722a0ccb07f075f4b790",
+            "merkleProof": {
+              "leaf": "381fada72a95078970f24ff972cd7ccbafb557d7433b722a0ccb07f075f4b790",
+              "root": "828586662d76f27a33693793a098ce1a81283ebd5f3a47218bb02d11b56b6549",
+              "siblings": [
+                {
+                  "hash": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+                  "position": "left"
+                }
+              ]
+            },
+            "category": "Weapon",
+            "collectedAt": "2025-09-30T22:30:00.000Z",
+            "collectedBy": "sagar",
+            "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-01T22:31:13.719Z\",\"location\":\"university\"}]",
+            "deviceInfo": null,
+            "encryptionKey": null,
+            "evidenceType": "OTHER",
+            "fileHash": "c8b47175a47cb493a92047c57be987fa73753bb4df56c4be134b188cf6b96cad",
+            "filesize": 7493,
+            "ipfsCid": "bafkreigiwryxljd4wsj2sichyv56tb72on2txng7k3cl4e2ldcgpnolmvu",
+            "isEncrypted": true,
+            "verified": true,
+            "location": "university",
+            "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreigiwryxljd4wsj2sichyv56tb72on2txng7k3cl4e2ldcgpnolmvu",
+            "tags": []
+          },
+          {
+            "id": "eb6be32a-142c-47a5-bf9d-1ecce954f907",
+            "filename": "download (2).jpeg",
+            "filetype": "image/jpeg",
+            "notes": "a guy was found wearing all black clothes , his names is tyler robinson , his grandfather also has same gun which is missing now , also he lives  near utah city",
+            "ipfsHash": "bafkreibnifax2xrdewjktdimjy3pig3xx4puxr7aumyeypqulgnazfclwq",
+            "blockchainTxId": "31c29b4e29d8cad170ef45c95ab8419686a544e36963abda5696f8a9d0bbcdf0",
+            "createdAt": "2025-10-01T22:33:35.571Z",
+            "updatedAt": "2025-10-01T22:33:36.656Z",
+            "caseId": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+            "accessLevel": "RESTRICTED",
+            "blockchainHash": "c814f0f293c6fe119e4f59672f5ff50d0587f79c44505345865744f25d79ec1a",
+            "merkleProof": {
+              "leaf": "c814f0f293c6fe119e4f59672f5ff50d0587f79c44505345865744f25d79ec1a",
+              "root": "31c29b4e29d8cad170ef45c95ab8419686a544e36963abda5696f8a9d0bbcdf0",
+              "siblings": [
+                {
+                  "hash": "c814f0f293c6fe119e4f59672f5ff50d0587f79c44505345865744f25d79ec1a",
+                  "position": "right"
+                },
+                {
+                  "hash": "828586662d76f27a33693793a098ce1a81283ebd5f3a47218bb02d11b56b6549",
+                  "position": "left"
+                }
+              ]
+            },
+            "category": "Photos",
+            "collectedAt": "2025-09-30T22:31:00.000Z",
+            "collectedBy": "sagar",
+            "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-01T22:33:36.654Z\",\"location\":\"Digital Evidence System\"}]",
+            "deviceInfo": null,
+            "encryptionKey": null,
+            "evidenceType": "PHOTO",
+            "fileHash": "2d41417d5e232592a98d0c4e36f41b77bf1f4bc7e0a3304c3e14599a0c944bb4",
+            "filesize": 5977,
+            "ipfsCid": "bafkreibnifax2xrdewjktdimjy3pig3xx4puxr7aumyeypqulgnazfclwq",
+            "isEncrypted": true,
+            "verified": true,
+            "location": "",
+            "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreibnifax2xrdewjktdimjy3pig3xx4puxr7aumyeypqulgnazfclwq",
+            "tags": []
+          }
+        ],
+        "User": {
+          "id": "301626c2-0115-449e-a1d7-03c8a57393d2",
+          "email": "test@example.com",
+          "name": "sagar",
+          "role": "OFFICER",
+          "badge": null,
+          "department": null
+        }
+      },
+      {
+        "id": "396b6f5b-5dbb-43ce-add5-1867aa54999a",
+        "caseNumber": "CASE-1759408686573-0002",
+        "title": "Theft of Solar Panels from Agricultural Land in Miraj",
+        "description": "A formal complaint was filed on October 2, 2025, by a local farmer concerning the theft of four solar panels from a water pump installation on his agricultural property located on the outskirts of Miraj. The complainant has provided the serial numbers for all stolen panels. The incident is believed to have occurred during the early morning hours, between approximately 2:00 AM and 3:00 AM. Initial leads include a key piece of digital evidence: a CCTV video file obtained from a neighboring property, which reportedly captured a suspicious vehicle near the scene during the estimated time frame. Crime scene photographs documenting cut electrical wires and damaged mounting brackets have also been logged as initial physical evidence.",
+        "createdAt": "2025-10-02T12:38:06.576Z",
+        "updatedAt": "2025-10-02T12:45:14.355Z",
+        "officerId": "301626c2-0115-449e-a1d7-03c8a57393d2",
+        "merkleRoot": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+        "category": "Theft",
+        "dateClosed": null,
+        "dateOpened": "2025-10-02T12:38:06.576Z",
+        "location": "Miraj",
+        "priority": "MEDIUM",
+        "status": "OPEN",
+        "evidence": [
+          {
+            "id": "8301390f-94ec-4960-a641-8b7340daf3f8",
+            "filename": "Solar-Farm-Security-Systems.jpg",
+            "filetype": "image/jpeg",
+            "notes": "Captured from neighboring store\r\n",
+            "ipfsHash": "bafkreie6x2bxuho66v5y542v6hhjpvbpfgtigtcvdq3x7fdcbgceylp774",
+            "blockchainTxId": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+            "createdAt": "2025-10-02T12:45:14.077Z",
+            "updatedAt": "2025-10-02T12:45:15.282Z",
+            "caseId": "396b6f5b-5dbb-43ce-add5-1867aa54999a",
+            "accessLevel": "RESTRICTED",
+            "blockchainHash": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+            "merkleProof": {
+              "leaf": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+              "root": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+              "siblings": []
+            },
+            "category": "",
+            "collectedAt": "2025-10-01T06:44:00.000Z",
+            "collectedBy": "sagar",
+            "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-02T12:45:15.281Z\",\"location\":\"Miraj\"}]",
+            "deviceInfo": null,
+            "encryptionKey": null,
+            "evidenceType": "OTHER",
+            "fileHash": "9ebe837a1ddef57b8ef355f1ce97d42f29a6834c551c377f946209844c2dffff",
+            "filesize": 67022,
+            "ipfsCid": "bafkreie6x2bxuho66v5y542v6hhjpvbpfgtigtcvdq3x7fdcbgceylp774",
+            "isEncrypted": true,
+            "verified": true,
+            "location": "Miraj",
+            "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreie6x2bxuho66v5y542v6hhjpvbpfgtigtcvdq3x7fdcbgceylp774",
+            "tags": [
+              "land"
+            ]
+          }
+        ],
+        "User": {
+          "id": "301626c2-0115-449e-a1d7-03c8a57393d2",
+          "email": "test@example.com",
+          "name": "sagar",
+          "role": "OFFICER",
+          "badge": null,
+          "department": null
+        }
+      }
+    ],
+    "evidence": [
+      {
+        "id": "f64fd66b-5f97-4b58-9edd-bde09b64a44b",
+        "filename": "charkie-kirk-killer-jpg-1757644122613_1757644123206-600x338.jpg",
+        "filetype": "image/jpeg",
+        "notes": "suspect found jumping from university terrace , he was in all black clothes\r\n",
+        "ipfsHash": "bafkreides4rgdxcphedhn4zchw5ia6l6d4tbrr34dzprq64v5jgqlrjn7e",
+        "blockchainTxId": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+        "createdAt": "2025-10-01T22:29:12.320Z",
+        "updatedAt": "2025-10-01T22:29:13.531Z",
+        "caseId": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+        "accessLevel": "RESTRICTED",
+        "blockchainHash": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+        "merkleProof": {
+          "leaf": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+          "root": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+          "siblings": []
+        },
+        "category": "",
+        "collectedAt": "2025-09-30T22:27:00.000Z",
+        "collectedBy": "sagar",
+        "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-01T22:29:13.529Z\",\"location\":\"university terrace\"}]",
+        "deviceInfo": null,
+        "encryptionKey": null,
+        "evidenceType": "OTHER",
+        "fileHash": "64972261dc4f390676f3223dba80797e1f2618c77c1e5f187b95ea4d05c52df9",
+        "filesize": 36734,
+        "ipfsCid": "bafkreides4rgdxcphedhn4zchw5ia6l6d4tbrr34dzprq64v5jgqlrjn7e",
+        "isEncrypted": true,
+        "verified": true,
+        "location": "university terrace",
+        "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreides4rgdxcphedhn4zchw5ia6l6d4tbrr34dzprq64v5jgqlrjn7e",
+        "tags": [],
+        "case": {
+          "id": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+          "caseNumber": "CASE-1759357655106-0001",
+          "title": "Assassination of Political Activist Charlie Kirk"
+        }
+      },
+      {
+        "id": "cd740073-2940-4123-b3fc-c8eae4ab6ffd",
+        "filename": "download (1).jpeg",
+        "filetype": "image/jpeg",
+        "notes": "gun found wrapped in towel in the bushes of university",
+        "ipfsHash": "bafkreigiwryxljd4wsj2sichyv56tb72on2txng7k3cl4e2ldcgpnolmvu",
+        "blockchainTxId": "828586662d76f27a33693793a098ce1a81283ebd5f3a47218bb02d11b56b6549",
+        "createdAt": "2025-10-01T22:31:13.126Z",
+        "updatedAt": "2025-10-01T22:31:13.721Z",
+        "caseId": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+        "accessLevel": "RESTRICTED",
+        "blockchainHash": "381fada72a95078970f24ff972cd7ccbafb557d7433b722a0ccb07f075f4b790",
+        "merkleProof": {
+          "leaf": "381fada72a95078970f24ff972cd7ccbafb557d7433b722a0ccb07f075f4b790",
+          "root": "828586662d76f27a33693793a098ce1a81283ebd5f3a47218bb02d11b56b6549",
+          "siblings": [
+            {
+              "hash": "8944962794787c1749f16d6928daf7640eee2d58aee0586f8be8a3f9ef939c86",
+              "position": "left"
+            }
+          ]
+        },
+        "category": "Weapon",
+        "collectedAt": "2025-09-30T22:30:00.000Z",
+        "collectedBy": "sagar",
+        "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-01T22:31:13.719Z\",\"location\":\"university\"}]",
+        "deviceInfo": null,
+        "encryptionKey": null,
+        "evidenceType": "OTHER",
+        "fileHash": "c8b47175a47cb493a92047c57be987fa73753bb4df56c4be134b188cf6b96cad",
+        "filesize": 7493,
+        "ipfsCid": "bafkreigiwryxljd4wsj2sichyv56tb72on2txng7k3cl4e2ldcgpnolmvu",
+        "isEncrypted": true,
+        "verified": true,
+        "location": "university",
+        "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreigiwryxljd4wsj2sichyv56tb72on2txng7k3cl4e2ldcgpnolmvu",
+        "tags": [],
+        "case": {
+          "id": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+          "caseNumber": "CASE-1759357655106-0001",
+          "title": "Assassination of Political Activist Charlie Kirk"
+        }
+      },
+      {
+        "id": "eb6be32a-142c-47a5-bf9d-1ecce954f907",
+        "filename": "download (2).jpeg",
+        "filetype": "image/jpeg",
+        "notes": "a guy was found wearing all black clothes , his names is tyler robinson , his grandfather also has same gun which is missing now , also he lives  near utah city",
+        "ipfsHash": "bafkreibnifax2xrdewjktdimjy3pig3xx4puxr7aumyeypqulgnazfclwq",
+        "blockchainTxId": "31c29b4e29d8cad170ef45c95ab8419686a544e36963abda5696f8a9d0bbcdf0",
+        "createdAt": "2025-10-01T22:33:35.571Z",
+        "updatedAt": "2025-10-01T22:33:36.656Z",
+        "caseId": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+        "accessLevel": "RESTRICTED",
+        "blockchainHash": "c814f0f293c6fe119e4f59672f5ff50d0587f79c44505345865744f25d79ec1a",
+        "merkleProof": {
+          "leaf": "c814f0f293c6fe119e4f59672f5ff50d0587f79c44505345865744f25d79ec1a",
+          "root": "31c29b4e29d8cad170ef45c95ab8419686a544e36963abda5696f8a9d0bbcdf0",
+          "siblings": [
+            {
+              "hash": "c814f0f293c6fe119e4f59672f5ff50d0587f79c44505345865744f25d79ec1a",
+              "position": "right"
+            },
+            {
+              "hash": "828586662d76f27a33693793a098ce1a81283ebd5f3a47218bb02d11b56b6549",
+              "position": "left"
+            }
+          ]
+        },
+        "category": "Photos",
+        "collectedAt": "2025-09-30T22:31:00.000Z",
+        "collectedBy": "sagar",
+        "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-01T22:33:36.654Z\",\"location\":\"Digital Evidence System\"}]",
+        "deviceInfo": null,
+        "encryptionKey": null,
+        "evidenceType": "PHOTO",
+        "fileHash": "2d41417d5e232592a98d0c4e36f41b77bf1f4bc7e0a3304c3e14599a0c944bb4",
+        "filesize": 5977,
+        "ipfsCid": "bafkreibnifax2xrdewjktdimjy3pig3xx4puxr7aumyeypqulgnazfclwq",
+        "isEncrypted": true,
+        "verified": true,
+        "location": "",
+        "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreibnifax2xrdewjktdimjy3pig3xx4puxr7aumyeypqulgnazfclwq",
+        "tags": [],
+        "case": {
+          "id": "5c1c31e1-a7b6-4e8a-a101-d1b804fcb323",
+          "caseNumber": "CASE-1759357655106-0001",
+          "title": "Assassination of Political Activist Charlie Kirk"
+        }
+      },
+      {
+        "id": "8301390f-94ec-4960-a641-8b7340daf3f8",
+        "filename": "Solar-Farm-Security-Systems.jpg",
+        "filetype": "image/jpeg",
+        "notes": "Captured from neighboring store\r\n",
+        "ipfsHash": "bafkreie6x2bxuho66v5y542v6hhjpvbpfgtigtcvdq3x7fdcbgceylp774",
+        "blockchainTxId": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+        "createdAt": "2025-10-02T12:45:14.077Z",
+        "updatedAt": "2025-10-02T12:45:15.282Z",
+        "caseId": "396b6f5b-5dbb-43ce-add5-1867aa54999a",
+        "accessLevel": "RESTRICTED",
+        "blockchainHash": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+        "merkleProof": {
+          "leaf": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+          "root": "a9d20ee433a6175b75dfe2ce9391f3f9fb86d99cffb749384068938e4d99c397",
+          "siblings": []
+        },
+        "category": "",
+        "collectedAt": "2025-10-01T06:44:00.000Z",
+        "collectedBy": "sagar",
+        "custodyChain": "[{\"officer\":\"test@example.com\",\"action\":\"UPLOADED\",\"timestamp\":\"2025-10-02T12:45:15.281Z\",\"location\":\"Miraj\"}]",
+        "deviceInfo": null,
+        "encryptionKey": null,
+        "evidenceType": "OTHER",
+        "fileHash": "9ebe837a1ddef57b8ef355f1ce97d42f29a6834c551c377f946209844c2dffff",
+        "filesize": 67022,
+        "ipfsCid": "bafkreie6x2bxuho66v5y542v6hhjpvbpfgtigtcvdq3x7fdcbgceylp774",
+        "isEncrypted": true,
+        "verified": true,
+        "location": "Miraj",
+        "retrievalUrl": "https://gateway.pinata.cloud/ipfs/bafkreie6x2bxuho66v5y542v6hhjpvbpfgtigtcvdq3x7fdcbgceylp774",
+        "tags": [
+          "land"
+        ],
+        "case": {
+          "id": "396b6f5b-5dbb-43ce-add5-1867aa54999a",
+          "caseNumber": "CASE-1759408686573-0002",
+          "title": "Theft of Solar Panels from Agricultural Land in Miraj"
+        }
+      }
+    ],
+    "users": [
+      {
+        "id": "301626c2-0115-449e-a1d7-03c8a57393d2",
+        "name": "sagar",
+        "email": "test@example.com",
+        "createdAt": "2025-10-01T22:21:42.191Z",
+        "updatedAt": "2025-10-01T22:21:42.187Z",
+        "badge": null,
+        "department": null,
+        "role": "OFFICER"
+      },
+      {
+        "id": "a764343d-c935-46c4-afa9-746054fc31ef",
+        "name": "Ajay",
+        "email": "ajaysapkal1001@gmail.com",
+        "createdAt": "2025-10-02T11:52:22.714Z",
+        "updatedAt": "2025-10-02T11:52:22.713Z",
+        "badge": null,
+        "department": null,
+        "role": "OFFICER"
+      }
+    ],
+    "whitelist": [
+      {
+        "id": "9b36eb30-c238-4033-8ce0-21403385c6b0",
+        "email": "test@example.com"
+      },
+      {
+        "id": "521e73d1-a7d4-4733-8a0b-ce4e41d9de76",
+        "email": "admin@chainguard.com"
+      },
+      {
+        "id": "51414ddd-d37a-49f0-a27e-65903a24105a",
+        "email": "officer@police.gov"
+      },
+      {
+        "id": "5e3ca2ff-1991-4e68-8758-80d6f099fadb",
+        "email": "forensic@lab.gov"
+      },
+      {
+        "id": "af23d769-91b1-4ccc-8c19-4a43fb49fd85",
+        "email": "ajaysapkal1001@gmail.com"
+      }
+    ],
+    "passwordResetTokens": []
+  }
+}

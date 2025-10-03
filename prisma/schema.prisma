@@ -77,20 +77,40 @@ model Evidence {
 }
 
 model User {
-  id         String   @id
+  id         String     @id
   name       String?
-  email      String   @unique
+  email      String     @unique
   password   String
-  createdAt  DateTime @default(now())
+  createdAt  DateTime   @default(now())
   updatedAt  DateTime
-  badge      String?  @unique
+  badge      String?    @unique
   department String?
-  role       UserRole @default(OFFICER)
+  role       UserRole   @default(OFFICER)
   Case       Case[]
+  Activity   Activity[]
 
   @@index([department])
   @@index([email])
   @@index([role])
+}
+
+model Activity {
+  id          String       @id
+  type        ActivityType
+  title       String
+  description String?
+  metadata    Json?
+  createdAt   DateTime     @default(now())
+  userId      String
+  caseId      String?
+  evidenceId  String?
+  user        User         @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([caseId])
+  @@index([evidenceId])
+  @@index([type])
+  @@index([createdAt])
 }
 
 model Whitelist {
@@ -149,4 +169,19 @@ enum UserRole {
   OFFICER
   FORENSIC_TECH
   READONLY
+}
+
+enum ActivityType {
+  CASE_CREATED
+  CASE_UPDATED
+  CASE_STATUS_CHANGED
+  CASE_CLOSED
+  EVIDENCE_UPLOADED
+  EVIDENCE_UPDATED
+  EVIDENCE_VERIFIED
+  EVIDENCE_ACCESSED
+  USER_LOGIN
+  USER_LOGOUT
+  SYSTEM_BACKUP
+  CHAIN_CUSTODY_VERIFIED
 }
