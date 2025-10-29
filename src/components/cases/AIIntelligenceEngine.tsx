@@ -98,7 +98,17 @@ export default function AIIntelligenceEngine({ caseId }: AIIntelligenceEnginePro
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}))
         console.error('API error:', errorData)
-        throw new Error(errorData.error || `Failed to analyze case (${response.status})`)
+        
+        let errorMessage = `Failed to analyze case (${response.status})`
+        if (errorData.error) {
+          errorMessage = errorData.error
+        }
+        if (errorData.details) {
+          console.error('Error details:', errorData.details)
+          errorMessage += ` - ${errorData.details}`
+        }
+        
+        throw new Error(errorMessage)
       }
 
       const data = await response.json()
@@ -111,7 +121,14 @@ export default function AIIntelligenceEngine({ caseId }: AIIntelligenceEnginePro
       setAnalysis(data.analysis)
     } catch (err: any) {
       console.error('Analysis error:', err)
-      setError(err.message || 'Failed to analyze case. Please try again.')
+      let errorMessage = err.message || 'Failed to analyze case. Please try again.'
+      
+      // If it's a timeout or server error, suggest retry
+      if (errorMessage.includes('timeout') || errorMessage.includes('500')) {
+        errorMessage += ' The service may be temporarily busy - please try again in a moment.'
+      }
+      
+      setError(errorMessage)
     } finally {
       setIsAnalyzing(false)
     }
@@ -174,6 +191,19 @@ export default function AIIntelligenceEngine({ caseId }: AIIntelligenceEnginePro
 
       {analysis && (
         <div className="space-y-4">
+          {/* Check if this is a fallback analysis */}
+          {analysis.caseSummary.summary.some(s => s.includes('AI analysis temporarily unavailable')) && (
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start space-x-3">
+              <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-amber-900">AI Analysis Temporarily Unavailable</p>
+                <p className="text-xs text-amber-700 mt-1">
+                  The AI analysis service is currently at capacity. A manual analysis has been generated based on your case data.
+                </p>
+              </div>
+            </div>
+          )}
+          
           {/* Analysis Content */}
           <div className="max-h-[600px] overflow-y-auto">
             <div className="space-y-6">

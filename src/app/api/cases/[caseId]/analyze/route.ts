@@ -61,7 +61,7 @@ async function analyzeCaseWithGemini(caseData: any, allCases: any[]): Promise<An
 
     console.log("Initializing Gemini model...")
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.5-flash"
+      model: "gemini-2.0-flash-lite"  // Try a lighter model with potentially higher quota
     })
 
     // Prepare case data for analysis
@@ -176,7 +176,16 @@ Return ONLY valid JSON, no additional text.`
     console.log("API Key present:", !!process.env.GEMINI_API_KEY)
     console.log("API Key starts with:", process.env.GEMINI_API_KEY?.substring(0, 10))
     
-    const result = await model.generateContent(prompt)
+    // Add timeout to prevent hanging requests
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("Gemini API request timed out after 30 seconds")), 30000)
+    })
+    
+    const result = await Promise.race([
+      model.generateContent(prompt),
+      timeoutPromise
+    ]) as any
+    
     console.log("Result received:", !!result)
     
     const response = await result.response
@@ -204,54 +213,19 @@ Return ONLY valid JSON, no additional text.`
     console.error("Error status:", error?.status)
     console.error("Error details:", JSON.stringify(error, null, 2))
     
-    // Rethrow the error so we can see it in the API response
-    throw new Error(`Gemini API Error: ${error?.message || 'Unknown error'}`)
+    // Check if it's a quota/rate limit error
+    const isQuotaError = error?.status === 429 || 
+                        error?.message?.includes('quota') || 
+                        error?.message?.includes('RATE_LIMIT_EXCEEDED') ||
+                        error?.message?.includes('Too Many Requests')
     
-    // Return a fallback analysis
-    return {
-      caseSummary: {
-        summary: [
-          "Case analysis is currently processing",
-          `This is a ${caseData.priority} priority ${caseData.category || 'general'} case`,
-          `${caseData.evidence.length} pieces of evidence have been collected`
-        ],
-        keyEntities: {
-          people: [],
-          locations: caseData.location ? [caseData.location] : [],
-          organizations: [],
-          objects: []
-        },
-        suspectProfile: {
-          likelySuspects: [],
-          motivePrediction: "Analysis in progress",
-          modusPrediction: "Analysis in progress"
-        },
-        suggestedNextSteps: [
-          {
-            step: "Review all collected evidence thoroughly",
-            priority: "HIGH",
-            reasoning: "Complete evidence review is essential for accurate analysis"
-          },
-          {
-            step: "Interview relevant witnesses",
-            priority: "HIGH",
-            reasoning: "Witness testimony can provide crucial context"
-          },
-          {
-            step: "Cross-reference with similar cases",
-            priority: "MEDIUM",
-            reasoning: "Pattern detection may reveal connections"
-          },
-          {
-            step: "Collect additional evidence if needed",
-            priority: "MEDIUM",
-            reasoning: "Additional evidence may strengthen the case"
-          }
-        ]
-      },
-      relatedCases: [],
-      externalContext: []
+    if (isQuotaError) {
+      console.log("Quota exceeded for Gemini API")
+      throw new Error("Gemini API quota exceeded. Please wait or upgrade your API plan.")
     }
+    
+    // For other errors, throw with details
+    throw new Error(`Gemini API Error: ${error?.message || 'Unknown error'}`)
   }
 }
 
@@ -329,8 +303,20 @@ export async function POST(
     })
   } catch (error) {
     console.error("Error in case analysis:", error)
+    
+    // Provide more specific error information
+    let errorMessage = "Failed to analyze case"
+    if (error instanceof Error) {
+      errorMessage = error.message
+      console.error("Specific error:", error.message)
+      console.error("Error stack:", error.stack)
+    }
+    
     return NextResponse.json(
-      { error: "Failed to analyze case" },
+      { 
+        error: errorMessage,
+        details: error instanceof Error ? error.message : "Unknown error occurred"
+      },
       { status: 500 }
     )
   }
