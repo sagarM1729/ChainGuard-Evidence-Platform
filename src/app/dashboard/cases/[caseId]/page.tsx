@@ -13,6 +13,7 @@ import {
   Download, 
   Eye, 
   Shield, 
+  ShieldAlert,
   Hash,
   Clock,
   AlertCircle,
@@ -24,6 +25,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import ComprehensiveUploadForm from "@/components/evidence/ComprehensiveUploadForm"
 import AIIntelligenceEngine from "@/components/cases/AIIntelligenceEngine"
+import TamperDetector from "@/components/evidence/TamperDetector"
 import type { MerkleProof } from "@/lib/merkle"
 
 interface Evidence {
@@ -43,6 +45,7 @@ interface Evidence {
   merkleRoot?: string
   merkleProof?: MerkleProof
   verified: boolean
+  isTampered?: boolean
 }
 
 interface Case {
@@ -64,6 +67,12 @@ interface Case {
     name: string | null
     email: string
   }
+  isChainValid?: boolean
+  integrityCheckDetails?: {
+    calculatedRoot: string | null
+    storedRoot: string | null
+    mismatch: boolean
+  }
 }
 
 export default function CaseDetailsPage() {
@@ -76,6 +85,7 @@ export default function CaseDetailsPage() {
   const [showUploadForm, setShowUploadForm] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
+  const [verifyingEvidenceId, setVerifyingEvidenceId] = useState<string | null>(null)
 
   const fetchCaseDetails = useCallback(async () => {
     if (!caseId) {
@@ -346,14 +356,20 @@ export default function CaseDetailsPage() {
             ) : (
               <div className="space-y-3 sm:space-y-4">
                 {case_.evidence.map((evidence) => (
-                  <div key={evidence.id} className="border border-[#1f7a8c]/20 rounded-lg p-3 sm:p-4 hover:shadow-lg transition-shadow">
+                  <div key={evidence.id} className={`border rounded-lg p-3 sm:p-4 hover:shadow-lg transition-shadow ${evidence.isTampered ? 'border-red-500 bg-red-50' : 'border-[#1f7a8c]/20'}`}>
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-3 sm:space-y-0">
                       <div className="flex-1">
                         <div className="flex items-center flex-wrap gap-2 mb-2">
-                          <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-[#1f7a8c] flex-shrink-0" />
-                          <h3 className="font-semibold text-sm sm:text-base text-[#022b3a] break-all">{evidence.filename}</h3>
-                          {evidence.verified && (
+                          <FileText className={`h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 ${evidence.isTampered ? 'text-red-500' : 'text-[#1f7a8c]'}`} />
+                          <h3 className={`font-semibold text-sm sm:text-base break-all ${evidence.isTampered ? 'text-red-700' : 'text-[#022b3a]'}`}>{evidence.filename}</h3>
+                          {evidence.verified && !evidence.isTampered && (
                             <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
+                          )}
+                          {evidence.isTampered && (
+                            <div className="flex items-center text-red-600 text-xs font-bold bg-red-100 px-2 py-0.5 rounded-full">
+                               <AlertCircle className="h-3 w-3 mr-1" />
+                               TAMPERED
+                            </div>
                           )}
                         </div>
                         
@@ -441,8 +457,25 @@ export default function CaseDetailsPage() {
                           <Download className="h-4 w-4 sm:mr-0" />
                           <span className="sm:hidden ml-2">Download</span>
                         </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setVerifyingEvidenceId(verifyingEvidenceId === evidence.id ? null : evidence.id)}
+                          className={`border ${verifyingEvidenceId === evidence.id ? 'bg-blue-50 border-blue-500 text-blue-700' : 'border-[#022b3a]/30 bg-white text-[#022b3a]'} hover:bg-[#022b3a]/10 hover:border-[#022b3a]/40 hover:text-[#022b3a] active:scale-95 transition-colors duration-200 flex-1 sm:flex-none`}
+                        >
+                          <ShieldAlert className="h-4 w-4 sm:mr-0" />
+                          <span className="sm:hidden ml-2">Verify</span>
+                        </Button>
                       </div>
                     </div>
+                    
+                    {verifyingEvidenceId === evidence.id && (
+                      <TamperDetector 
+                        evidenceId={evidence.id} 
+                        evidenceFilename={evidence.filename} 
+                      />
+                    )}
                   </div>
                 ))}
               </div>
@@ -463,7 +496,7 @@ export default function CaseDetailsPage() {
                 <h3 className="text-xs sm:text-sm font-bold text-[#022b3a]">Chain Integrity</h3>
               </div>
               {case_.merkleRoot ? (
-                case_.evidence.length > 0 && case_.evidence.every(e => e.verified) ? (
+                (case_.isChainValid !== false && case_.evidence.length > 0 && case_.evidence.every(e => e.verified)) ? (
                   <div className="flex items-center space-x-1 px-2 sm:px-3 py-1 bg-green-100 border border-green-200 rounded-full">
                     <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
                     <span className="text-[10px] sm:text-xs font-semibold text-green-700">✓ Verified</span>
@@ -471,7 +504,9 @@ export default function CaseDetailsPage() {
                 ) : (
                   <div className="flex items-center space-x-1 px-2 sm:px-3 py-1 bg-red-100 border border-red-200 rounded-full">
                     <AlertCircle className="h-3 w-3 sm:h-4 sm:w-4 text-red-600" />
-                    <span className="text-[10px] sm:text-xs font-semibold text-red-700">✗ Tampered</span>
+                    <span className="text-[10px] sm:text-xs font-semibold text-red-700">
+                       {case_.isChainValid === false ? "⚠ DB Tampered" : "✗ Tampered"}
+                    </span>
                   </div>
                 )
               ) : (
@@ -486,16 +521,22 @@ export default function CaseDetailsPage() {
                 <p className="text-[10px] sm:text-xs text-[#022b3a]/60 mb-1">Evidence Status:</p>
                 <div className="flex items-center justify-between text-[10px] sm:text-xs">
                   <span className="text-[#022b3a]/70">
-                    {case_.evidence.filter(e => e.verified).length} / {case_.evidence.length} verified
+                    {case_.evidence.filter(e => e.verified && !e.isTampered).length} / {case_.evidence.length} verified
                   </span>
                   <span className={`font-semibold ${
-                    case_.evidence.every(e => e.verified) 
+                    case_.evidence.every(e => e.verified && !e.isTampered) 
                       ? 'text-green-600' 
                       : 'text-red-600'
                   }`}>
-                    {((case_.evidence.filter(e => e.verified).length / case_.evidence.length) * 100).toFixed(0)}%
+                    {((case_.evidence.filter(e => e.verified && !e.isTampered).length / case_.evidence.length) * 100).toFixed(0)}%
                   </span>
                 </div>
+                
+                {case_.isChainValid === false && (
+                   <div className="mt-2 p-2 bg-red-50 border border-red-100 rounded text-[10px] sm:text-xs text-red-800">
+                      <strong>CRITICAL:</strong> Database records do not match the immutable Case Merkle Root.
+                   </div>
+                )}
               </div>
             )}
           </Card>
