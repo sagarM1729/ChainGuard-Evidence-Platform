@@ -205,13 +205,15 @@ Return ONLY valid JSON, no additional text.`
     console.error("Error details:", JSON.stringify(error, null, 2))
     
     // Rethrow the error so we can see it in the API response
-    throw new Error(`Gemini API Error: ${error?.message || 'Unknown error'}`)
+    // throw new Error(`Gemini API Error: ${error?.message || 'Unknown error'}`)
+    console.warn("Falling back to static analysis due to Gemini error")
     
     // Return a fallback analysis
     return {
       caseSummary: {
         summary: [
-          "Case analysis is currently processing",
+          "AI Analysis Unavailable (Quota Exceeded or Service Down)",
+          "Showing basic case statistics instead.",
           `This is a ${caseData.priority} priority ${caseData.category || 'general'} case`,
           `${caseData.evidence.length} pieces of evidence have been collected`
         ],
@@ -223,8 +225,8 @@ Return ONLY valid JSON, no additional text.`
         },
         suspectProfile: {
           likelySuspects: [],
-          motivePrediction: "Analysis in progress",
-          modusPrediction: "Analysis in progress"
+          motivePrediction: "Analysis Unavailable (Quota Exceeded)",
+          modusPrediction: "Analysis Unavailable (Quota Exceeded)"
         },
         suggestedNextSteps: [
           {
