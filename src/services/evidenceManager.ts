@@ -89,25 +89,31 @@ class EvidenceManager {
       })
 
       if (existingEvidence) {
-        console.log('⚠️ Evidence with this CID already exists, returning existing record')
+        console.log('⚠️ Evidence with this CID already exists')
         
-        // If it exists, we still need to return the merkle proof for it
-        // But we can't "create" it again.
-        // We should probably link it to the new case if it's a different case?
-        // For now, let's assume if you upload the EXACT same file, it's a duplicate upload error or we return existing.
-        
-        // However, the user might be uploading the same file to a DIFFERENT case.
-        // The schema has `ipfsCid` as @unique, which means a file can only belong to ONE case globally?
-        // That seems like a schema limitation. 
-        // If we want to allow the same file in multiple cases, we should remove @unique from ipfsCid in schema.prisma
-        // OR we append a random salt to the file content before uploading to get a new CID (but that changes the file).
-        
-        // WORKAROUND: If we can't change schema right now, we'll fail gracefully or return existing.
-        // But wait, if we return existing, the `updateMerkleLedger` later uses `evidence.id`.
-        // If we use the existing ID, we might mess up the old case's merkle tree if we try to move it?
-        // Actually, `updateMerkleLedger` takes `caseId` from metadata.
-        
-        throw new Error(`This exact file has already been uploaded to the system (CID: ${ipfsCid}). Duplicate uploads are not allowed.`)
+        if (existingEvidence.caseId === metadata.caseId) {
+           console.log('✅ Evidence belongs to the same case. Returning existing record.')
+           
+           // Get the current Merkle Root for the case
+           const caseRecord = await prisma.case.findUnique({
+             where: { id: metadata.caseId },
+             select: { merkleRoot: true }
+           })
+
+           // We need to return a valid result. 
+           // We can try to get the verification details.
+           const verification = await this.getMerkleVerification(existingEvidence.id)
+           
+           return {
+             ipfsCid: existingEvidence.ipfsCid,
+             retrievalUrl: existingEvidence.retrievalUrl,
+             fileHash: existingEvidence.fileHash,
+             merkleRoot: caseRecord?.merkleRoot || '',
+             merkleProof: verification?.proof as MerkleProof || { leaf: '', siblings: [], root: '' }
+           }
+        } else {
+           throw new Error(`This file has already been uploaded to Case ${existingEvidence.caseId}. Cross-case duplicate uploads are not currently supported.`)
+        }
       }
 
       const evidence = await prisma.evidence.create({
@@ -430,11 +436,8 @@ class EvidenceManager {
         continue
       }
 
-      if (item.blockchainHash) {
-        leafById[item.id] = item.blockchainHash
-        continue
-      }
-
+      // Always recalculate leaf hash from current DB data to ensure consistency with verification logic
+      // This prevents "Tampered" false positives if the stored blockchainHash was somehow out of sync
       leafById[item.id] = createLeafHash({
         caseId: item.caseId,
         evidenceId: item.id,
