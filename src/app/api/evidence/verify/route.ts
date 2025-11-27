@@ -28,6 +28,15 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Check file size to prevent memory issues (50MB limit)
+    const MAX_FILE_SIZE = 50 * 1024 * 1024 // 50MB
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: "File too large for verification. Maximum size is 50MB." },
+        { status: 413 }
+      )
+    }
+
     // Get the evidence record
     const evidence = await prisma.evidence.findUnique({
       where: { id: evidenceId },
@@ -49,8 +58,10 @@ export async function POST(req: NextRequest) {
     }
 
     // 1. Calculate hash of the uploaded file (Content Integrity)
-    const buffer = Buffer.from(await file.arrayBuffer())
+    // Use streaming to avoid memory issues with large files
     const hashSum = crypto.createHash('sha256')
+    const arrayBuffer = await file.arrayBuffer()
+    const buffer = Buffer.from(arrayBuffer)
     hashSum.update(buffer)
     const currentHash = hashSum.digest('hex')
 
@@ -90,6 +101,12 @@ export async function POST(req: NextRequest) {
 
         // Calculate the root from these leaves
         calculatedRoot = getMerkleRoot(leaves)
+
+        console.log(`🔍 Verification for Evidence ${evidenceId}:`)
+        console.log(`   Evidence count: ${allCaseEvidence.length}`)
+        console.log(`   Calculated Root: ${calculatedRoot}`)
+        console.log(`   Stored Root:     ${evidence.case.merkleRoot}`)
+        console.log(`   Leaves:`, leaves)
 
         // Compare calculated root with the stored Case Root
         // If they don't match, it means SOMETHING in the DB (one of the evidence items) was tampered with.

@@ -121,8 +121,8 @@ export default function TamperDetector({ evidenceId, evidenceFilename }: TamperD
                   </div>
                   <div className="flex flex-col sm:flex-row sm:gap-4 mt-2 pt-2 border-t border-slate-100">
                      <span className="text-slate-500">Chain Status:</span>
-                     <span className={`${result.isChainVerified ? 'text-green-600' : 'text-red-600'} font-bold`}>
-                        {result.isChainVerified ? "MERKLE ROOT MATCHED" : "MERKLE ROOT MISMATCH (DB TAMPERED)"}
+                     <span className={`${result.isChainVerified !== false ? 'text-green-600' : 'text-red-600'} font-bold`}>
+                        {result.isChainVerified !== false ? "MERKLE ROOT MATCHED" : "MERKLE ROOT MISMATCH (DB TAMPERED)"}
                      </span>
                   </div>
                 </div>

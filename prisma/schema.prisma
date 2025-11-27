@@ -56,7 +56,7 @@ model Evidence {
   evidenceType   EvidenceType @default(DOCUMENT)
   fileHash       String
   filesize       Int?
-  ipfsCid        String       @unique
+  ipfsCid        String
   isEncrypted    Boolean      @default(true)
   verified       Boolean      @default(false)
   location       String?

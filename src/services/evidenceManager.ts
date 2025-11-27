@@ -83,37 +83,19 @@ class EvidenceManager {
   console.log('✅ File uploaded to Pinata IPFS:', ipfsCid)
 
       // Step 3: Store metadata in PostgreSQL (Tier 1)
-      // Check if evidence with this CID already exists (deduplication)
-      const existingEvidence = await prisma.evidence.findUnique({
-        where: { ipfsCid: ipfsCid }
+      // Check if evidence with this CID already exists within THIS case (same file uploaded multiple times)
+      const existingEvidenceInCase = await prisma.evidence.findFirst({
+        where: { 
+          ipfsCid: ipfsCid,
+          caseId: metadata.caseId
+        }
       })
 
-      if (existingEvidence) {
-        console.log('⚠️ Evidence with this CID already exists')
-        
-        if (existingEvidence.caseId === metadata.caseId) {
-           console.log('✅ Evidence belongs to the same case. Returning existing record.')
-           
-           // Get the current Merkle Root for the case
-           const caseRecord = await prisma.case.findUnique({
-             where: { id: metadata.caseId },
-             select: { merkleRoot: true }
-           })
-
-           // We need to return a valid result. 
-           // We can try to get the verification details.
-           const verification = await this.getMerkleVerification(existingEvidence.id)
-           
-           return {
-             ipfsCid: existingEvidence.ipfsCid,
-             retrievalUrl: existingEvidence.retrievalUrl,
-             fileHash: existingEvidence.fileHash,
-             merkleRoot: caseRecord?.merkleRoot || '',
-             merkleProof: verification?.proof as MerkleProof || { leaf: '', siblings: [], root: '' }
-           }
-        } else {
-           throw new Error(`This file has already been uploaded to Case ${existingEvidence.caseId}. Cross-case duplicate uploads are not currently supported.`)
-        }
+      if (existingEvidenceInCase) {
+        console.log('⚠️ This file has already been uploaded to this case. Creating a new evidence record.')
+        // Allow duplicate uploads in the same case - don't block it
+        // We'll create a new evidence record below with a unique ID
+        // This is useful for cases where the same file needs multiple entries (e.g., different timestamps/notes)
       }
 
       const evidence = await prisma.evidence.create({
@@ -151,6 +133,7 @@ class EvidenceManager {
       if (!reloadedEvidence) throw new Error("Failed to reload evidence")
 
       // Step 4: Update Merkle ledger (Tier 2)
+      // This will update ALL evidence items in the case with new proofs and set verified=true
       const { merkleRoot, merkleProof, leafHash } = await this.updateMerkleLedger({
         caseId: metadata.caseId,
         evidenceId: reloadedEvidence.id,
@@ -159,13 +142,12 @@ class EvidenceManager {
         timestamp: reloadedEvidence.createdAt.toISOString()
       })
 
+      // Note: The evidence record is already updated by updateMerkleLedger
+      // But we still need to update the legacy blockchainTxId field
       await prisma.evidence.update({
         where: { id: evidence.id },
         data: {
-          blockchainHash: leafHash,
-          blockchainTxId: merkleRoot, // legacy field now stores root snapshot
-          merkleProof: merkleProof as unknown as Prisma.InputJsonValue,
-          verified: true
+          blockchainTxId: merkleRoot // legacy field now stores root snapshot
         }
       })
 
@@ -450,6 +432,9 @@ class EvidenceManager {
     const leaves = caseEvidence.map(item => leafById[item.id])
     const merkleRoot = getMerkleRoot(leaves)
 
+    console.log(`🔐 Updating Merkle Root for Case ${input.caseId}:`, merkleRoot)
+    console.log(`   Evidence count: ${caseEvidence.length}, Leaves:`, leaves)
+
     await prisma.case.update({
       where: { id: input.caseId },
       data: {
@@ -460,23 +445,22 @@ class EvidenceManager {
     // Update ALL evidence items with new proofs and ensure blockchainHash is set
     // When the tree changes (new leaf), ALL proofs change. We must update them.
     const updateOperations = caseEvidence.map((item, index) => {
-      // Skip the current item, as it will be updated by the caller (storeEvidence)
-      if (item.id === input.evidenceId) return null
-
       const proof = generateMerkleProof(leaves, index)
       const hash = leafById[item.id]
 
+      // Update ALL items including the new one to ensure consistency
       return prisma.evidence.update({
         where: { id: item.id },
         data: { 
           blockchainHash: hash,
-          merkleProof: proof as unknown as Prisma.InputJsonValue
+          merkleProof: proof as unknown as Prisma.InputJsonValue,
+          verified: true
         }
       })
-    }).filter(Boolean)
+    })
 
     if (updateOperations.length > 0) {
-      await prisma.$transaction(updateOperations as any[])
+      await prisma.$transaction(updateOperations)
     }
 
     const targetIndex = caseEvidence.findIndex(item => item.id === input.evidenceId)
