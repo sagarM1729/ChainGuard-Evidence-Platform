@@ -71,7 +71,10 @@ export async function POST(req: NextRequest) {
         // This is the "Gold Standard" verification: Rebuild the world and check the root.
         const allCaseEvidence = await prisma.evidence.findMany({
           where: { caseId: evidence.caseId },
-          orderBy: { createdAt: 'asc' } // Order is critical for Merkle Tree
+          orderBy: [
+            { createdAt: 'asc' },
+            { id: 'asc' } // Deterministic sort to match evidenceManager
+          ]
         })
 
         // Reconstruct leaves from current DB state

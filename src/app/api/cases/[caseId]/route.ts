@@ -62,9 +62,11 @@ export async function GET(
     if (case_.merkleRoot && case_.evidence.length > 0) {
       // 1. Sort evidence by creation time (ASC) to match Merkle Tree construction order
       // (The query above returns DESC for UI, so we reverse or sort)
-      const sortedEvidence = [...case_.evidence].sort((a, b) => 
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-      )
+      const sortedEvidence = [...case_.evidence].sort((a, b) => {
+        const timeDiff = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        if (timeDiff !== 0) return timeDiff
+        return a.id.localeCompare(b.id) // Deterministic tie-breaker
+      })
 
       // 2. Reconstruct leaves from current DB state
       const leaves = sortedEvidence.map(item => 
@@ -88,6 +90,9 @@ export async function GET(
         console.warn(`🚨 TAMPER DETECTED for Case ${case_.caseNumber}: Merkle Root Mismatch!`)
         console.warn(`Expected: ${case_.merkleRoot}`)
         console.warn(`Actual:   ${calculatedRoot}`)
+        
+        // Debug: Log the leaves to see which one differs
+        console.warn("Leaves:", leaves)
       }
     } else if (case_.merkleRoot && case_.evidence.length === 0) {
        // Should not happen if root exists, but technically possible if all evidence deleted

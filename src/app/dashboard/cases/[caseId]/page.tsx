@@ -244,6 +244,30 @@ export default function CaseDetailsPage() {
         </div>
       </div>
 
+      {/* Chain Integrity Warning (Scenario B: Database Tampering) */}
+      {case_ && case_.isChainValid === false && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg shadow-sm animate-pulse">
+          <div className="flex items-start">
+            <ShieldAlert className="h-6 w-6 text-red-600 mt-0.5 mr-3 flex-shrink-0" />
+            <div>
+              <h3 className="text-lg font-bold text-red-800">CRITICAL SECURITY ALERT: Chain Integrity Compromised</h3>
+              <p className="text-red-700 mt-1">
+                The cryptographic integrity of this case has been violated. The Merkle Root stored in the immutable ledger 
+                does not match the current database records.
+              </p>
+              <div className="mt-3 text-sm bg-white/50 p-3 rounded border border-red-100 font-mono text-red-900">
+                <p>Expected Root: {case_.integrityCheckDetails?.storedRoot}</p>
+                <p>Calculated Root: {case_.integrityCheckDetails?.calculatedRoot}</p>
+              </div>
+              <p className="mt-2 text-sm text-red-600 font-medium">
+                This indicates that evidence data in the database has been manually altered or corrupted. 
+                Evidence in this case cannot be trusted until the discrepancy is resolved.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* Case Information */}

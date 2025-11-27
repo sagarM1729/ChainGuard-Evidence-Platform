@@ -83,6 +83,33 @@ class EvidenceManager {
   console.log('✅ File uploaded to Pinata IPFS:', ipfsCid)
 
       // Step 3: Store metadata in PostgreSQL (Tier 1)
+      // Check if evidence with this CID already exists (deduplication)
+      const existingEvidence = await prisma.evidence.findUnique({
+        where: { ipfsCid: ipfsCid }
+      })
+
+      if (existingEvidence) {
+        console.log('⚠️ Evidence with this CID already exists, returning existing record')
+        
+        // If it exists, we still need to return the merkle proof for it
+        // But we can't "create" it again.
+        // We should probably link it to the new case if it's a different case?
+        // For now, let's assume if you upload the EXACT same file, it's a duplicate upload error or we return existing.
+        
+        // However, the user might be uploading the same file to a DIFFERENT case.
+        // The schema has `ipfsCid` as @unique, which means a file can only belong to ONE case globally?
+        // That seems like a schema limitation. 
+        // If we want to allow the same file in multiple cases, we should remove @unique from ipfsCid in schema.prisma
+        // OR we append a random salt to the file content before uploading to get a new CID (but that changes the file).
+        
+        // WORKAROUND: If we can't change schema right now, we'll fail gracefully or return existing.
+        // But wait, if we return existing, the `updateMerkleLedger` later uses `evidence.id`.
+        // If we use the existing ID, we might mess up the old case's merkle tree if we try to move it?
+        // Actually, `updateMerkleLedger` takes `caseId` from metadata.
+        
+        throw new Error(`This exact file has already been uploaded to the system (CID: ${ipfsCid}). Duplicate uploads are not allowed.`)
+      }
+
       const evidence = await prisma.evidence.create({
         data: {
           id: crypto.randomUUID(),
@@ -110,13 +137,20 @@ class EvidenceManager {
 
       console.log('✅ Evidence metadata stored in PostgreSQL:', evidence.id)
 
+      // RELOAD evidence to ensure we have the exact DB timestamp (precision consistency)
+      const reloadedEvidence = await prisma.evidence.findUnique({
+        where: { id: evidence.id }
+      })
+
+      if (!reloadedEvidence) throw new Error("Failed to reload evidence")
+
       // Step 4: Update Merkle ledger (Tier 2)
       const { merkleRoot, merkleProof, leafHash } = await this.updateMerkleLedger({
         caseId: metadata.caseId,
-        evidenceId: evidence.id,
+        evidenceId: reloadedEvidence.id,
         ipfsCid,
         fileHash,
-        timestamp: evidence.createdAt.toISOString()
+        timestamp: reloadedEvidence.createdAt.toISOString()
       })
 
       await prisma.evidence.update({
@@ -382,7 +416,10 @@ class EvidenceManager {
 
     const caseEvidence = await prisma.evidence.findMany({
       where: { caseId: input.caseId },
-      orderBy: { createdAt: 'asc' }
+      orderBy: [
+        { createdAt: 'asc' },
+        { id: 'asc' } // Deterministic sort
+      ]
     })
 
     const leafById: Record<string, string> = {}
@@ -417,20 +454,26 @@ class EvidenceManager {
       }
     })
 
-    const missingHashes = Object.entries(leafById).filter(([id, hash]) => {
-      const evidence = caseEvidence.find(item => item.id === id)
-      return evidence && evidence.blockchainHash !== hash
-    })
+    // Update ALL evidence items with new proofs and ensure blockchainHash is set
+    // When the tree changes (new leaf), ALL proofs change. We must update them.
+    const updateOperations = caseEvidence.map((item, index) => {
+      // Skip the current item, as it will be updated by the caller (storeEvidence)
+      if (item.id === input.evidenceId) return null
 
-    if (missingHashes.length > 0) {
-      await prisma.$transaction(
-        missingHashes.map(([id, hash]) =>
-          prisma.evidence.update({
-            where: { id },
-            data: { blockchainHash: hash }
-          })
-        )
-      )
+      const proof = generateMerkleProof(leaves, index)
+      const hash = leafById[item.id]
+
+      return prisma.evidence.update({
+        where: { id: item.id },
+        data: { 
+          blockchainHash: hash,
+          merkleProof: proof as unknown as Prisma.InputJsonValue
+        }
+      })
+    }).filter(Boolean)
+
+    if (updateOperations.length > 0) {
+      await prisma.$transaction(updateOperations as any[])
     }
 
     const targetIndex = caseEvidence.findIndex(item => item.id === input.evidenceId)
