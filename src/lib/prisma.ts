@@ -5,12 +5,17 @@ declare global {
 	var prisma: PrismaClient | undefined
 }
 
+const dbUrl = process.env.DATABASE_URL || ''
+const url = dbUrl.includes('?')
+  ? dbUrl + '&connection_limit=5&pool_timeout=20&connect_timeout=60'
+  : dbUrl + '?connection_limit=5&pool_timeout=20&connect_timeout=60'
+
 // Enhanced Prisma client with better connection handling
 export const prisma = global.prisma || new PrismaClient({
 	log: ['warn', 'error'],
 	datasources: {
 		db: {
-			url: process.env.DATABASE_URL + '&connection_limit=5&pool_timeout=20&connect_timeout=60'
+			url
 		}
 	},
 	// Add connection retry logic

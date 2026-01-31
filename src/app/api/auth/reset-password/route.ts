@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Find the Token
-    const resetToken = await prisma.password_reset_tokens.findFirst({
+    const resetToken = await prisma.passwordResetToken.findFirst({
       where: {
         email,
         expiresAt: {
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
     })
 
     // Delete the Token (so it can't be used again)
-    await prisma.password_reset_tokens.delete({
+    await prisma.passwordResetToken.delete({
       where: { id: resetToken.id }
     })
 

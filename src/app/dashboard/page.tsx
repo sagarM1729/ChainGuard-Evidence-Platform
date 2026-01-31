@@ -1,7 +1,7 @@
 "use client"
 
 import { useSession } from "next-auth/react"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Files, Users, AlertCircle, TrendingUp, Plus, Eye, Clock, Star, Upload, Shield, FolderOpen, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -48,11 +48,19 @@ export default function DashboardPage() {
   const [activities, setActivities] = useState<Activity[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchDashboardData()
+  const fetchActivities = useCallback(async () => {
+    try {
+      const response = await fetch('/api/activities?limit=5')
+      if (response.ok) {
+        const data = await response.json()
+        setActivities(data.activities || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch activities:', error)
+    }
   }, [])
 
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       const response = await fetch('/api/cases')
       if (response.ok) {
@@ -115,19 +123,11 @@ export default function DashboardPage() {
     await fetchActivities()
     
     setLoading(false)
-  }
+  }, [fetchActivities])
 
-  const fetchActivities = async () => {
-    try {
-      const response = await fetch('/api/activities?limit=5')
-      if (response.ok) {
-        const data = await response.json()
-        setActivities(data.activities || [])
-      }
-    } catch (error) {
-      console.error('Failed to fetch activities:', error)
-    }
-  }
+  useEffect(() => {
+    fetchDashboardData()
+  }, [fetchDashboardData])
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {

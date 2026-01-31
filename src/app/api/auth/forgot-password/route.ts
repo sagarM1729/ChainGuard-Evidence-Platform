@@ -4,10 +4,11 @@ import nodemailer from "nodemailer"
 import { Resend } from 'resend'
 import { prisma } from "@/lib/prisma"
 import { cleanupAllExpiredTokens } from "@/lib/cleanup"
+import { randomInt } from "crypto"
 
 // Generate a 6-digit OTP
 function generateOTP(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString()
+  return randomInt(100000, 1000000).toString()
 }
 
 // Create email transporter based on available configuration
@@ -86,7 +87,7 @@ export async function POST(req: NextRequest) {
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
 
     // Delete any existing tokens for this email
-    await prisma.password_reset_tokens.deleteMany({
+    await prisma.passwordResetToken.deleteMany({
       where: { email }
     })
 
@@ -94,9 +95,8 @@ export async function POST(req: NextRequest) {
     await cleanupAllExpiredTokens()
 
     // Store the Hashed OTP
-    await prisma.password_reset_tokens.create({
+    await prisma.passwordResetToken.create({
       data: {
-        id: crypto.randomUUID(),
         email,
         token: hashedOTP,
         expiresAt

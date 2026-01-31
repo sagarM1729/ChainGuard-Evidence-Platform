@@ -1,5 +1,4 @@
 const { PrismaClient } = require('@prisma/client');
-const crypto = require('crypto');
 
 async function manageWhitelist() {
   const prisma = new PrismaClient();
@@ -44,7 +43,6 @@ async function manageWhitelist() {
         if (!existingEntry) {
           await prisma.whitelist.create({
             data: { 
-              id: crypto.randomUUID(),
               email 
             }
           });

@@ -77,12 +77,12 @@ model Evidence {
 }
 
 model User {
-  id         String     @id
+  id         String     @id @default(uuid())
   name       String?
   email      String     @unique
   password   String
   createdAt  DateTime   @default(now())
-  updatedAt  DateTime
+  updatedAt  DateTime   @updatedAt
   badge      String?    @unique
   department String?
   role       UserRole   @default(OFFICER)
@@ -114,16 +114,18 @@ model Activity {
 }
 
 model Whitelist {
-  id    String @id
+  id    String @id @default(uuid())
   email String @unique
 }
 
-model password_reset_tokens {
-  id        String   @id
+model PasswordResetToken {
+  id        String   @id @default(uuid())
   email     String
   token     String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
+
+  @@map("password_reset_tokens")
 }
 
 enum AccessLevel {
