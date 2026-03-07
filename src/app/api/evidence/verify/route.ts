@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { updateCustodyChain } from '@/lib/custody-manager'
 import crypto from 'crypto'
 import { verifyMerkleProof, createLeafHash, getMerkleRoot, type MerkleProof } from '@/lib/merkle'
 
@@ -128,6 +129,19 @@ export async function POST(req: NextRequest) {
     let statusMessage = "Integrity Verified"
     if (!isContentVerified) statusMessage = "File Content Mismatch (Tampered File)"
     else if (!isChainVerified) statusMessage = "Database Record Mismatch (Tampered Metadata)"
+
+    // Update custody chain for evidence verification
+    try {
+      await updateCustodyChain(
+        evidenceId,
+        session.user.email || session.user.id,
+        'EVIDENCE_VERIFIED',
+        `Evidence ${evidence.filename} verification: ${statusMessage}. Content verified: ${isContentVerified}, Chain verified: ${isChainVerified}`
+      )
+    } catch (error) {
+      console.error('Error updating custody chain for verification:', error)
+      // Don't fail the request if custody update fails
+    }
 
     return NextResponse.json({
       verified: isVerified,

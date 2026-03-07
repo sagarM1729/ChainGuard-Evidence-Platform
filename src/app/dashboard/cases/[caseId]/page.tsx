@@ -19,7 +19,8 @@ import {
   AlertCircle,
   CheckCircle,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  FileBarChart
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -86,6 +87,7 @@ export default function CaseDetailsPage() {
   const [error, setError] = useState<string | null>(null)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const [verifyingEvidenceId, setVerifyingEvidenceId] = useState<string | null>(null)
+  const [exportingReportId, setExportingReportId] = useState<string | null>(null)
 
   const fetchCaseDetails = useCallback(async () => {
     if (!caseId) {
@@ -142,6 +144,43 @@ export default function CaseDetailsPage() {
     const sizes = ['Bytes', 'KB', 'MB', 'GB']
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
+  const handleExportCustodyReport = async (evidenceId: string, filename: string) => {
+    try {
+      setExportingReportId(evidenceId)
+      
+      const response = await fetch(`/api/evidence/${evidenceId}/custody-report`)
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to generate custody report')
+      }
+      
+      // Get the PDF blob
+      const blob = await response.blob()
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `custody-report-${filename}-${new Date().toISOString().split('T')[0]}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      
+      // Cleanup
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(link)
+      
+      // Show success message
+      alert('Custody report generated successfully!')
+      
+    } catch (error) {
+      console.error('Error exporting custody report:', error)
+      alert(`Failed to generate custody report: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+      setExportingReportId(null)
+    }
   }
 
   const handleEvidenceUploaded = () => {
@@ -441,16 +480,30 @@ export default function CaseDetailsPage() {
                         )}
                       </div>
                       
-                      <div className="flex sm:flex-col gap-2 sm:ml-4">
+                      <div className="flex flex-wrap sm:flex-nowrap sm:flex-col gap-2 sm:ml-4">
                         {evidence.retrievalUrl && (
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => {
+                            onClick={async () => {
                               // Check if it's a mock/local URL
                               if (evidence.retrievalUrl?.startsWith('local://') || evidence.retrievalUrl?.includes('local_')) {
                                 alert('This evidence file is stored locally and cannot be viewed online. The original upload to IPFS failed, but the evidence metadata was saved.')
                               } else {
+                                // Update custody chain for evidence viewing
+                                try {
+                                  await fetch(`/api/evidence/${evidence.id}/custody`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ 
+                                      action: 'EVIDENCE_VIEWED',
+                                      notes: `Evidence file ${evidence.filename} viewed by officer`
+                                    })
+                                  })
+                                } catch (error) {
+                                  console.error('Failed to update custody chain:', error)
+                                }
+                                
                                 window.open(evidence.retrievalUrl, '_blank')
                               }
                             }}
@@ -463,16 +516,50 @@ export default function CaseDetailsPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => {
+                          onClick={async () => {
                             if (evidence.retrievalUrl) {
                               // Check if it's a mock/local URL
                               if (evidence.retrievalUrl.startsWith('local://') || evidence.retrievalUrl.includes('local_')) {
                                 alert('This evidence file is stored locally and cannot be downloaded. The original upload to IPFS failed, but the evidence metadata was saved.')
                               } else {
-                                const link = document.createElement('a')
-                                link.href = evidence.retrievalUrl
-                                link.download = evidence.filename
-                                link.click()
+                                // Update custody chain for evidence downloading
+                                try {
+                                  await fetch(`/api/evidence/${evidence.id}/custody`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ 
+                                      action: 'EVIDENCE_DOWNLOADED',
+                                      notes: `Evidence file ${evidence.filename} downloaded by officer`
+                                    })
+                                  })
+                                } catch (error) {
+                                  console.error('Failed to update custody chain:', error)
+                                }
+                                
+                                // Properly force download using fetch and blob
+                                try {
+                                  const response = await fetch(evidence.retrievalUrl)
+                                  if (!response.ok) {
+                                    throw new Error('Failed to fetch file')
+                                  }
+                                  
+                                  const blob = await response.blob()
+                                  const url = window.URL.createObjectURL(blob)
+                                  
+                                  const link = document.createElement('a')
+                                  link.href = url
+                                  link.download = evidence.filename
+                                  link.style.display = 'none'
+                                  document.body.appendChild(link)
+                                  link.click()
+                                  
+                                  // Cleanup
+                                  document.body.removeChild(link)
+                                  window.URL.revokeObjectURL(url)
+                                } catch (error) {
+                                  console.error('Download failed:', error)
+                                  alert('Download failed. The file may not be accessible.')
+                                }
                               }
                             }
                           }}
@@ -480,6 +567,23 @@ export default function CaseDetailsPage() {
                         >
                           <Download className="h-4 w-4 sm:mr-0" />
                           <span className="sm:hidden ml-2">Download</span>
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleExportCustodyReport(evidence.id, evidence.filename)}
+                          disabled={exportingReportId === evidence.id}
+                          className="border border-green-600/30 bg-white text-green-700 hover:bg-green-50 hover:border-green-600/40 hover:text-green-700 active:scale-95 transition-colors duration-200 flex-1 sm:flex-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {exportingReportId === evidence.id ? (
+                            <Clock className="h-4 w-4 sm:mr-0 animate-spin" />
+                          ) : (
+                            <FileBarChart className="h-4 w-4 sm:mr-0" />
+                          )}
+                          <span className="sm:hidden ml-2">
+                            {exportingReportId === evidence.id ? 'Generating...' : 'Custody Report'}
+                          </span>
                         </Button>
                         
                         <Button

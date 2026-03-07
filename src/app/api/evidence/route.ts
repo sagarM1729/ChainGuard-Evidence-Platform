@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { withRetry, checkDatabaseHealth } from "@/lib/db-utils"
 import { evidenceManager } from "@/services/evidenceManager"
+import { updateCustodyChain } from "@/lib/custody-manager"
 import { randomUUID } from "crypto"
 
 export async function GET(req: NextRequest) {
@@ -178,12 +179,26 @@ export async function POST(req: NextRequest) {
           updatedAt: new Date(),
           custodyChain: JSON.stringify([{
             officer: session.user.email,
-            action: 'CREATED',
+            action: 'INITIAL_UPLOAD',
             timestamp: new Date().toISOString(),
+            ipfsCid: ipfsCid || 'N/A',
             location: location || 'Digital Evidence System'
           }])
         }
       })
+
+      // Update custody chain using standardized manager
+      try {
+        await updateCustodyChain(
+          evidence.id,
+          session.user.email || session.user.id,
+          'INITIAL_UPLOAD',
+          `Evidence file ${filename} initially uploaded to case ${case_.caseNumber}`
+        )
+      } catch (error) {
+        console.error('Error updating custody chain for upload:', error)
+        // Don't fail the request if custody update fails
+      }
 
       // Log activity
       await prisma.activity.create({
