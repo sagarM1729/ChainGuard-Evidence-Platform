@@ -44,6 +44,7 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             name: user.name,
             role: user.role,
+            department: user.department || 'General',
           }
         } catch (error) {
           console.error('Auth error:', error)
@@ -60,6 +61,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = (user as any).role
+        token.department = (user as any).department
         token.id = user.id
       }
       return token
@@ -67,7 +69,8 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id as string
-        session.user.role = token.role as string
+        session.user.role = token.role as any
+        session.user.department = token.department as string
       }
       return session
     },

@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { LogOut, User, Home, Folder, Plus, Menu, X } from "lucide-react"
+import { LogOut, User, Home, Folder, Plus, Menu, X, Shield } from "lucide-react"
+import { hasPermission, getRoleDisplayName } from "@/lib/rbac"
+import { ToastContainer } from "@/components/ui/Toast"
 
 export default function DashboardLayout({
   children,
@@ -76,10 +78,19 @@ export default function DashboardLayout({
                 <Folder className="h-4 w-4" />
                 <span className="font-medium">Cases</span>
               </Link>
-              <Link href="/dashboard/cases/new" className="flex items-center space-x-2 text-[#022b3a] hover:text-[#1f7a8c] transition-colors">
-                <Plus className="h-4 w-4" />
-                <span className="font-medium">Create New</span>
-              </Link>
+              {session && hasPermission(session.user.role, 'CREATE_CASE') && (
+                <Link href="/dashboard/cases/new" className="flex items-center space-x-2 text-[#022b3a] hover:text-[#1f7a8c] transition-colors">
+                  <Plus className="h-4 w-4" />
+                  <span className="font-medium">Create New</span>
+                </Link>
+              )}
+              {/* Admin Panel - Only show for ADMIN role */}
+              {session && hasPermission(session.user.role, 'ACCESS_ADMIN_PANEL') && (
+                <Link href="/dashboard/admin" className="flex items-center space-x-2 text-[#022b3a] hover:text-[#1f7a8c] transition-colors">
+                  <Shield className="h-4 w-4" />
+                  <span className="font-medium">Admin Panel</span>
+                </Link>
+              )}
             </div>
 
             {/* Desktop User Menu */}
@@ -93,7 +104,9 @@ export default function DashboardLayout({
                 </div>
                 <div className="hidden lg:block">
                   <p className="text-sm font-semibold text-[#022b3a]">{session.user?.name}</p>
-                  <p className="text-xs text-[#022b3a]/60">{session.user?.email}</p>
+                  <p className="text-xs text-[#022b3a]/60">
+                    {session.user?.email} • {getRoleDisplayName(session.user?.role)}
+                  </p>
                 </div>
               </div>
 
@@ -137,14 +150,28 @@ export default function DashboardLayout({
                   <Folder className="h-4 w-4" />
                   <span className="font-medium">Cases</span>
                 </Link>
-                <Link 
-                  href="/dashboard/cases/new" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center space-x-2 px-4 py-2 text-[#022b3a] hover:text-[#1f7a8c] hover:bg-[#1f7a8c]/5 rounded-lg transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                  <span className="font-medium">Create New</span>
-                </Link>
+                {session && hasPermission(session.user.role, 'CREATE_CASE') && (
+                  <Link 
+                    href="/dashboard/cases/new" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center space-x-2 px-4 py-2 text-[#022b3a] hover:text-[#1f7a8c] hover:bg-[#1f7a8c]/5 rounded-lg transition-colors"
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span className="font-medium">Create New</span>
+                  </Link>
+                )}
+                
+                {/* Admin Panel - Mobile Menu */}
+                {session && hasPermission(session.user.role, 'ACCESS_ADMIN_PANEL') && (
+                  <Link 
+                    href="/dashboard/admin" 
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center space-x-2 px-4 py-2 text-[#022b3a] hover:text-[#1f7a8c] hover:bg-[#1f7a8c]/5 rounded-lg transition-colors"
+                  >
+                    <Shield className="h-4 w-4" />
+                    <span className="font-medium">Admin Panel</span>
+                  </Link>
+                )}
                 
                 {/* Mobile User Info */}
                 <div className="flex items-center space-x-3 px-4 py-3 border-t border-[#1f7a8c]/10 mt-2">
@@ -155,7 +182,9 @@ export default function DashboardLayout({
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-[#022b3a]">{session.user?.name}</p>
-                    <p className="text-xs text-[#022b3a]/60">{session.user?.email}</p>
+                    <p className="text-xs text-[#022b3a]/60">
+                      {session.user?.email} • {getRoleDisplayName(session.user?.role)}
+                    </p>
                   </div>
                 </div>
 
@@ -180,6 +209,9 @@ export default function DashboardLayout({
       <main className="flex-1">
         {children}
       </main>
+
+      {/* Toast Notifications */}
+      <ToastContainer />
     </div>
   )
 }

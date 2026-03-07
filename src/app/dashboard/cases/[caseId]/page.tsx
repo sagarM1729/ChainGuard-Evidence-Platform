@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
+import { useSession } from "next-auth/react"
 import { 
   ArrowLeft, 
   Edit, 
@@ -27,7 +28,9 @@ import { Card } from "@/components/ui/card"
 import ComprehensiveUploadForm from "@/components/evidence/ComprehensiveUploadForm"
 import AIIntelligenceEngine from "@/components/cases/AIIntelligenceEngine"
 import TamperDetector from "@/components/evidence/TamperDetector"
+import { toast_warning, toast_error } from "@/components/ui/Toast"
 import type { MerkleProof } from "@/lib/merkle"
+import type { CaseAccessLevel } from "@/lib/rbac"
 
 interface Evidence {
   id: string
@@ -74,11 +77,13 @@ interface Case {
     storedRoot: string | null
     mismatch: boolean
   }
+  accessLevel?: CaseAccessLevel
 }
 
 export default function CaseDetailsPage() {
   const router = useRouter()
   const params = useParams()
+  const { data: session } = useSession()
   const caseId = params?.caseId as string
 
   const [case_, setCase] = useState<Case | null>(null)
@@ -99,6 +104,10 @@ export default function CaseDetailsPage() {
       if (response.ok) {
         const caseData = await response.json()
         setCase(caseData)
+      } else if (response.status === 403) {
+        const errorData = await response.json().catch(() => ({}))
+        toast_warning(errorData.error || "You don't have permission to view this case")
+        router.replace('/dashboard/cases')
       } else {
         setError('Case not found')
       }
@@ -173,11 +182,11 @@ export default function CaseDetailsPage() {
       document.body.removeChild(link)
       
       // Show success message
-      alert('Custody report generated successfully!')
+      toast_warning('Custody report generated successfully!')
       
     } catch (error) {
       console.error('Error exporting custody report:', error)
-      alert(`Failed to generate custody report: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast_error(`Failed to generate custody report: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setExportingReportId(null)
     }
@@ -264,21 +273,25 @@ export default function CaseDetailsPage() {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            <Button 
-              onClick={() => setShowUploadForm(true)}
-              className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] hover:from-[#022b3a] hover:to-[#1f7a8c] text-white text-sm sm:text-base w-full sm:w-auto"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Evidence
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => router.push(`/dashboard/cases/${case_.id}/edit`)}
-              className="border border-[#022b3a]/30 bg-white text-[#022b3a] hover:bg-[#022b3a]/10 hover:border-[#022b3a]/40 hover:text-[#022b3a] active:scale-95 transition-colors duration-200 text-sm sm:text-base w-full sm:w-auto"
-            >
-              <Edit className="h-4 w-4 mr-2" />
-              Update Case
-            </Button>
+            {case_.accessLevel === 'FULL_ACCESS' && (
+              <Button 
+                onClick={() => setShowUploadForm(true)}
+                className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] hover:from-[#022b3a] hover:to-[#1f7a8c] text-white text-sm sm:text-base w-full sm:w-auto"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Evidence
+              </Button>
+            )}
+            {case_.accessLevel === 'FULL_ACCESS' && (
+              <Button 
+                variant="outline"
+                onClick={() => router.push(`/dashboard/cases/${case_.id}/edit`)}
+                className="border border-[#022b3a]/30 bg-white text-[#022b3a] hover:bg-[#022b3a]/10 hover:border-[#022b3a]/40 hover:text-[#022b3a] active:scale-95 transition-colors duration-200 text-sm sm:text-base w-full sm:w-auto"
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Update Case
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -395,26 +408,30 @@ export default function CaseDetailsPage() {
           <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 space-y-3 sm:space-y-0">
               <h2 className="text-lg sm:text-xl font-bold text-[#022b3a]">Evidence ({case_.evidence.length})</h2>
-              <Button 
-                onClick={() => setShowUploadForm(true)}
-                className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white text-sm sm:text-base w-full sm:w-auto"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Evidence
-              </Button>
+              {case_.accessLevel === 'FULL_ACCESS' && (
+                <Button 
+                  onClick={() => setShowUploadForm(true)}
+                  className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white text-sm sm:text-base w-full sm:w-auto"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Evidence
+                </Button>
+              )}
             </div>
 
             {case_.evidence.length === 0 ? (
               <div className="text-center py-6 sm:py-8">
                 <FileText className="h-10 w-10 sm:h-12 sm:w-12 text-[#1f7a8c]/30 mx-auto mb-3 sm:mb-4" />
                 <p className="text-sm sm:text-base text-[#022b3a]/60 mb-3 sm:mb-4">No evidence uploaded yet</p>
-                <Button 
-                  onClick={() => setShowUploadForm(true)}
-                  className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white text-sm sm:text-base"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Upload First Evidence
-                </Button>
+                {case_.accessLevel === 'FULL_ACCESS' && (
+                  <Button 
+                    onClick={() => setShowUploadForm(true)}
+                    className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white text-sm sm:text-base"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Upload First Evidence
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="space-y-3 sm:space-y-4">
@@ -488,7 +505,7 @@ export default function CaseDetailsPage() {
                             onClick={async () => {
                               // Check if it's a mock/local URL
                               if (evidence.retrievalUrl?.startsWith('local://') || evidence.retrievalUrl?.includes('local_')) {
-                                alert('This evidence file is stored locally and cannot be viewed online. The original upload to IPFS failed, but the evidence metadata was saved.')
+                                toast_warning('This evidence file is stored locally and cannot be viewed online. The original upload to IPFS failed, but the evidence metadata was saved.')
                               } else {
                                 // Update custody chain for evidence viewing
                                 try {
@@ -520,7 +537,7 @@ export default function CaseDetailsPage() {
                             if (evidence.retrievalUrl) {
                               // Check if it's a mock/local URL
                               if (evidence.retrievalUrl.startsWith('local://') || evidence.retrievalUrl.includes('local_')) {
-                                alert('This evidence file is stored locally and cannot be downloaded. The original upload to IPFS failed, but the evidence metadata was saved.')
+                                toast_warning('This evidence file is stored locally and cannot be downloaded. The original upload to IPFS failed, but the evidence metadata was saved.')
                               } else {
                                 // Update custody chain for evidence downloading
                                 try {
@@ -558,7 +575,7 @@ export default function CaseDetailsPage() {
                                   window.URL.revokeObjectURL(url)
                                 } catch (error) {
                                   console.error('Download failed:', error)
-                                  alert('Download failed. The file may not be accessible.')
+                                  toast_error('Download failed. The file may not be accessible.')
                                 }
                               }
                             }

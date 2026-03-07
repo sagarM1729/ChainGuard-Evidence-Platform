@@ -17,6 +17,20 @@ Comprehensive automatic tracking of all evidence interactions including viewing,
 - Enhanced download functionality
 - Complete audit trails
 
+### 2. Role-Based Access Control (RBAC) & Admin Panel
+**File:** `admin-panel-enhancements.md`  
+**Date:** March 8, 2026  
+**Status:** ✅ Complete
+
+Full RBAC system that enforces 6 roles and 18 permissions across every layer of the application — API routes, database queries, and UI rendering. The admin panel is the management interface built on top of RBAC.
+
+**Key Benefits:**
+- 6 roles with 18 granular permissions enforced at every layer
+- Case access filtering at the database level (users only see permitted cases)
+- Department-based isolation and role hierarchy
+- Admin panel with user CRUD, audit logs, department overview, system monitor
+- Reusable DataTable, Select, MultiSelect, Breadcrumb, and Modal components
+
 ---
 
 ## Future Features (Planned)

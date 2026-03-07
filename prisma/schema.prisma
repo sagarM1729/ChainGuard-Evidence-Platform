@@ -17,6 +17,7 @@ model Case {
   officerId   String
   merkleRoot  String?
   category    String?
+  department  String?    @default("General")
   dateClosed  DateTime?
   dateOpened  DateTime   @default(now())
   location    String?
@@ -28,6 +29,7 @@ model Case {
   @@index([caseNumber])
   @@index([category])
   @@index([description])
+  @@index([department])
   @@index([officerId])
   @@index([priority])
   @@index([status])
@@ -183,6 +185,9 @@ enum ActivityType {
   EVIDENCE_DELETED
   USER_LOGIN
   USER_LOGOUT
+  USER_CREATED
+  USER_UPDATED
+  USER_DELETED
   SYSTEM_BACKUP
   CHAIN_CUSTODY_VERIFIED
   CUSTODY_REPORT_GENERATED
