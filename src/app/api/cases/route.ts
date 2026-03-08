@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { buildCaseAccessFilter, hasPermission } from "@/lib/rbac"
 import { v4 as uuidv4 } from "uuid"
 
 export async function GET(req: NextRequest) {
@@ -15,16 +16,29 @@ export async function GET(req: NextRequest) {
       )
     }
 
+    // Use RBAC to determine case access based on role and department
+    const accessFilter = buildCaseAccessFilter(
+      session.user.role,
+      session.user.id,
+      session.user.department || 'General'
+    )
+
     const cases = await prisma.case.findMany({
-      where: {
-        officerId: session.user.id,
-      },
+      where: accessFilter,
       include: {
         _count: {
           select: {
             evidence: true,
           },
         },
+        User: {
+          select: {
+            name: true,
+            email: true,
+            badge: true,
+            department: true
+          }
+        }
       },
       orderBy: {
         updatedAt: "desc",
@@ -54,6 +68,14 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Check if user has permission to create cases
+    if (!hasPermission(session.user.role, 'CREATE_CASE')) {
+      return NextResponse.json(
+        { error: "Insufficient permissions to create cases" },
+        { status: 403 }
+      )
+    }
+
     const { title, description, category, location, priority = "MEDIUM", status = "OPEN" } = await req.json()
 
     if (!title || !description) {
@@ -78,6 +100,7 @@ export async function POST(req: NextRequest) {
       priority,
       status,
       officerId: session.user.id,
+      department: session.user.department || 'General', // Add department from user
       updatedAt: now,
     }
 

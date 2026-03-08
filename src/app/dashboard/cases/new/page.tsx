@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { ArrowLeft, Save, FileText, Calendar, MapPin, User } from "lucide-react"
@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
+import { hasPermission } from "@/lib/rbac"
+import { toast_warning, toast_error, toast_success } from "@/components/ui/Toast"
 
 interface CaseFormData {
   title: string
@@ -41,6 +43,14 @@ export default function NewCasePage() {
   
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Permission gate: redirect if user can't create cases
+  useEffect(() => {
+    if (session?.user?.role && !hasPermission(session.user.role, 'CREATE_CASE')) {
+      toast_warning("You don't have permission to create cases")
+      router.replace('/dashboard/cases')
+    }
+  }, [session, router])
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({
@@ -53,7 +63,7 @@ export default function NewCasePage() {
     e.preventDefault()
     
     if (!formData.title || !formData.description) {
-      alert('Please fill in all required fields')
+      toast_warning('Please fill in all required fields')
       return
     }
     
@@ -79,16 +89,21 @@ export default function NewCasePage() {
       })
       
       if (!caseResponse.ok) {
-        throw new Error('Failed to create case')
+        const errorData = await caseResponse.json().catch(() => ({}))
+        if (caseResponse.status === 403) {
+          toast_warning(errorData.error || "You don't have permission to create cases")
+          return
+        }
+        throw new Error(errorData.error || 'Failed to create case')
       }
       
       const { case: newCase } = await caseResponse.json()
       
-      alert('Case created successfully! You can now add evidence to this case.')
+      toast_success('Case created successfully! You can now add evidence.')
       router.push(`/dashboard/cases/${newCase.id}`)
     } catch (error) {
       console.error('Error creating case:', error)
-      alert('Failed to create case. Please try again.')
+      toast_error(error instanceof Error ? error.message : 'Failed to create case. Please try again.')
     } finally {
       setIsSubmitting(false)
     }

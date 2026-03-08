@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 import ComprehensiveUploadForm from "@/components/evidence/ComprehensiveUploadForm"
+import { toast_warning, toast_error, toast_success } from "@/components/ui/Toast"
 
 interface Evidence {
   id: string
@@ -68,6 +69,13 @@ export default function EditCasePage() {
       if (response.ok) {
         const caseData = await response.json()
         
+        // Check access level — only FULL_ACCESS can edit
+        if (caseData.accessLevel && caseData.accessLevel !== 'FULL_ACCESS') {
+          toast_warning("You don't have permission to edit this case")
+          router.replace(`/dashboard/cases/${caseId}`)
+          return
+        }
+        
         // Predefined categories list
         const predefinedCategories = [
           'Theft', 'Fraud', 'Assault', 'Homicide', 'Cybercrime', 
@@ -87,6 +95,10 @@ export default function EditCasePage() {
           status: caseData.status,
           evidence: caseData.evidence || []
         })
+      } else if (response.status === 403) {
+        const errorData = await response.json().catch(() => ({}))
+        toast_warning(errorData.error || "You don't have permission to view this case")
+        router.replace('/dashboard/cases')
       } else {
         setError('Case not found')
       }
@@ -126,10 +138,14 @@ export default function EditCasePage() {
       })
 
       if (response.ok) {
+        toast_success('Case updated successfully')
         router.push(`/dashboard/cases/${caseId}`)
+      } else if (response.status === 403) {
+        const data = await response.json().catch(() => ({}))
+        toast_warning(data.error || "You don't have permission to update this case")
       } else {
         const data = await response.json()
-        setError(data.error || 'Failed to update case')
+        toast_error(data.error || 'Failed to update case')
       }
     } catch (error) {
       console.error('Failed to update case:', error)

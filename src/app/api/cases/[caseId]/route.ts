@@ -4,6 +4,7 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { randomUUID } from "crypto"
 import { createLeafHash, getMerkleRoot, verifyMerkleProof, type MerkleProof } from "@/lib/merkle"
+import { getCaseAccessLevel, hasPermission } from "@/lib/rbac"
 
 export async function GET(
   req: NextRequest,
@@ -23,7 +24,6 @@ export async function GET(
     const case_ = await prisma.case.findFirst({
       where: {
         id: caseId,
-        officerId: session.user.id,
       },
       include: {
         evidence: {
@@ -45,6 +45,21 @@ export async function GET(
       return NextResponse.json(
         { error: "Case not found" },
         { status: 404 }
+      )
+    }
+
+    // RBAC: Check if user has access to this case
+    const accessLevel = getCaseAccessLevel(
+      session.user.role,
+      session.user.id,
+      session.user.department || 'General',
+      { officerId: case_.officerId, department: (case_ as any).department }
+    )
+
+    if (accessLevel === 'NO_ACCESS') {
+      return NextResponse.json(
+        { error: "You don't have permission to view this case" },
+        { status: 403 }
       )
     }
 
@@ -137,7 +152,8 @@ export async function GET(
       ...case_,
       evidence: evidenceWithIntegrity,
       isChainValid, // Frontend will use this to show Red/Green status
-      integrityCheckDetails
+      integrityCheckDetails,
+      accessLevel // Frontend uses this to conditionally show buttons
     })
   } catch (error) {
     console.error("Error fetching case:", error)
@@ -168,13 +184,14 @@ export async function PUT(
     const case_ = await prisma.case.findFirst({
       where: {
         id: caseId,
-        officerId: session.user.id,
       },
       select: {
         id: true,
         caseNumber: true,
         title: true,
         status: true,
+        officerId: true,
+        department: true,
       }
     })
 
@@ -182,6 +199,21 @@ export async function PUT(
       return NextResponse.json(
         { error: "Case not found" },
         { status: 404 }
+      )
+    }
+
+    // RBAC: Check if user has full access to modify this case
+    const accessLevel = getCaseAccessLevel(
+      session.user.role,
+      session.user.id,
+      session.user.department || 'General',
+      { officerId: case_.officerId, department: case_.department || undefined }
+    )
+
+    if (accessLevel !== 'FULL_ACCESS') {
+      return NextResponse.json(
+        { error: "You don't have permission to edit this case" },
+        { status: 403 }
       )
     }
 
@@ -286,10 +318,18 @@ export async function DELETE(
     }
 
     const { caseId } = await params
+
+    // Check DELETE_CASE permission
+    if (!hasPermission(session.user.role, 'DELETE_CASE')) {
+      return NextResponse.json(
+        { error: "You don't have permission to delete cases" },
+        { status: 403 }
+      )
+    }
+
     const case_ = await prisma.case.findFirst({
       where: {
         id: caseId,
-        officerId: session.user.id,
       },
     })
 

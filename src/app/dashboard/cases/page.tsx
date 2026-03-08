@@ -2,10 +2,13 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { useSession } from "next-auth/react"
 import { Search, Plus, Filter, Eye, Edit, Calendar, FileText, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
+import { hasPermission } from "@/lib/rbac"
+import { toast_warning } from "@/components/ui/Toast"
 
 interface Case {
   id: string
@@ -26,6 +29,7 @@ interface Case {
 
 export default function AllCasesPage() {
   const router = useRouter()
+  const { data: session } = useSession()
   const [cases, setCases] = useState<Case[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -51,6 +55,9 @@ export default function AllCasesPage() {
           console.warn('Unexpected API response structure:', casesData)
           setCases([])
         }
+      } else if (response.status === 403) {
+        toast_warning("You don't have permission to view cases")
+        setCases([])
       } else {
         console.error('Failed to fetch cases:', response.status, response.statusText)
         setCases([])
@@ -113,6 +120,8 @@ export default function AllCasesPage() {
     }
   }
 
+  const canCreateCase = session?.user?.role ? hasPermission(session.user.role, 'CREATE_CASE') : false
+
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       {/* Header */}
@@ -124,13 +133,15 @@ export default function AllCasesPage() {
               Manage and track all your investigation cases
             </p>
           </div>
-          <Button 
-            onClick={() => router.push('/dashboard/cases/new')}
-            className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] hover:from-[#022b3a] hover:to-[#1f7a8c] text-white shadow-xl w-full sm:w-auto"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Create New Case
-          </Button>
+          {canCreateCase && (
+            <Button 
+              onClick={() => router.push('/dashboard/cases/new')}
+              className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] hover:from-[#022b3a] hover:to-[#1f7a8c] text-white shadow-xl w-full sm:w-auto"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Create New Case
+            </Button>
+          )}
         </div>
       </div>
 
@@ -292,18 +303,20 @@ export default function AllCasesPage() {
                     <Eye className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                     View
                   </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      router.push(`/dashboard/cases/${case_.id}/edit`)
-                    }}
-                    className="border border-[#022b3a]/30 bg-white text-[#022b3a] hover:bg-[#022b3a]/10 hover:border-[#022b3a]/40 hover:text-[#022b3a] active:scale-95 transition-colors duration-200 text-xs sm:text-sm flex-1"
-                  >
-                    <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    Edit
-                  </Button>
+                  {canCreateCase && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        router.push(`/dashboard/cases/${case_.id}/edit`)
+                      }}
+                      className="border border-[#022b3a]/30 bg-white text-[#022b3a] hover:bg-[#022b3a]/10 hover:border-[#022b3a]/40 hover:text-[#022b3a] active:scale-95 transition-colors duration-200 text-xs sm:text-sm flex-1"
+                    >
+                      <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                      Edit
+                    </Button>
+                  )}
                 </div>
               </div>
             </Card>
@@ -321,13 +334,15 @@ export default function AllCasesPage() {
               }
             </p>
             <div className="space-y-2">
-              <Button 
-                onClick={() => router.push('/dashboard/cases/new')}
-                className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white w-full text-sm sm:text-base"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Create New Case
-              </Button>
+              {canCreateCase && (
+                <Button 
+                  onClick={() => router.push('/dashboard/cases/new')}
+                  className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white w-full text-sm sm:text-base"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create New Case
+                </Button>
+              )}
               {(searchTerm || statusFilter !== 'ALL' || priorityFilter !== 'ALL') && (
                 <Button 
                   variant="outline"

@@ -70,7 +70,7 @@ export default function TamperDetector({ evidenceId, evidenceFilename }: TamperD
       
       <div className="space-y-4">
         <div className="grid w-full max-w-sm items-center gap-1.5">
-          <Label htmlFor="tamper-file">Upload file to verify against "{evidenceFilename}"</Label>
+          <Label htmlFor="tamper-file">Upload file to verify against &quot;{evidenceFilename}&quot;</Label>
           <Input 
             id="tamper-file" 
             type="file" 

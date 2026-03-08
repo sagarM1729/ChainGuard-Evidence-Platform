@@ -4,7 +4,9 @@ import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { withRetry, checkDatabaseHealth } from "@/lib/db-utils"
 import { evidenceManager } from "@/services/evidenceManager"
+import { updateCustodyChain } from "@/lib/custody-manager"
 import { randomUUID } from "crypto"
+import { buildCaseAccessFilter, hasPermission, getCaseAccessLevel } from "@/lib/rbac"
 
 export async function GET(req: NextRequest) {
   try {
@@ -26,27 +28,46 @@ export async function GET(req: NextRequest) {
       // Get evidence for specific case
       whereClause.caseId = caseId
       
-      // Verify user has access to this case with retry logic
+      // Verify user has access to this case using RBAC
       const case_ = await withRetry(() => 
         prisma.case.findFirst({
           where: {
             id: caseId,
-            officerId: session.user.id
-          }
+          },
+          select: { id: true, officerId: true, department: true }
         })
       )
       
       if (!case_) {
         return NextResponse.json(
-          { error: "Case not found or access denied" },
+          { error: "Case not found" },
           { status: 404 }
         )
       }
+
+      const accessLevel = getCaseAccessLevel(
+        session.user.role,
+        session.user.id,
+        session.user.department || 'General',
+        { officerId: case_.officerId, department: case_.department || undefined }
+      )
+
+      if (accessLevel === 'NO_ACCESS') {
+        return NextResponse.json(
+          { error: "You don't have permission to view evidence for this case" },
+          { status: 403 }
+        )
+      }
     } else {
-      // Get all evidence for user's cases with retry logic
+      // Get all evidence for cases the user can access using RBAC
+      const accessFilter = buildCaseAccessFilter(
+        session.user.role,
+        session.user.id,
+        session.user.department || 'General'
+      )
       const userCases = await withRetry(() =>
         prisma.case.findMany({
-          where: { officerId: session.user.id },
+          where: accessFilter,
           select: { id: true }
         })
       )
@@ -101,6 +122,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
+      )
+    }
+
+    // Check UPLOAD_EVIDENCE permission
+    if (!hasPermission(session.user.role, 'UPLOAD_EVIDENCE')) {
+      return NextResponse.json(
+        { error: "You don't have permission to upload evidence" },
+        { status: 403 }
       )
     }
 
@@ -178,12 +207,26 @@ export async function POST(req: NextRequest) {
           updatedAt: new Date(),
           custodyChain: JSON.stringify([{
             officer: session.user.email,
-            action: 'CREATED',
+            action: 'INITIAL_UPLOAD',
             timestamp: new Date().toISOString(),
+            ipfsCid: ipfsCid || 'N/A',
             location: location || 'Digital Evidence System'
           }])
         }
       })
+
+      // Update custody chain using standardized manager
+      try {
+        await updateCustodyChain(
+          evidence.id,
+          session.user.email || session.user.id,
+          'INITIAL_UPLOAD',
+          `Evidence file ${filename} initially uploaded to case ${case_.caseNumber}`
+        )
+      } catch (error) {
+        console.error('Error updating custody chain for upload:', error)
+        // Don't fail the request if custody update fails
+      }
 
       // Log activity
       await prisma.activity.create({
@@ -231,22 +274,37 @@ export async function POST(req: NextRequest) {
         )
       }
 
-      // Verify user has access to this case
+      // Verify user has access to this case using RBAC
       const case_ = await prisma.case.findFirst({
         where: {
           id: caseId,
-          officerId: session.user.id
         },
         select: {
           id: true,
-          caseNumber: true
+          caseNumber: true,
+          officerId: true,
+          department: true,
         }
       })
       
       if (!case_) {
         return NextResponse.json(
-          { error: "Case not found or access denied" },
+          { error: "Case not found" },
           { status: 404 }
+        )
+      }
+
+      const formAccessLevel = getCaseAccessLevel(
+        session.user.role,
+        session.user.id,
+        session.user.department || 'General',
+        { officerId: case_.officerId, department: case_.department || undefined }
+      )
+
+      if (formAccessLevel !== 'FULL_ACCESS') {
+        return NextResponse.json(
+          { error: "You don't have permission to add evidence to this case" },
+          { status: 403 }
         )
       }
 

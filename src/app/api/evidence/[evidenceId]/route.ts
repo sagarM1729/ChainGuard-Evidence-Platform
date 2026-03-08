@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { evidenceManager } from "@/services/evidenceManager"
+import { updateCustodyChain } from "@/lib/custody-manager"
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ evidenceId: string }> }) {
   try {
@@ -93,6 +94,19 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ e
         { error: "Evidence not found or access denied" },
         { status: 404 }
       )
+    }
+
+    // Update custody chain before deletion
+    try {
+      await updateCustodyChain(
+        evidenceId,
+        session.user.email || session.user.id,
+        'EVIDENCE_DELETED',
+        `Evidence file ${evidence.filename} deleted from case (file remains on IPFS for immutability)`
+      )
+    } catch (error) {
+      console.error('Error updating custody chain for deletion:', error)
+      // Don't fail the request if custody update fails
     }
 
     // Note: We don't actually delete from IPFS (immutable)

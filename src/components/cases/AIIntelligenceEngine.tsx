@@ -91,14 +91,24 @@ export default function AIIntelligenceEngine({ caseId }: AIIntelligenceEnginePro
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
       })
 
       console.log('Response status:', response.status)
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}))
-        console.error('API error:', errorData)
-        throw new Error(errorData.error || `Failed to analyze case (${response.status})`)
+        const responseText = await response.text()
+        let errorMessage = `Failed to analyze case (${response.status})`
+        try {
+          const errorData = JSON.parse(responseText)
+          console.error('API error:', errorData)
+          if (errorData.error) {
+            errorMessage = errorData.error
+          }
+        } catch {
+          console.error('API returned non-JSON response:', responseText.substring(0, 500))
+        }
+        throw new Error(errorMessage)
       }
 
       const data = await response.json()

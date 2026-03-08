@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { useRouter, useParams } from "next/navigation"
+import { useSession } from "next-auth/react"
 import { 
   ArrowLeft, 
   Edit, 
@@ -19,14 +20,17 @@ import {
   AlertCircle,
   CheckCircle,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  FileBarChart
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import ComprehensiveUploadForm from "@/components/evidence/ComprehensiveUploadForm"
 import AIIntelligenceEngine from "@/components/cases/AIIntelligenceEngine"
 import TamperDetector from "@/components/evidence/TamperDetector"
+import { toast_warning, toast_error } from "@/components/ui/Toast"
 import type { MerkleProof } from "@/lib/merkle"
+import type { CaseAccessLevel } from "@/lib/rbac"
 
 interface Evidence {
   id: string
@@ -73,11 +77,13 @@ interface Case {
     storedRoot: string | null
     mismatch: boolean
   }
+  accessLevel?: CaseAccessLevel
 }
 
 export default function CaseDetailsPage() {
   const router = useRouter()
   const params = useParams()
+  const { data: session } = useSession()
   const caseId = params?.caseId as string
 
   const [case_, setCase] = useState<Case | null>(null)
@@ -86,6 +92,7 @@ export default function CaseDetailsPage() {
   const [error, setError] = useState<string | null>(null)
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
   const [verifyingEvidenceId, setVerifyingEvidenceId] = useState<string | null>(null)
+  const [exportingReportId, setExportingReportId] = useState<string | null>(null)
 
   const fetchCaseDetails = useCallback(async () => {
     if (!caseId) {
@@ -97,6 +104,10 @@ export default function CaseDetailsPage() {
       if (response.ok) {
         const caseData = await response.json()
         setCase(caseData)
+      } else if (response.status === 403) {
+        const errorData = await response.json().catch(() => ({}))
+        toast_warning(errorData.error || "You don't have permission to view this case")
+        router.replace('/dashboard/cases')
       } else {
         setError('Case not found')
       }
@@ -142,6 +153,43 @@ export default function CaseDetailsPage() {
     const sizes = ['Bytes', 'KB', 'MB', 'GB']
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+  }
+
+  const handleExportCustodyReport = async (evidenceId: string, filename: string) => {
+    try {
+      setExportingReportId(evidenceId)
+      
+      const response = await fetch(`/api/evidence/${evidenceId}/custody-report`)
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to generate custody report')
+      }
+      
+      // Get the PDF blob
+      const blob = await response.blob()
+      
+      // Create download link
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `custody-report-${filename}-${new Date().toISOString().split('T')[0]}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      
+      // Cleanup
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(link)
+      
+      // Show success message
+      toast_warning('Custody report generated successfully!')
+      
+    } catch (error) {
+      console.error('Error exporting custody report:', error)
+      toast_error(`Failed to generate custody report: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    } finally {
+      setExportingReportId(null)
+    }
   }
 
   const handleEvidenceUploaded = () => {
@@ -225,21 +273,25 @@ export default function CaseDetailsPage() {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            <Button 
-              onClick={() => setShowUploadForm(true)}
-              className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] hover:from-[#022b3a] hover:to-[#1f7a8c] text-white text-sm sm:text-base w-full sm:w-auto"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Evidence
-            </Button>
-            <Button 
-              variant="outline"
-              onClick={() => router.push(`/dashboard/cases/${case_.id}/edit`)}
-              className="border border-[#022b3a]/30 bg-white text-[#022b3a] hover:bg-[#022b3a]/10 hover:border-[#022b3a]/40 hover:text-[#022b3a] active:scale-95 transition-colors duration-200 text-sm sm:text-base w-full sm:w-auto"
-            >
-              <Edit className="h-4 w-4 mr-2" />
-              Update Case
-            </Button>
+            {case_.accessLevel === 'FULL_ACCESS' && (
+              <Button 
+                onClick={() => setShowUploadForm(true)}
+                className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] hover:from-[#022b3a] hover:to-[#1f7a8c] text-white text-sm sm:text-base w-full sm:w-auto"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Evidence
+              </Button>
+            )}
+            {case_.accessLevel === 'FULL_ACCESS' && (
+              <Button 
+                variant="outline"
+                onClick={() => router.push(`/dashboard/cases/${case_.id}/edit`)}
+                className="border border-[#022b3a]/30 bg-white text-[#022b3a] hover:bg-[#022b3a]/10 hover:border-[#022b3a]/40 hover:text-[#022b3a] active:scale-95 transition-colors duration-200 text-sm sm:text-base w-full sm:w-auto"
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Update Case
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -356,26 +408,30 @@ export default function CaseDetailsPage() {
           <Card className="p-4 sm:p-6 border-[#1f7a8c]/20 bg-white/95 backdrop-blur-sm shadow-xl">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 space-y-3 sm:space-y-0">
               <h2 className="text-lg sm:text-xl font-bold text-[#022b3a]">Evidence ({case_.evidence.length})</h2>
-              <Button 
-                onClick={() => setShowUploadForm(true)}
-                className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white text-sm sm:text-base w-full sm:w-auto"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Evidence
-              </Button>
+              {case_.accessLevel === 'FULL_ACCESS' && (
+                <Button 
+                  onClick={() => setShowUploadForm(true)}
+                  className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white text-sm sm:text-base w-full sm:w-auto"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Evidence
+                </Button>
+              )}
             </div>
 
             {case_.evidence.length === 0 ? (
               <div className="text-center py-6 sm:py-8">
                 <FileText className="h-10 w-10 sm:h-12 sm:w-12 text-[#1f7a8c]/30 mx-auto mb-3 sm:mb-4" />
                 <p className="text-sm sm:text-base text-[#022b3a]/60 mb-3 sm:mb-4">No evidence uploaded yet</p>
-                <Button 
-                  onClick={() => setShowUploadForm(true)}
-                  className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white text-sm sm:text-base"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Upload First Evidence
-                </Button>
+                {case_.accessLevel === 'FULL_ACCESS' && (
+                  <Button 
+                    onClick={() => setShowUploadForm(true)}
+                    className="bg-gradient-to-r from-[#1f7a8c] to-[#022b3a] text-white text-sm sm:text-base"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Upload First Evidence
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="space-y-3 sm:space-y-4">
@@ -441,16 +497,30 @@ export default function CaseDetailsPage() {
                         )}
                       </div>
                       
-                      <div className="flex sm:flex-col gap-2 sm:ml-4">
+                      <div className="flex flex-wrap sm:flex-nowrap sm:flex-col gap-2 sm:ml-4">
                         {evidence.retrievalUrl && (
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => {
+                            onClick={async () => {
                               // Check if it's a mock/local URL
                               if (evidence.retrievalUrl?.startsWith('local://') || evidence.retrievalUrl?.includes('local_')) {
-                                alert('This evidence file is stored locally and cannot be viewed online. The original upload to IPFS failed, but the evidence metadata was saved.')
+                                toast_warning('This evidence file is stored locally and cannot be viewed online. The original upload to IPFS failed, but the evidence metadata was saved.')
                               } else {
+                                // Update custody chain for evidence viewing
+                                try {
+                                  await fetch(`/api/evidence/${evidence.id}/custody`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ 
+                                      action: 'EVIDENCE_VIEWED',
+                                      notes: `Evidence file ${evidence.filename} viewed by officer`
+                                    })
+                                  })
+                                } catch (error) {
+                                  console.error('Failed to update custody chain:', error)
+                                }
+                                
                                 window.open(evidence.retrievalUrl, '_blank')
                               }
                             }}
@@ -463,16 +533,50 @@ export default function CaseDetailsPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => {
+                          onClick={async () => {
                             if (evidence.retrievalUrl) {
                               // Check if it's a mock/local URL
                               if (evidence.retrievalUrl.startsWith('local://') || evidence.retrievalUrl.includes('local_')) {
-                                alert('This evidence file is stored locally and cannot be downloaded. The original upload to IPFS failed, but the evidence metadata was saved.')
+                                toast_warning('This evidence file is stored locally and cannot be downloaded. The original upload to IPFS failed, but the evidence metadata was saved.')
                               } else {
-                                const link = document.createElement('a')
-                                link.href = evidence.retrievalUrl
-                                link.download = evidence.filename
-                                link.click()
+                                // Update custody chain for evidence downloading
+                                try {
+                                  await fetch(`/api/evidence/${evidence.id}/custody`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ 
+                                      action: 'EVIDENCE_DOWNLOADED',
+                                      notes: `Evidence file ${evidence.filename} downloaded by officer`
+                                    })
+                                  })
+                                } catch (error) {
+                                  console.error('Failed to update custody chain:', error)
+                                }
+                                
+                                // Properly force download using fetch and blob
+                                try {
+                                  const response = await fetch(evidence.retrievalUrl)
+                                  if (!response.ok) {
+                                    throw new Error('Failed to fetch file')
+                                  }
+                                  
+                                  const blob = await response.blob()
+                                  const url = window.URL.createObjectURL(blob)
+                                  
+                                  const link = document.createElement('a')
+                                  link.href = url
+                                  link.download = evidence.filename
+                                  link.style.display = 'none'
+                                  document.body.appendChild(link)
+                                  link.click()
+                                  
+                                  // Cleanup
+                                  document.body.removeChild(link)
+                                  window.URL.revokeObjectURL(url)
+                                } catch (error) {
+                                  console.error('Download failed:', error)
+                                  toast_error('Download failed. The file may not be accessible.')
+                                }
                               }
                             }
                           }}
@@ -480,6 +584,23 @@ export default function CaseDetailsPage() {
                         >
                           <Download className="h-4 w-4 sm:mr-0" />
                           <span className="sm:hidden ml-2">Download</span>
+                        </Button>
+                        
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleExportCustodyReport(evidence.id, evidence.filename)}
+                          disabled={exportingReportId === evidence.id}
+                          className="border border-green-600/30 bg-white text-green-700 hover:bg-green-50 hover:border-green-600/40 hover:text-green-700 active:scale-95 transition-colors duration-200 flex-1 sm:flex-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {exportingReportId === evidence.id ? (
+                            <Clock className="h-4 w-4 sm:mr-0 animate-spin" />
+                          ) : (
+                            <FileBarChart className="h-4 w-4 sm:mr-0" />
+                          )}
+                          <span className="sm:hidden ml-2">
+                            {exportingReportId === evidence.id ? 'Generating...' : 'Custody Report'}
+                          </span>
                         </Button>
                         
                         <Button
