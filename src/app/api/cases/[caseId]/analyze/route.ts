@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { GoogleGenerativeAI } from "@google/generative-ai"
+import { getCaseAccessLevel } from "@/lib/rbac"
 
 // Validate API key on startup
 if (!process.env.GEMINI_API_KEY) {
@@ -174,9 +175,15 @@ Return ONLY valid JSON, no additional text.`
 
     console.log("Sending prompt to Gemini AI...")
     console.log("API Key present:", !!process.env.GEMINI_API_KEY)
-    console.log("API Key starts with:", process.env.GEMINI_API_KEY?.substring(0, 10))
     
-    const result = await model.generateContent(prompt)
+    // Add timeout to prevent hanging requests
+    const timeoutMs = 60000 // 60 seconds
+    const result = await Promise.race([
+      model.generateContent(prompt),
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Gemini API request timed out after 60s')), timeoutMs)
+      )
+    ])
     console.log("Result received:", !!result)
     
     const response = await result.response
@@ -273,11 +280,10 @@ export async function POST(
 
     const { caseId } = await params
 
-    // Fetch the case with all evidence
+    // Fetch the case with all evidence (no officerId filter - use RBAC instead)
     const caseData = await prisma.case.findFirst({
       where: {
         id: caseId,
-        officerId: session.user.id,
       },
       include: {
         evidence: true,
@@ -297,13 +303,27 @@ export async function POST(
       )
     }
 
+    // RBAC: Check if user has access to this case
+    const accessLevel = getCaseAccessLevel(
+      session.user.role,
+      session.user.id,
+      session.user.department || 'General',
+      { officerId: caseData.officerId, department: (caseData as any).department }
+    )
+
+    if (accessLevel === 'NO_ACCESS') {
+      return NextResponse.json(
+        { error: "You do not have permission to analyze this case" },
+        { status: 403 }
+      )
+    }
+
     // Fetch all other cases for pattern detection
     const allCases = await prisma.case.findMany({
       where: {
         id: {
           not: caseId
         },
-        officerId: session.user.id,
       },
       select: {
         id: true,
@@ -329,10 +349,12 @@ export async function POST(
       success: true,
       analysis
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error in case analysis:", error)
+    console.error("Error message:", error?.message)
+    console.error("Error stack:", error?.stack)
     return NextResponse.json(
-      { error: "Failed to analyze case" },
+      { error: error?.message || "Failed to analyze case" },
       { status: 500 }
     )
   }

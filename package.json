@@ -34,6 +34,7 @@
 		"crypto-js": "^4.2.0",
 		"dotenv": "^17.2.2",
 		"ethereal-email": "^1.0.0",
+		"groq-sdk": "^0.37.0",
 		"jspdf": "^4.2.0",
 		"jspdf-autotable": "^5.0.7",
 		"lucide-react": "^0.540.0",
