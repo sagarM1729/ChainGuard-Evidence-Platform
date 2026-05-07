@@ -7,6 +7,7 @@
 		"node": ">=18.18.0"
 	},
 	"scripts": {
+		"postinstall": "prisma generate",
 		"dev": "next dev",
 		"build": "next build",
 		"start": "next start",
@@ -24,7 +25,7 @@
 		"@auth/prisma-adapter": "^2.10.0",
 		"@google/generative-ai": "^0.24.1",
 		"@pdf-lib/fontkit": "^1.1.1",
-		"@prisma/client": "^6.14.0",
+		"@prisma/client": "6.16.2",
 		"@types/bcryptjs": "^2.4.6",
 		"@types/nodemailer": "^7.0.1",
 		"@types/uuid": "^10.0.0",
