@@ -1,1 +1,0 @@
-// Legacy endpoint removed. See /api/test-pinata
